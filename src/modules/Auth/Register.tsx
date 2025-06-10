@@ -124,6 +124,9 @@ const Register = () => {
     retry: false, // prevent retry on 404
   });
 
+  const isSponsorValid =
+    sponsorId.length === 8 && sponsorData && !isSponsorLoading;
+
   const registerMutation = useMutation<
     RegisterResponse,
     unknown,
@@ -212,11 +215,11 @@ const Register = () => {
                   onValueChange={(value) => field.onChange(value)}
                 >
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem id="left" value="left" />
+                    <RadioGroupItem id="left" value="Left" />
                     <Label htmlFor="left">Left</Label>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem id="right" value="right" />
+                    <RadioGroupItem id="right" value="Right" />
                     <Label htmlFor="right">Right</Label>
                   </div>
                 </RadioGroup>
@@ -345,7 +348,7 @@ const Register = () => {
           <Button
             type="submit"
             className="w-full"
-            disabled={registerMutation.isPending}
+            disabled={registerMutation.isPending || !isSponsorValid}
           >
             {registerMutation.isPending ? (
               <>
