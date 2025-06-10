@@ -21,7 +21,6 @@ import UserList from "@/modules/User/UserList";
 import { Toaster } from "sonner";
 import "./App.css";
 
-import AirlineList from "@/modules/Airline/AirlineList";
 import ProductList from "./modules/Product/ProductList";
 import CreateProduct from "./modules/Product/CreateProduct";
 import EditProduct from "./modules/Product/EditProduct";
@@ -68,14 +67,6 @@ const App = () => {
               }
             />
 
-            <Route
-              path="/airlines"
-              element={
-                <ProtectedRoute>
-                  <AirlineList />
-                </ProtectedRoute>
-              }
-            />
             <Route
               path="/products"
               element={
