@@ -24,6 +24,9 @@ import "./App.css";
 import ProductList from "./modules/Product/ProductList";
 import CreateProduct from "./modules/Product/CreateProduct";
 import EditProduct from "./modules/Product/EditProduct";
+import MemberList from "./modules/Member/MemberList";
+import CreateMember from "./modules/Member/CreateMember";
+import EditMember from "./modules/Member/EditMember";
 const App = () => {
   useEffect(() => {
     document.title = appName; // Set the document title
@@ -89,6 +92,31 @@ const App = () => {
               element={
                 <ProtectedRoute>
                   <EditProduct />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/members"
+              element={
+                <ProtectedRoute>
+                  <MemberList />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/members/create"
+              element={
+                <ProtectedRoute>
+                  <CreateMember />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/members/:id/edit"
+              element={
+                <ProtectedRoute>
+                  <EditMember />
                 </ProtectedRoute>
               }
             />

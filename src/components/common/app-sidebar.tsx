@@ -76,7 +76,10 @@ const initialData = {
           url: "#",
           icon: SquareTerminal,
           isActive: false,
-          items: [{ title: "Products", url: "/products" }],
+          items: [
+            { title: "Products", url: "/products" },
+            { title: "Members", url: "/members" },
+          ],
         },
       ],
     },

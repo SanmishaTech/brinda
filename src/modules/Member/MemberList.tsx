@@ -208,14 +208,31 @@ const MemberList = () => {
                         )}
                       </div>
                     </TableHead>
+                    <TableHead
+                      onClick={() => handleSort("memberUsername")}
+                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
+                    >
+                      <div className="flex items-center">
+                        <span>Username</span>
+                        {sortBy === "memberUsername" && (
+                          <span className="ml-1">
+                            {sortOrder === "asc" ? (
+                              <ChevronUp size={16} />
+                            ) : (
+                              <ChevronDown size={16} />
+                            )}
+                          </span>
+                        )}
+                      </div>
+                    </TableHead>
 
                     <TableHead
-                      onClick={() => handleSort("mrp")}
+                      onClick={() => handleSort("memberEmail")}
                       className="cursor-pointer max-w-[250px] break-words whitespace-normal"
                     >
                       <div className="flex items-center">
-                        <span>MRP</span>
-                        {sortBy === "mrp" && (
+                        <span>Email</span>
+                        {sortBy === "memberEmail" && (
                           <span className="ml-1">
                             {sortOrder === "asc" ? (
                               <ChevronUp size={16} />
@@ -227,12 +244,12 @@ const MemberList = () => {
                       </div>
                     </TableHead>
                     <TableHead
-                      onClick={() => handleSort("dspRate")}
+                      onClick={() => handleSort("memberMobile")}
                       className="cursor-pointer max-w-[250px] break-words whitespace-normal"
                     >
                       <div className="flex items-center">
-                        <span>DSP Rate</span>
-                        {sortBy === "dspRate" && (
+                        <span>Mobile</span>
+                        {sortBy === "memberMobile" && (
                           <span className="ml-1">
                             {sortOrder === "asc" ? (
                               <ChevronUp size={16} />
@@ -243,66 +260,33 @@ const MemberList = () => {
                         )}
                       </div>
                     </TableHead>
-                    <TableHead
-                      onClick={() => handleSort("mfgRate")}
-                      className="cursor-pointer"
-                    >
-                      <div className="flex items-center">
-                        <span>MFG Rate</span>
-                        {sortBy === "mfgRate" && (
-                          <span className="ml-1">
-                            {sortOrder === "asc" ? (
-                              <ChevronUp size={16} />
-                            ) : (
-                              <ChevronDown size={16} />
-                            )}
-                          </span>
-                        )}
-                      </div>
-                    </TableHead>
-                    <TableHead
-                      onClick={() => handleSort("gst")}
-                      className="cursor-pointer"
-                    >
-                      <div className="flex items-center">
-                        <span>GST (%)</span>
-                        {sortBy === "gst" && (
-                          <span className="ml-1">
-                            {sortOrder === "asc" ? (
-                              <ChevronUp size={16} />
-                            ) : (
-                              <ChevronDown size={16} />
-                            )}
-                          </span>
-                        )}
-                      </div>
-                    </TableHead>
+
                     <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {products.map((product) => (
-                    <TableRow key={product.id}>
+                  {members.map((member) => (
+                    <TableRow key={member.id}>
                       <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {product.productName}
-                      </TableCell>
-                      <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {formatCurrency(product.mrp) || "N/A"}
+                        {member.memberName}
                       </TableCell>
                       <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {formatCurrency(product.dspRate) || "N/A"}
+                        {member.memberUsername}
                       </TableCell>
-                      <TableCell>
-                        {formatCurrency(product.mfgRate) || "N/A"}
+                      <TableCell className="max-w-[250px] break-words whitespace-normal">
+                        {member.memberEmail || "N/A"}
                       </TableCell>
-                      <TableCell>{product.gst || "N/A"}</TableCell>
+                      <TableCell className="max-w-[250px] break-words whitespace-normal">
+                        {member.memberMobile || "N/A"}
+                      </TableCell>
+
                       <TableCell>
                         <div className="flex gap-2">
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() =>
-                              navigate(`/products/${product.id}/edit`)
+                              navigate(`/products/${member.id}/edit`)
                             }
                           >
                             <Edit size={16} />
@@ -311,7 +295,7 @@ const MemberList = () => {
                           <Button
                             variant="destructive"
                             size="sm"
-                            onClick={() => confirmDelete(product.id)}
+                            onClick={() => confirmDelete(member.id)}
                           >
                             <Trash2 size={16} />
                           </Button>
@@ -324,7 +308,7 @@ const MemberList = () => {
               <CustomPagination
                 currentPage={currentPage}
                 totalPages={totalPages}
-                totalRecords={totalProducts}
+                totalRecords={totalMembers}
                 recordsPerPage={recordsPerPage}
                 onPageChange={setCurrentPage} // Pass setCurrentPage directly
                 onRecordsPerPageChange={(newRecordsPerPage) => {
@@ -334,7 +318,7 @@ const MemberList = () => {
               />
             </div>
           ) : (
-            <div className="text-center">No Products Found.</div>
+            <div className="text-center">No Members Found.</div>
           )}
         </CardContent>
       </Card>
@@ -342,10 +326,10 @@ const MemberList = () => {
       <ConfirmDialog
         isOpen={showConfirmation}
         title="Confirm Deletion"
-        description="Are you sure you want to delete this Product? This action cannot be undone."
+        description="Are you sure you want to delete this Member? This action cannot be undone."
         onCancel={() => {
           setShowConfirmation(false);
-          setProductToDelete(null);
+          setMemberToDelete(null);
         }}
         onConfirm={handleDelete}
       />
