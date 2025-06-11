@@ -27,6 +27,7 @@ import EditProduct from "./modules/Product/EditProduct";
 import MemberList from "./modules/Member/MemberList";
 import CreateMember from "./modules/Member/CreateMember";
 import EditMember from "./modules/Member/EditMember";
+import WalletDetails from "./modules/Product copy/WalletDetails";
 const App = () => {
   useEffect(() => {
     document.title = appName; // Set the document title
@@ -117,6 +118,14 @@ const App = () => {
               element={
                 <ProtectedRoute>
                   <EditMember />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/wallet"
+              element={
+                <ProtectedRoute>
+                  <WalletDetails />
                 </ProtectedRoute>
               }
             />

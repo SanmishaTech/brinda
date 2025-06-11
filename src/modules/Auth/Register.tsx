@@ -49,7 +49,13 @@ type RegisterFormInputs = z.infer<typeof registerSchema>;
 // Define Zod schema
 const registerSchema = z.object({
   sponsorId: z.string().min(1, "Sponsor ID is required"),
-  name: z.string().nonempty("Name is required"),
+  name: z
+    .string()
+    .min(1, "Name cannot be left blank.") // Ensuring minimum length of 2
+    .max(100, "Name must not exceed 100 characters.")
+    .refine((val) => /^[A-Za-z\s\u0900-\u097F]+$/.test(val), {
+      message: "Name can only contain letters.",
+    }),
   email: z
     .string()
     .refine(
@@ -117,7 +123,7 @@ const Register = () => {
   const { data: sponsorData, isLoading: isSponsorLoading } = useQuery({
     queryKey: ["sponsorData", sponsorId],
     queryFn: async () => {
-      const response = await get(`/members/${sponsorId}`);
+      const response = await get(`/auth/${sponsorId}`);
       return response;
     },
     enabled: sponsorId?.length === 8, // 👈 only call when exactly 8 characters

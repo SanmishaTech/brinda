@@ -13,11 +13,12 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Sun, Moon } from "lucide-react";
+import { Sun, Moon, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import * as React from "react";
+import WalletButton from "@/modules/Product copy/WalletMenu";
 
 interface RouteConfig {
   parent?: string;
@@ -136,6 +137,7 @@ export default function MainLayout() {
     setIsDarkMode(newDarkMode);
     localStorage.setItem("theme", newDarkMode ? "dark" : "light");
   };
+  const navigate = useNavigate();
 
   return (
     <SidebarProvider>
@@ -170,16 +172,29 @@ export default function MainLayout() {
               </Breadcrumb>
             </div>
 
-            {/* Dark Mode Switcher */}
-            <Button
-              onClick={toggleDarkMode}
-              className="size-7 cursor-pointer"
-              variant="ghost"
-              size="icon"
-              aria-label="Toggle Dark Mode"
-            >
-              {isDarkMode ? <Moon /> : <Sun />}
-            </Button>
+            <div>
+              <div className="flex items-center gap-2 w-full justify-between">
+                {/* <Button
+                  onClick={() => navigate("/wallet")}
+                  className="size-7 cursor-pointer"
+                  size="icon"
+                  aria-label="Go to Wallet"
+                >
+                  <Wallet className="w-4 h-4" />
+                </Button> */}
+                <WalletButton />
+                {/* Dark Mode Switcher */}
+                <Button
+                  onClick={toggleDarkMode}
+                  className="size-7 cursor-pointer"
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Toggle Dark Mode"
+                >
+                  {isDarkMode ? <Moon /> : <Sun />}
+                </Button>
+              </div>
+            </div>
           </div>
         </header>
 

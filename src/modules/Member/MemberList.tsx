@@ -35,12 +35,15 @@ import {
   Trash2,
   Filter,
   Download,
+  SquarePen,
   ShieldEllipsis,
   Search,
   PlusCircle,
   MoreHorizontal,
   CheckCircle,
   XCircle,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import ConfirmDialog from "@/components/common/confirm-dialog";
 import { saveAs } from "file-saver";
@@ -70,13 +73,17 @@ const MemberList = () => {
   const queryClient = useQueryClient();
   const [currentPage, setCurrentPage] = useState(1);
   const [recordsPerPage, setRecordsPerPage] = useState(10); // Add recordsPerPage state
-  const [sortBy, setSortBy] = useState("memberName"); // Default sort column
+  const [sortBy, setSortBy] = useState("memberUsername"); // Default sort column
   const [sortOrder, setSortOrder] = useState("asc"); // Default sort order
   const [search, setSearch] = useState(""); // Search query
   const [showConfirmation, setShowConfirmation] = useState(false); // State to show/hide confirmation dialog
   const [memberToDelete, setMemberToDelete] = useState<number | null>(null); //
   //  Track the user ID to delete
   const navigate = useNavigate();
+  const [visiblePasswords, setVisiblePasswords] = useState<
+    Record<string, boolean>
+  >({});
+  const [visibleTPins, setVisibleTPins] = useState<Record<string, boolean>>({});
 
   // Fetch users using react-query
   const { data, isLoading, isError, refetch } = useQuery({
@@ -125,6 +132,19 @@ const MemberList = () => {
     }
   };
 
+  const togglePasswordVisibility = (id: string) => {
+    setVisiblePasswords((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+
+  const toggleTPinVisibility = (id: string) => {
+    setVisibleTPins((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
   // Handle sorting
   const handleSort = (column: string) => {
     if (sortBy === column) {
@@ -225,10 +245,98 @@ const MemberList = () => {
                         )}
                       </div>
                     </TableHead>
+                    <TableHead
+                      onClick={() => handleSort("sponsor")}
+                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
+                    >
+                      <div className="flex items-center">
+                        <span>Sponsor</span>
+                        {sortBy === "sponsor" && (
+                          <span className="ml-1">
+                            {sortOrder === "asc" ? (
+                              <ChevronUp size={16} />
+                            ) : (
+                              <ChevronDown size={16} />
+                            )}
+                          </span>
+                        )}
+                      </div>
+                    </TableHead>
+                    <TableHead
+                      onClick={() => handleSort("positionToParent")}
+                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
+                    >
+                      <div className="flex items-center">
+                        <span>Position</span>
+                        {sortBy === "positionToParent" && (
+                          <span className="ml-1">
+                            {sortOrder === "asc" ? (
+                              <ChevronUp size={16} />
+                            ) : (
+                              <ChevronDown size={16} />
+                            )}
+                          </span>
+                        )}
+                      </div>
+                    </TableHead>
+                    <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
+                      <div className="flex items-center">
+                        <span>LC</span>
+                      </div>
+                    </TableHead>
+                    <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
+                      <div className="flex items-center">
+                        <span>RC</span>
+                      </div>
+                    </TableHead>
+                    <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
+                      <div className="flex items-center">
+                        <span>LDC</span>
+                      </div>
+                    </TableHead>
+                    <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
+                      <div className="flex items-center">
+                        <span>RDC</span>
+                      </div>
+                    </TableHead>
+                    <TableHead
+                      onClick={() => handleSort("password")}
+                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
+                    >
+                      <div className="flex items-center">
+                        <span>Password</span>
+                        {sortBy === "password" && (
+                          <span className="ml-1">
+                            {sortOrder === "asc" ? (
+                              <ChevronUp size={16} />
+                            ) : (
+                              <ChevronDown size={16} />
+                            )}
+                          </span>
+                        )}
+                      </div>
+                    </TableHead>
+                    <TableHead
+                      onClick={() => handleSort("tPin")}
+                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
+                    >
+                      <div className="flex items-center">
+                        <span>T Pin</span>
+                        {sortBy === "tPin" && (
+                          <span className="ml-1">
+                            {sortOrder === "asc" ? (
+                              <ChevronUp size={16} />
+                            ) : (
+                              <ChevronDown size={16} />
+                            )}
+                          </span>
+                        )}
+                      </div>
+                    </TableHead>
 
                     <TableHead
                       onClick={() => handleSort("memberEmail")}
-                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
+                      className="cursor-pointer max-w-[200px] break-words whitespace-normal"
                     >
                       <div className="flex items-center">
                         <span>Email</span>
@@ -268,12 +376,66 @@ const MemberList = () => {
                   {members.map((member) => (
                     <TableRow key={member.id}>
                       <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {member.memberName}
+                        {member.memberName || "N/A"}
                       </TableCell>
                       <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {member.memberUsername}
+                        {member.memberUsername || "N/A"}
                       </TableCell>
                       <TableCell className="max-w-[250px] break-words whitespace-normal">
+                        {member?.sponsor?.memberUsername || "N/A"}
+                      </TableCell>
+                      <TableCell className="max-w-[250px] break-words whitespace-normal">
+                        {member?.positionToParent || "N/A"}
+                      </TableCell>
+                      <TableCell className="max-w-[250px] break-words whitespace-normal">
+                        {member?.leftCount}
+                      </TableCell>
+                      <TableCell className="max-w-[250px] break-words whitespace-normal">
+                        {member?.rightCount}{" "}
+                      </TableCell>
+                      <TableCell className="max-w-[250px] break-words whitespace-normal">
+                        {member?.leftDirectCount}
+                      </TableCell>
+                      <TableCell className="max-w-[250px] break-words whitespace-normal">
+                        {member?.rightDirectCount}
+                      </TableCell>
+                      <TableCell className="max-w-[250px] break-words whitespace-normal">
+                        <span>
+                          {visiblePasswords[member.id]
+                            ? member?.user?.password || "N/A"
+                            : "********"}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => togglePasswordVisibility(member.id)}
+                          className="ml-2 text-gray-500 hover:text-gray-700"
+                        >
+                          {visiblePasswords[member.id] ? (
+                            <EyeOff size={16} />
+                          ) : (
+                            <Eye size={16} />
+                          )}
+                        </button>
+                      </TableCell>
+                      <TableCell className="max-w-[250px] break-words whitespace-normal">
+                        <span>
+                          {visibleTPins[member.id]
+                            ? member?.tPin || "N/A"
+                            : "********"}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => toggleTPinVisibility(member.id)}
+                          className="ml-2 text-gray-500 hover:text-gray-700"
+                        >
+                          {visibleTPins[member.id] ? (
+                            <EyeOff size={16} />
+                          ) : (
+                            <Eye size={16} />
+                          )}
+                        </button>
+                      </TableCell>
+                      <TableCell className="max-w-[200px] break-words whitespace-normal">
                         {member.memberEmail || "N/A"}
                       </TableCell>
                       <TableCell className="max-w-[250px] break-words whitespace-normal">
@@ -281,7 +443,7 @@ const MemberList = () => {
                       </TableCell>
 
                       <TableCell>
-                        <div className="flex gap-2">
+                        {/* <div className="flex gap-2">
                           <Button
                             variant="outline"
                             size="sm"
@@ -299,7 +461,41 @@ const MemberList = () => {
                           >
                             <Trash2 size={16} />
                           </Button>
-                        </div>
+                        </div> */}
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                              <span className="sr-only">Open menu</span>
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent className="w-56">
+                            <DropdownMenuGroup>
+                              <DropdownMenuItem
+                                onClick={() =>
+                                  navigate(`/members/${member.id}/edit`)
+                                }
+                              >
+                                <div className="flex items-center gap-2">
+                                  <SquarePen className="h-4 w-4" />
+                                  <span>Edit</span>
+                                </div>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                // onClick={() => confirmDelete(booking.id)}
+                                onClick={() => {
+                                  // setDropdownOpen(false); // Close the dropdown
+                                  setTimeout(() => confirmDelete(member.id), 0); // Open dialog after dropdown closes
+                                }}
+                              >
+                                <div className="flex items-center gap-2">
+                                  <Trash2 className="h-4 w-4" />
+                                  <span>Delete</span>
+                                </div>
+                              </DropdownMenuItem>
+                            </DropdownMenuGroup>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </TableCell>
                     </TableRow>
                   ))}
