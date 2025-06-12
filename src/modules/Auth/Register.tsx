@@ -15,6 +15,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import Validate from "@/lib/Handlevalidation";
 import { cn } from "@/lib/utils";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -100,6 +101,7 @@ const Register = () => {
     handleSubmit,
     setError,
     setValue,
+    reset,
     control,
     watch,
     formState: { errors },
@@ -184,7 +186,7 @@ const Register = () => {
                 ) : sponsorId.length === 8 ? (
                   sponsorData ? (
                     <span className="text-green-600">
-                      Sponsor Name: {sponsorData.sponsor.memberName}
+                      Sponsor Name: {sponsorData.name}
                     </span>
                   ) : (
                     <span className="text-red-500">Invalid Sponsor ID</span>

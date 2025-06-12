@@ -79,6 +79,7 @@ const initialData = {
           items: [
             { title: "Products", url: "/products" },
             { title: "Members", url: "/members" },
+            { title: "Wallet", url: "/admin/wallet" },
           ],
         },
       ],

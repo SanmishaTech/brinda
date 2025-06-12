@@ -52,3 +52,34 @@ export const stateOptions = [
   // { label: "Lakshadweep", value: "Lakshadweep" },
   // { label: "Puducherry", value: "Puducherry" },
 ];
+
+export const walletPaymentModeOptions = [
+  { label: "Cash", value: "Cash" },
+  { label: "Bank Transfer", value: "Bank Transfer" },
+  { label: "UPI", value: "UPI" },
+];
+
+export const CASH = "Cash";
+export const BANK_TRANSFER = "Bank Transfer";
+export const UPI = "UPI";
+
+
+
+export const GENDER_MALE = "Male";
+export const GENDER_FEMALE = "Female";
+export const GENDER_OTHER = "Other";
+
+export const LEFT = "Left";
+export const TOP = "Top";
+export const RIGHT = "Right";
+
+export const ACTIVE = "Active";
+export const INACTIVE = "Inactive";
+
+export const DEBIT = "Debit";
+export const CREDIT = "Credit";
+
+export const TRANSFERRED = "Transferred";
+export const APPROVED = "Approved";
+export const REJECTED = "Rejected";
+export const PENDING = "Pending";

@@ -18,8 +18,7 @@ import { useState, useEffect } from "react";
 import { Sun, Moon, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import * as React from "react";
-import WalletButton from "@/modules/Product copy/WalletMenu";
-
+import WalletButton from "@/modules/Wallet/WalletMenu";
 interface RouteConfig {
   parent?: string;
   label: string;
@@ -79,6 +78,18 @@ export default function MainLayout() {
     // If no saved preference, check system preference
     return window.matchMedia("(prefers-color-scheme: dark)").matches;
   });
+
+  // Get user data from localStorage
+  const user = React.useMemo(() => {
+    try {
+      return JSON.parse(localStorage.getItem("user"));
+    } catch {
+      return null;
+    }
+  }, []);
+
+  // Check if user is admin
+  const isAdmin = user?.role === "admin";
 
   // Effect to sync dark mode state with HTML class
   useEffect(() => {
@@ -182,7 +193,7 @@ export default function MainLayout() {
                 >
                   <Wallet className="w-4 h-4" />
                 </Button> */}
-                <WalletButton />
+                {!isAdmin && <WalletButton />}
                 {/* Dark Mode Switcher */}
                 <Button
                   onClick={toggleDarkMode}

@@ -22,7 +22,8 @@ export default function WalletButton() {
     queryKey: ["walletBalance"],
     queryFn: async () => {
       const response = await get("/wallet-transactions/wallet-amount");
-      return Number(response.walletBalance);
+      const amount = Number(response.walletBalance);
+      return isNaN(amount) ? null : parseFloat(amount.toFixed(2));
     },
     onError: (err: any) => {
       const errorMessage =
@@ -32,6 +33,8 @@ export default function WalletButton() {
       toast.error(errorMessage);
     },
   });
+
+  console.log("Wallet Balance Data:", data);
 
   if (isLoading) {
     return (
@@ -46,7 +49,7 @@ export default function WalletButton() {
     );
   }
 
-  if (isError || !data) {
+  if (isError || data === null || data === undefined) {
     return (
       <Button
         variant="outline"

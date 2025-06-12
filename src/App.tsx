@@ -27,7 +27,9 @@ import EditProduct from "./modules/Product/EditProduct";
 import MemberList from "./modules/Member/MemberList";
 import CreateMember from "./modules/Member/CreateMember";
 import EditMember from "./modules/Member/EditMember";
-import WalletDetails from "./modules/Product copy/WalletDetails";
+import UserWalletPage from "./modules/Wallet/UserWalletPage"; // Adjust the import path as needed
+import AdminWalletPage from "./modules/Wallet/AdminWalletPage";
+
 const App = () => {
   useEffect(() => {
     document.title = appName; // Set the document title
@@ -122,10 +124,18 @@ const App = () => {
               }
             />
             <Route
-              path="/wallet"
+              path="/member/wallet"
               element={
                 <ProtectedRoute>
-                  <WalletDetails />
+                  <UserWalletPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/wallet"
+              element={
+                <ProtectedRoute>
+                  <AdminWalletPage />
                 </ProtectedRoute>
               }
             />
