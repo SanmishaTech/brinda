@@ -3,7 +3,7 @@ import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle, KeySquare, Copy } from "lucide-react";
+import { CheckCircle, KeySquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -93,8 +93,6 @@ const Register = () => {
     password: "",
   });
   const [sponsorName, setSponsorName] = useState<string | null>(null);
-
-  const [copiedField, setCopiedField] = useState(null);
 
   const defaultValues = {
     sponsorId: "",
@@ -201,13 +199,6 @@ const Register = () => {
       }
     },
   });
-
-  const handleCopy = (text, field) => {
-    navigator.clipboard.writeText(text).then(() => {
-      setCopiedField(field);
-      setTimeout(() => setCopiedField(null), 2000); // reset after 2 seconds
-    });
-  };
 
   const onSubmit: SubmitHandler<RegisterFormInputs> = (data) => {
     registerMutation.mutate(data);
@@ -565,51 +556,25 @@ const Register = () => {
 
             <div className="my-4 space-y-3 px-2">
               {/* Username Card */}
-              <div className="flex items-center justify-between gap-3 border rounded-md p-3 shadow-sm bg-white">
-                <div className="flex items-center gap-3">
-                  <UserCheck className="w-5 h-5 text-blue-600" />
-                  <div>
-                    <p className="text-xs text-gray-500">Username</p>
-                    <p className="text-sm font-normal text-gray-800">
-                      {credentials.username}
-                    </p>
-                  </div>
+              <div className="flex items-center gap-3 border rounded-md p-3 shadow-sm bg-white">
+                <UserCheck className="w-5 h-5 text-blue-600" />
+                <div>
+                  <p className="text-xs text-gray-500">Username</p>
+                  <p className="text-sm font-normal text-gray-800">
+                    {credentials.username}
+                  </p>
                 </div>
-                <button
-                  onClick={() => handleCopy(credentials.username, "username")}
-                  aria-label="Copy username"
-                  className="p-1 rounded hover:bg-gray-200"
-                >
-                  {copiedField === "username" ? (
-                    <Check className="w-4 h-4 text-green-500" />
-                  ) : (
-                    <Copy className="w-4 h-4 text-gray-500" />
-                  )}
-                </button>
               </div>
 
               {/* Password Card */}
-              <div className="flex items-center justify-between gap-3 border rounded-md p-3 shadow-sm bg-white">
-                <div className="flex items-center gap-3">
-                  <KeySquare className="w-5 h-5 text-blue-600" />
-                  <div>
-                    <p className="text-xs text-gray-500">Password</p>
-                    <p className="text-sm font-normal text-gray-800">
-                      {credentials.password}
-                    </p>
-                  </div>
+              <div className="flex items-center gap-3 border rounded-md p-3 shadow-sm bg-white">
+                <KeySquare className="w-5 h-5 text-blue-600" />
+                <div>
+                  <p className="text-xs text-gray-500">Password</p>
+                  <p className="text-sm font-normal text-gray-800">
+                    {credentials.password}
+                  </p>
                 </div>
-                <button
-                  onClick={() => handleCopy(credentials.password, "password")}
-                  aria-label="Copy password"
-                  className="p-1 rounded hover:bg-gray-200"
-                >
-                  {copiedField === "password" ? (
-                    <Check className="w-4 h-4 text-green-500" />
-                  ) : (
-                    <Copy className="w-4 h-4 text-gray-500" />
-                  )}
-                </button>
               </div>
             </div>
 
