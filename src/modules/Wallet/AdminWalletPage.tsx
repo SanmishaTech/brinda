@@ -27,6 +27,7 @@ import {
   PlusCircle,
   Loader,
   ChevronUp,
+  User,
   ArrowDownCircle,
   ChevronDown,
   TrendingUp,
@@ -159,18 +160,29 @@ const AdminWalletPage = () => {
         Wallet Management
       </h1>
       {/* <div className="bg-white mt-3 shadow-md rounded-lg p-6"> */}
+
       <Card className="mx-auto mt-6 sm:mt-10">
         <CardContent>
           {/* Member Combobox */}
-          <div className="flex justify-between items-center ">
-            <div className="">
+          <div className="flex justify-between items-center">
+            {/* Wrap icon, label, and combobox in a flex container for horizontal alignment */}
+            <div className="flex items-center gap-2">
+              {/* User icon added */}
+              <User className="w-5 h-5 text-blue-600" />
+
+              {/* Label "User:" added */}
+              <span className="text-gray-700 font-medium select-none">
+                Member:
+              </span>
+
+              {/* Existing Popover Combobox unchanged */}
               <Popover open={openMember} onOpenChange={setOpenMember}>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
                     role="combobox"
                     aria-expanded={openMember}
-                    className="w-[250px] justify-between "
+                    className="w-[250px] justify-between"
                   >
                     {memberId
                       ? members?.find((m) => m.id === parseInt(memberId))
@@ -215,9 +227,11 @@ const AdminWalletPage = () => {
                 </PopoverContent>
               </Popover>
             </div>
+
+            {/* Existing buttons remain unchanged */}
             {memberId && (
               <>
-                <div className="flex flex-wrap items-center gap-2 ">
+                <div className="flex flex-wrap items-center gap-2">
                   <Button
                     onClick={handleOpenDepositDialog}
                     className="bg-green-500 hover:bg-green-600 text-white shadow-sm transition-all duration-200 hover:shadow-md"
