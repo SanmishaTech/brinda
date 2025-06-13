@@ -159,7 +159,7 @@ const Register = () => {
         setSponsorName(data.name);
         setIsSponsorVerified(true);
 
-        toast.success("Sponsor verified!");
+        // toast.success("Sponsor verified!");
       } else {
         setSponsorName(null);
         setIsSponsorVerified(false);
