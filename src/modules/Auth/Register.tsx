@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { motion, AnimatePresence } from "framer-motion";
+import { CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,7 +11,7 @@ import { PasswordInput } from "@/components/ui/password-input";
 import { useNavigate } from "react-router-dom";
 import { get, post } from "@/services/apiService";
 import { appName } from "@/config";
-import { LoaderCircle, ChevronsUpDown, Check } from "lucide-react"; // Spinner icon
+import { LoaderCircle, ChevronsUpDown, Check, UserCheck } from "lucide-react"; // Spinner icon
 import { toast } from "sonner";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Validate from "@/lib/Handlevalidation";
@@ -40,6 +42,8 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import { Search } from "lucide-react";
+
 // Define expected API response structure
 interface RegisterResponse {
   message: string;
@@ -80,6 +84,9 @@ const registerSchema = z.object({
 const Register = () => {
   const navigate = useNavigate();
   const [openState, setOpenState] = useState<boolean>(false);
+  const [isSponsorLoading, setIsSponsorLoading] = useState(false);
+  const [isSponsorVerified, setIsSponsorVerified] = useState(false);
+  const MAHARASHTRA = "maharashtra"; // Assuming this is the state you want to set by default
   const [showDialog, setShowDialog] = useState(false);
   const [credentials, setCredentials] = useState({
     username: "",
@@ -121,19 +128,54 @@ const Register = () => {
     },
   });
 
+  useEffect(() => {
+    if (states && states.length > 0) {
+      // Find Maharashtra by label (or by your exact API property)
+      const maharashtraState = states.find(
+        (state) => state.label.toLowerCase() === MAHARASHTRA
+      );
+
+      if (maharashtraState) {
+        setValue("state", maharashtraState.value);
+      }
+    }
+  }, [states, setValue]);
+
+  useEffect(() => {
+    setIsSponsorVerified(false);
+    setSponsorName(null);
+  }, [sponsorId]);
+
   // sponsor Details
-  const { data: sponsorData, isLoading: isSponsorLoading } = useQuery({
-    queryKey: ["sponsorData", sponsorId],
-    queryFn: async () => {
+  const sponsorLookupMutation = useMutation({
+    mutationFn: async (sponsorId: string) => {
       const response = await get(`/auth/${sponsorId}`);
       return response;
     },
-    enabled: sponsorId?.length === 8, // 👈 only call when exactly 8 characters
-    retry: false, // prevent retry on 404
+    onSuccess: (data) => {
+      if (data?.name) {
+        setSponsorName(data.name);
+        setIsSponsorVerified(true);
+
+        toast.success("Sponsor verified!");
+      } else {
+        setSponsorName(null);
+        setIsSponsorVerified(false);
+
+        toast.error("Sponsor has no name or invalid data returned");
+      }
+    },
+    onError: () => {
+      setTimeout(() => {
+        setSponsorName(null);
+        setIsSponsorVerified(false);
+      }, 100); // allows exit animation time to start
+      toast.error("Invalid Sponsor ID or user not found");
+    },
   });
 
   const isSponsorValid =
-    sponsorId.length === 8 && sponsorData && !isSponsorLoading;
+    sponsorId.length === 8 && sponsorName && !sponsorLookupMutation.isLoading;
 
   const registerMutation = useMutation<
     RegisterResponse,
@@ -171,74 +213,110 @@ const Register = () => {
             Register for your {appName} account
           </p>
         </div>
-        <div className="flex flex-col space-y-6">
-          <div className="grid gap-2 relative">
-            <Label
-              htmlFor="sponsorId"
-              className="flex justify-between items-center"
-            >
-              <span>Sponsor ID</span>
-              <span className="text-xs ml-2">
-                {sponsorId === "" ? null : isSponsorLoading ? (
-                  <span className="text-muted-foreground">
-                    Verifying sponsor...
-                  </span>
-                ) : sponsorId.length === 8 ? (
-                  sponsorData ? (
-                    <span className="text-green-600">
-                      Sponsor Name: {sponsorData.name}
-                    </span>
-                  ) : (
-                    <span className="text-red-500">Invalid Sponsor ID</span>
-                  )
-                ) : (
-                  <span className="text-red-500">Invalid Sponsor ID</span>
-                )}
-              </span>
-            </Label>
 
-            <Input
-              id="sponsorId"
-              type="text"
-              placeholder="Enter Sponsor ID"
-              {...register("sponsorId")}
-              required
-              disabled={registerMutation.isPending}
-            />
+        <div className="flex flex-col space-y-6">
+          <div className="grid gap-2">
+            <Label htmlFor="sponsorId">Sponsor ID</Label>
+            <div className="flex gap-2 items-center">
+              <Input
+                id="sponsorId"
+                type="text"
+                placeholder="Enter Sponsor ID"
+                {...register("sponsorId")}
+                disabled={registerMutation.isPending}
+              />
+              <Button
+                type="button"
+                variant="secondary"
+                className="min-w-[110px] flex items-center gap-2"
+                onClick={() => {
+                  const id = watch("sponsorId");
+                  if (id.length !== 8) {
+                    toast.error("Sponsor ID must be exactly 8 characters");
+                    return;
+                  }
+                  sponsorLookupMutation.mutate(id);
+                }}
+              >
+                {sponsorLookupMutation.isLoading ? (
+                  <LoaderCircle className="w-4 h-4 animate-spin text-blue-600" />
+                ) : (
+                  <Search className="w-4 h-4 text-blue-600" />
+                )}
+                <span className="text-sm font-medium">Find</span>
+              </Button>
+            </div>
             {errors.sponsorId && (
-              <span className="text-destructive text-xs absolute -bottom-5">
+              <span className="text-destructive text-xs">
                 {errors.sponsorId.message}
               </span>
             )}
           </div>
-          <div className="grid gap-2 relative">
-            <Label htmlFor="position">Position</Label>
-            <Controller
-              name="position"
-              control={control}
-              render={({ field }) => (
-                <RadioGroup
-                  className="flex space-x-4"
-                  value={field.value}
-                  onValueChange={(value) => field.onChange(value)}
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem id="left" value="Left" />
-                    <Label htmlFor="left">Left</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem id="right" value="Right" />
-                    <Label htmlFor="right">Right</Label>
-                  </div>
-                </RadioGroup>
-              )}
-            />
-            {errors.position && (
-              <p className="text-destructive text-xs absolute -bottom-5">
-                {errors.position.message}
-              </p>
+
+          {/* {isSponsorVerified && sponsorName && (
+            <div className="flex items-center gap-3 border rounded-lg bg-blue-50 p-4 text-blue-800 shadow-sm animate-fade-in">
+              <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full">
+                <UserCheck className="w-5 h-5 text-blue-600" />
+              </div>
+              <div className="text-sm font-medium">
+                Sponsor Found:{" "}
+                <strong className="text-blue-900">{sponsorName}</strong>
+              </div>
+            </div>
+          )} */}
+          {/* <AnimatePresence mode="wait">
+            {isSponsorVerified && sponsorName && (
+              <motion.div
+                key={sponsorName} // helps React identify the element
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.3 }}
+                className="flex items-center gap-3 border rounded-lg bg-blue-50 p-4 text-blue-800 shadow-md"
+              >
+                <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full">
+                  <UserCheck className="w-5 h-5 text-blue-600" />
+                </div>
+                <div className="text-sm font-medium">
+                  Sponsor Found:{" "}
+                  <strong className="text-blue-900">{sponsorName}</strong>
+                </div>
+              </motion.div>
             )}
-          </div>
+          </AnimatePresence> */}
+          <AnimatePresence mode="wait">
+            {isSponsorVerified && sponsorName && (
+              <motion.div
+                key={sponsorName}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.3 }}
+                className="flex items-center justify-between border rounded-lg bg-blue-50 p-3 text-blue-800 shadow-md"
+              >
+                {/* Icon and Sponsor Name at left center */}
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full">
+                    <UserCheck className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <span className="text-sm font-medium text-blue-900 whitespace-nowrap">
+                    {sponsorName}
+                  </span>
+                </div>
+
+                {/* Heading and Subheading at right center */}
+                <div className="text-right">
+                  <h4 className="text-xs font-semibold text-blue-900 leading-tight">
+                    Sponsor Verified
+                  </h4>
+                  <p className="text-[10px] text-blue-700 leading-tight">
+                    Sponsor details found
+                  </p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           <div className="grid gap-2 relative">
             <Label htmlFor="name">Name</Label>
             <Input
@@ -255,108 +333,143 @@ const Register = () => {
               </span>
             )}
           </div>
-          <div className="relative">
-            <Label htmlFor="state">State</Label>
 
-            {/* <div className="w-full pt-1"> */}
-            <Controller
-              name="state"
-              control={control}
-              render={({ field }) => (
-                <Popover open={openState} onOpenChange={setOpenState}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      aria-expanded={openState}
-                      className="w-[325px] justify-between mt-1"
-                      onClick={() => setOpenState((prev) => !prev)}
-                    >
-                      {field.value
-                        ? states.find((s) => s.value === field.value)?.label
-                        : "Select State..."}
-                      <ChevronsUpDown className="opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
+          <div className="flex gap-4">
+            <div className="relative">
+              <Label htmlFor="state">State</Label>
 
-                  <PopoverContent className="w-[325px] p-0">
-                    <Command>
-                      <CommandInput
-                        placeholder="Search state..."
-                        className="h-9"
-                      />
-                      <CommandList>
-                        <CommandEmpty>No state found.</CommandEmpty>
-                        <CommandGroup>
-                          {states?.map((state) => (
-                            <CommandItem
-                              key={state.value}
-                              value={state.value}
-                              onSelect={(currentValue) => {
-                                setValue("state", currentValue);
-                                setOpenState(false);
-                              }}
-                            >
-                              {state.label}
-                              <Check
-                                className={cn(
-                                  "ml-auto",
-                                  state.value === field.value
-                                    ? "opacity-100"
-                                    : "opacity-0"
-                                )}
-                              />
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
+              {/* <div className="w-full pt-1"> */}
+              <Controller
+                name="state"
+                control={control}
+                render={({ field }) => (
+                  <Popover open={openState} onOpenChange={setOpenState}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={openState}
+                        className="w-[325px] justify-between mt-1"
+                        onClick={() => setOpenState((prev) => !prev)}
+                      >
+                        {field.value
+                          ? states.find((s) => s.value === field.value)?.label
+                          : "Select State..."}
+                        <ChevronsUpDown className="opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+
+                    <PopoverContent className="w-[325px] p-0">
+                      <Command>
+                        <CommandInput
+                          placeholder="Search state..."
+                          className="h-9"
+                        />
+                        <CommandList>
+                          <CommandEmpty>No state found.</CommandEmpty>
+                          <CommandGroup>
+                            {states?.map((state) => (
+                              <CommandItem
+                                key={state.value}
+                                value={state.value}
+                                onSelect={(currentValue) => {
+                                  setValue("state", currentValue);
+                                  setOpenState(false);
+                                }}
+                              >
+                                {state.label}
+                                <Check
+                                  className={cn(
+                                    "ml-auto",
+                                    state.value === field.value
+                                      ? "opacity-100"
+                                      : "opacity-0"
+                                  )}
+                                />
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                )}
+              />
+
+              {/* </div> */}
+              {errors.state && (
+                <p className="text-destructive text-xs absolute -bottom-5">
+                  {errors.state.message}
+                </p>
               )}
-            />
+            </div>
+            <div className="grid gap-2 relative">
+              <Label htmlFor="position">Position</Label>
+              <Controller
+                name="position"
+                control={control}
+                render={({ field }) => (
+                  <RadioGroup
+                    className="flex space-x-4"
+                    value={field.value}
+                    onValueChange={(value) => field.onChange(value)}
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem id="left" value="Left" />
+                      <Label htmlFor="left">Left</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem id="right" value="Right" />
+                      <Label htmlFor="right">Right</Label>
+                    </div>
+                  </RadioGroup>
+                )}
+              />
+              {errors.position && (
+                <p className="text-destructive text-xs absolute -bottom-5">
+                  {errors.position.message}
+                </p>
+              )}
+            </div>
+          </div>
 
-            {/* </div> */}
-            {errors.state && (
-              <p className="text-destructive text-xs absolute -bottom-5">
-                {errors.state.message}
-              </p>
-            )}
-          </div>
-          <div className="grid gap-2 relative">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="m@example.com"
-              {...register("email")}
-              disabled={registerMutation.isPending}
-            />
-            {errors.email && (
-              <p className="text-destructive text-xs absolute -bottom-5">
-                {errors.email.message}
-              </p>
-            )}
-          </div>
-          <div className="grid gap-2 relative">
-            <Label htmlFor="mobile">Mobile</Label>
-            <Input
-              id="mobile"
-              {...register("mobile")}
-              maxLength={10}
-              placeholder="Enter mobile number"
-            />
-            {errors.mobile && (
-              <p className="text-destructive text-xs absolute -bottom-5">
-                {errors.mobile.message}
-              </p>
-            )}
+          <div className="flex flex-col gap-4 md:flex-row">
+            <div className="flex-1 grid gap-2 relative">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="m@example.com"
+                {...register("email")}
+                disabled={registerMutation.isPending}
+              />
+              {errors.email && (
+                <p className="text-destructive text-xs absolute -bottom-5">
+                  {errors.email.message}
+                </p>
+              )}
+            </div>
+
+            <div className="flex-1 grid gap-2 relative">
+              <Label htmlFor="mobile">Mobile</Label>
+              <Input
+                id="mobile"
+                {...register("mobile")}
+                maxLength={10}
+                placeholder="Enter mobile number"
+              />
+              {errors.mobile && (
+                <p className="text-destructive text-xs absolute -bottom-5">
+                  {errors.mobile.message}
+                </p>
+              )}
+            </div>
           </div>
 
           <Button
             type="submit"
             className="w-full"
-            disabled={registerMutation.isPending || !isSponsorValid}
+            disabled={registerMutation.isPending || !sponsorName}
           >
             {registerMutation.isPending ? (
               <>

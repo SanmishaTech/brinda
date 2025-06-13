@@ -1,31 +1,26 @@
-import { Outlet } from 'react-router-dom';
-import { Card, CardContent } from '@/components/ui/card';
+import { Outlet } from "react-router-dom";
+import { Card, CardContent } from "@/components/ui/card";
 
 const AuthLayout = () => {
-	return (
-		<div className='flex flex-col gap-6'>
-			<div className='flex min-h-svh flex-col items-center justify-center bg-muted p-6 md:p-10'>
-				<div className='w-full max-w-sm md:max-w-3xl'>
-					<Card className='overflow-hidden'>
-						<CardContent className='grid p-0 md:grid-cols-2'>
-							<Outlet />
-							<div className='relative hidden bg-muted md:block'>
-								<img
-									src='https://picsum.photos/id/1/200/300'
-									alt='Image'
-									className='absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale'
-								/>
-							</div>
-						</CardContent>
-					</Card>
-				</div>
-			</div>
-			{/* <div className='text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-primary'>
-				By clicking continue, you agree to our <a href='#'>Terms of Service</a>{' '}
-				and <a href='#'>Privacy Policy</a>.
-			</div> */}
-		</div>
-	);
+  return (
+    <div className="flex min-h-svh items-center justify-center bg-muted p-4 md:p-10">
+      <Card className="w-full max-w-8xl overflow-hidden p-0">
+        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-0 p-0">
+          <div className="p-6 md:p-10">
+            <Outlet />
+          </div>
+          <div className="relative hidden md:block h-full min-h-[400px]">
+            <img
+              src="https://picsum.photos/id/1/800/600"
+              alt="Illustration"
+              className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.5] dark:grayscale"
+            />
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
 };
 
 export default AuthLayout;
+//dfdf
