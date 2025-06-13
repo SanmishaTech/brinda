@@ -314,23 +314,6 @@ const MemberList = () => {
                       </div>
                     </TableHead>
                     <TableHead
-                      onClick={() => handleSort("rightCount")}
-                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
-                    >
-                      <div className="flex items-center">
-                        <span>RC</span>
-                        {sortBy === "rightCount" && (
-                          <span className="ml-1">
-                            {sortOrder === "asc" ? (
-                              <ChevronUp size={16} />
-                            ) : (
-                              <ChevronDown size={16} />
-                            )}
-                          </span>
-                        )}
-                      </div>
-                    </TableHead>
-                    <TableHead
                       onClick={() => handleSort("leftDirectCount")}
                       className="cursor-pointer max-w-[250px] break-words whitespace-normal"
                     >
@@ -347,6 +330,24 @@ const MemberList = () => {
                         )}
                       </div>
                     </TableHead>
+                    <TableHead
+                      onClick={() => handleSort("rightCount")}
+                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
+                    >
+                      <div className="flex items-center">
+                        <span>RC</span>
+                        {sortBy === "rightCount" && (
+                          <span className="ml-1">
+                            {sortOrder === "asc" ? (
+                              <ChevronUp size={16} />
+                            ) : (
+                              <ChevronDown size={16} />
+                            )}
+                          </span>
+                        )}
+                      </div>
+                    </TableHead>
+
                     <TableHead
                       onClick={() => handleSort("rightDirectCount")}
                       className="cursor-pointer max-w-[250px] break-words whitespace-normal"
@@ -432,13 +433,14 @@ const MemberList = () => {
                         {member?.positionToParent || "N/A"}
                       </TableCell>
                       <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {member?.leftCount}
+                        {member?.leftCount}+ {member?.leftDirectCount}
                       </TableCell>
-                      <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {member?.rightCount}{" "}
-                      </TableCell>
+
                       <TableCell className="max-w-[250px] break-words whitespace-normal">
                         {member?.leftDirectCount}
+                      </TableCell>
+                      <TableCell className="max-w-[250px] break-words whitespace-normal">
+                        {member?.rightCount} + {member?.rightDirectCount}
                       </TableCell>
                       <TableCell className="max-w-[250px] break-words whitespace-normal">
                         {member?.rightDirectCount}
