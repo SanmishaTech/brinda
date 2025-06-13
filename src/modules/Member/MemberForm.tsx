@@ -164,7 +164,7 @@ const MemberForm = ({ mode }: { mode: "create" | "edit" }) => {
             </CardTitle>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
               {/* Product Name */}
-              <div className="md:col-span-2">
+              <div className="">
                 <Label
                   htmlFor="name"
                   className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
@@ -179,6 +179,39 @@ const MemberForm = ({ mode }: { mode: "create" | "edit" }) => {
                 {errors.name && (
                   <p className="text-red-500 text-xs mt-1">
                     {errors.name.message}
+                  </p>
+                )}
+              </div>
+              <div>
+                <Label
+                  htmlFor="username"
+                  className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
+                  UserName
+                </Label>
+                <Input
+                  id="username"
+                  className="bg-gray-200 dark:bg-gray-700"
+                  value={editMemberData?.memberUsername || ""}
+                  readOnly
+                />
+              </div>
+              <div>
+                <Label
+                  htmlFor="email"
+                  className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
+                  Email
+                </Label>
+                <Input
+                  id="email"
+                  {...register("email")}
+                  type="email"
+                  placeholder="Enter Email"
+                />
+                {errors.email && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.email.message}
                   </p>
                 )}
               </div>
@@ -201,55 +234,46 @@ const MemberForm = ({ mode }: { mode: "create" | "edit" }) => {
                   </p>
                 )}
               </div>
-            </div>
-
-            <div>
-              <div className="grid grid-cols-1 md:grid-cols-5 my-3 gap-4">
-                <div>
-                  <Label
-                    htmlFor="email"
-                    className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-                  >
-                    Email
-                  </Label>
-                  <Input
-                    id="email"
-                    {...register("email")}
-                    type="email"
-                    placeholder="Enter Email"
-                  />
-                  {errors.email && (
-                    <p className="text-red-500 text-xs mt-1">
-                      {errors.email.message}
-                    </p>
-                  )}
-                </div>
-                <div>
-                  <Label
-                    htmlFor="password"
-                    className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-                  >
-                    Password <span className="text-red-500">*</span>
-                  </Label>
-                  <PasswordInput
-                    id="password"
-                    {...register("password")} // RHF validation triggers on change/blur
-                    required
-                    disabled={isLoading}
-                    aria-invalid={errors.password ? "true" : "false"} // Accessibility
-                  />
-                  {errors.password && (
-                    <p className="text-red-500 text-xs mt-1">
-                      {errors.password.message}
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* display read Only values */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
               <div>
+                <Label
+                  htmlFor="tPin"
+                  className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
+                  T Pin
+                </Label>
+                <PasswordInput
+                  id="tPin"
+                  {...register("tPin")} // RHF validation triggers on change/blur
+                  required
+                  value={editMemberData?.tPin || ""}
+                  disabled={isLoading}
+                  className="bg-gray-200  dark:bg-gray-700 cursor-not-allowed"
+                  aria-invalid={errors.tPin ? "true" : "false"} // Accessibility
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="Parent">Parent</Label>
+                <Input
+                  id="Parent"
+                  type="text"
+                  readOnly
+                  className="bg-gray-200  dark:bg-gray-700 cursor-not-allowed"
+                  value={editMemberData?.parent?.memberUsername || ""}
+                />
+              </div>
+
+              {/* Sponsor */}
+              <div className="grid gap-2">
+                <Label htmlFor="Sponsor">Sponsor</Label>
+                <Input
+                  id="Sponsor"
+                  type="text"
+                  readOnly
+                  className="bg-gray-200 dark:bg-gray-700 cursor-not-allowed"
+                  value={editMemberData?.sponsor?.memberUsername || ""}
+                />
+              </div>
+              {/* <div>
                 <Label
                   htmlFor="username"
                   className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
@@ -262,7 +286,7 @@ const MemberForm = ({ mode }: { mode: "create" | "edit" }) => {
                   value={editMemberData?.memberUsername || ""}
                   readOnly
                 />
-              </div>
+              </div> */}
               <div>
                 <Label
                   htmlFor="position"
@@ -274,6 +298,20 @@ const MemberForm = ({ mode }: { mode: "create" | "edit" }) => {
                   id="position"
                   value={editMemberData?.positionToParent || ""}
                   className="bg-gray-200 dark:bg-gray-700"
+                  readOnly
+                />
+              </div>
+              <div>
+                <Label
+                  htmlFor="gender"
+                  className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
+                  Gender
+                </Label>
+                <Input
+                  id="gender"
+                  className="bg-gray-200 dark:bg-gray-700"
+                  value={editMemberData?.memberGender || ""}
                   readOnly
                 />
               </div>
@@ -298,18 +336,30 @@ const MemberForm = ({ mode }: { mode: "create" | "edit" }) => {
               </div>
               <div>
                 <Label
-                  htmlFor="gender"
+                  htmlFor="password"
                   className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
                 >
-                  Gender
+                  Password <span className="text-red-500">*</span>
                 </Label>
-                <Input
-                  id="gender"
-                  className="bg-gray-200 dark:bg-gray-700"
-                  value={editMemberData?.memberGender || ""}
-                  readOnly
+                <PasswordInput
+                  id="password"
+                  {...register("password")} // RHF validation triggers on change/blur
+                  required
+                  disabled={isLoading}
+                  aria-invalid={errors.password ? "true" : "false"} // Accessibility
                 />
+                {errors.password && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
+            </div>
+
+            <CardTitle className="mt-7 mb-2">Address Information</CardTitle>
+
+            {/* display read Only values */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
               <div>
                 <Label
                   htmlFor="address"
@@ -340,13 +390,33 @@ const MemberForm = ({ mode }: { mode: "create" | "edit" }) => {
               </div>
               <div>
                 <Label
-                  htmlFor="pan"
+                  htmlFor="state"
                   className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
                 >
-                  PAN Number
+                  State
                 </Label>
                 <Input
-                  id="pan"
+                  id="state"
+                  className="bg-gray-200 dark:bg-gray-700"
+                  value={editMemberData?.memberState || ""}
+                  readOnly
+                />
+              </div>
+            </div>
+
+            <CardTitle className="mt-7 mb-2">Account Details</CardTitle>
+
+            {/* display read Only values */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+              <div>
+                <Label
+                  htmlFor="panNumber"
+                  className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
+                  Pan Number
+                </Label>
+                <Input
+                  id="panNumber"
                   className="bg-gray-200 dark:bg-gray-700"
                   value={editMemberData?.panNumber || ""}
                   readOnly
@@ -354,15 +424,71 @@ const MemberForm = ({ mode }: { mode: "create" | "edit" }) => {
               </div>
               <div>
                 <Label
-                  htmlFor="aadhar"
+                  htmlFor="aadharNumber"
                   className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
                 >
                   Aadhar Number
                 </Label>
                 <Input
-                  id="aadhar"
+                  id="aadharNumber"
                   className="bg-gray-200 dark:bg-gray-700"
                   value={editMemberData?.aadharNumber || ""}
+                  readOnly
+                />
+              </div>
+              <div>
+                <Label
+                  htmlFor="bankName"
+                  className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
+                  Bank Name
+                </Label>
+                <Input
+                  id="bankName"
+                  className="bg-gray-200 dark:bg-gray-700"
+                  value={editMemberData?.bankName || ""}
+                  readOnly
+                />
+              </div>
+              <div>
+                <Label
+                  htmlFor="bankAccountNumber"
+                  className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
+                  Account Number
+                </Label>
+                <Input
+                  id="bankAccountNumber"
+                  className="bg-gray-200 dark:bg-gray-700"
+                  value={editMemberData?.bankAccountNumber || ""}
+                  readOnly
+                />
+              </div>
+              <div>
+                <Label
+                  htmlFor="bankIfscCode"
+                  className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
+                  IFSC Code
+                </Label>
+                <Input
+                  id="bankIfscCode"
+                  className="bg-gray-200 dark:bg-gray-700"
+                  value={editMemberData?.bankIfscCode || ""}
+                  readOnly
+                />
+              </div>
+              <div>
+                <Label
+                  htmlFor="bankAccountType"
+                  className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
+                  Account Type
+                </Label>
+                <Input
+                  id="bankAccountType"
+                  className="bg-gray-200 dark:bg-gray-700"
+                  value={editMemberData?.bankAccountType || ""}
                   readOnly
                 />
               </div>

@@ -58,6 +58,7 @@ const ViewDetails: React.FC<ViewDetailsProps> = ({
     handleSubmit,
     setError,
     watch,
+    reset,
     setValue,
     formState: { errors },
   } = useForm<ApprovalInputs>({
@@ -102,8 +103,13 @@ const ViewDetails: React.FC<ViewDetailsProps> = ({
     approveMutation.mutate(data);
   };
 
+  const handleClose = () => {
+    reset(); // Clears all form inputs
+    onClose(); // Executes parent-provided close logic
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onClose}>
+    <Dialog open={open} onOpenChange={(isOpen) => !isOpen && handleClose()}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Approve Transaction</DialogTitle>

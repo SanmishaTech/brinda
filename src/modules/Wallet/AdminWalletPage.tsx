@@ -14,6 +14,14 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+
+import {
   ChevronsUpDown,
   Check,
   PlusCircle,
@@ -21,6 +29,9 @@ import {
   ChevronUp,
   ArrowDownCircle,
   ChevronDown,
+  TrendingUp,
+  TrendingDown,
+  Wallet,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -40,6 +51,9 @@ import { formatCurrency } from "@/lib/formatter.js";
 import Deposit from "./Admin/Deposit";
 import Withdraw from "./Admin/Withdraw";
 import ViewDetails from "./Admin/ViewDetails";
+import dayjs from "dayjs";
+import { APPROVED, CREDIT, DEBIT, PENDING, REJECTED } from "@/config/data";
+
 const fetchTransactions = async (
   page: number,
   sortBy: string,
@@ -144,190 +158,248 @@ const AdminWalletPage = () => {
       <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">
         Wallet Management
       </h1>
-      <div className="bg-white shadow-md rounded-lg p-6">
-        {/* Member Combobox */}
-        <div className="relative mb-6">
-          <Popover open={openMember} onOpenChange={setOpenMember}>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                role="combobox"
-                aria-expanded={openMember}
-                className="w-[250px] justify-between mt-1"
-              >
-                {memberId
-                  ? members?.find((m) => m.id === parseInt(memberId))
-                      ?.memberName
-                  : "Select Member..."}
-                <ChevronsUpDown className="opacity-50 ml-2 h-4 w-4" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-[250px] p-0">
-              <Command>
-                <CommandInput placeholder="Search member..." className="h-9" />
-                <CommandList>
-                  <CommandEmpty>No member found.</CommandEmpty>
-                  <CommandGroup>
-                    {members?.map((member) => (
-                      <CommandItem
-                        key={member.id}
-                        value={member.memberName}
-                        onSelect={() => {
-                          setMemberId(String(member.id));
-                          setCurrentPage(1);
-                          setOpenMember(false);
-                        }}
-                      >
-                        {member.memberName}
-                        <Check
-                          className={cn(
-                            "ml-auto h-4 w-4",
-                            String(member.id) === memberId
-                              ? "opacity-100"
-                              : "opacity-0"
-                          )}
-                        />
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                </CommandList>
-              </Command>
-            </PopoverContent>
-          </Popover>
-        </div>
-
-        {/* Show table and buttons only when a member is selected */}
-        {memberId && (
-          <>
-            {/* Action Buttons */}
-            <div className="flex flex-wrap items-center gap-2 mb-6">
-              <Button
-                onClick={handleOpenDepositDialog}
-                className="bg-primary hover:bg-primary/90 text-white shadow-sm transition-all duration-200 hover:shadow-md"
-              >
-                <PlusCircle className="mr-2 h-5 w-5" />
-                Deposit
-              </Button>
-
-              <Button
-                onClick={handleOpenWithdrawDialog}
-                className="bg-red-500 hover:bg-red-600 text-white shadow-sm transition-all duration-200 hover:shadow-md"
-              >
-                <ArrowDownCircle className="mr-2 h-5 w-5" />
-                Withdraw
-              </Button>
+      {/* <div className="bg-white mt-3 shadow-md rounded-lg p-6"> */}
+      <Card className="mx-auto mt-6 sm:mt-10">
+        <CardContent>
+          {/* Member Combobox */}
+          <div className="flex justify-between items-center ">
+            <div className="">
+              <Popover open={openMember} onOpenChange={setOpenMember}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={openMember}
+                    className="w-[250px] justify-between "
+                  >
+                    {memberId
+                      ? members?.find((m) => m.id === parseInt(memberId))
+                          ?.memberName
+                      : "Select Member..."}
+                    <ChevronsUpDown className="opacity-50 ml-2 h-4 w-4" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[250px] p-0">
+                  <Command>
+                    <CommandInput
+                      placeholder="Search member..."
+                      className="h-9"
+                    />
+                    <CommandList>
+                      <CommandEmpty>No member found.</CommandEmpty>
+                      <CommandGroup>
+                        {members?.map((member) => (
+                          <CommandItem
+                            key={member.id}
+                            value={member.memberName}
+                            onSelect={() => {
+                              setMemberId(String(member.id));
+                              setCurrentPage(1);
+                              setOpenMember(false);
+                            }}
+                          >
+                            {member.memberName}
+                            <Check
+                              className={cn(
+                                "ml-auto h-4 w-4",
+                                String(member.id) === memberId
+                                  ? "opacity-100"
+                                  : "opacity-0"
+                              )}
+                            />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
             </div>
+            {memberId && (
+              <>
+                <div className="flex flex-wrap items-center gap-2 ">
+                  <Button
+                    onClick={handleOpenDepositDialog}
+                    className="bg-green-500 hover:bg-green-600 text-white shadow-sm transition-all duration-200 hover:shadow-md"
+                  >
+                    <TrendingUp className="mr-2 h-5 w-5" />
+                    Deposit
+                  </Button>
 
-            <Separator className="mb-4" />
-
-            {/* Table Section */}
-            {isLoading ? (
-              <div className="flex justify-center items-center h-32">
-                <Loader className="mr-2 h-8 w-8 animate-spin" />
-              </div>
-            ) : isError ? (
-              <div className="text-center text-red-500">
-                Failed to load Transactions.
-              </div>
-            ) : walletTransactions.length > 0 ? (
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
-                        <div className="flex items-center">
-                          <span>Amount</span>
-                        </div>
-                      </TableHead>
-                      <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
-                        <div className="flex items-center">
-                          <span>Type</span>
-                        </div>
-                      </TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Payment Method</TableHead>
-                      <TableHead>Reference Number</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {walletTransactions.map((transaction) => (
-                      <TableRow key={transaction.id}>
-                        <TableCell className="max-w-[250px] break-words whitespace-normal">
-                          {formatCurrency(transaction.amount) || "N/A"}
-                        </TableCell>
-                        <TableCell>
-                          <span
-                            className={`px-2 py-1 text-xs font-medium rounded-full ${
-                              transaction.type === "Debit"
-                                ? "bg-red-100 text-red-700"
-                                : transaction.type === "Credit"
-                                ? "bg-green-100 text-green-700"
-                                : "bg-gray-100 text-gray-600"
-                            }`}
-                          >
-                            {transaction.type || "N/A"}
-                          </span>
-                        </TableCell>
-                        <TableCell>
-                          <span
-                            className={`px-2 py-1 text-xs font-medium rounded-full ${
-                              transaction.status === "Pending"
-                                ? "bg-yellow-100 text-yellow-800"
-                                : transaction.status === "Approved"
-                                ? "bg-green-100 text-green-700"
-                                : transaction.status === "Rejected"
-                                ? "bg-red-100 text-red-700"
-                                : "bg-gray-100 text-gray-600"
-                            }`}
-                          >
-                            {transaction.status || "N/A"}
-                          </span>
-                        </TableCell>
-                        <TableCell>
-                          {transaction.paymentMethod || "N/A"}
-                        </TableCell>
-                        <TableCell>
-                          {transaction.referenceNumber || "N/A"}
-                        </TableCell>
-                        <TableCell>
-                          <Button
-                            size="sm"
-                            disabled={transaction.status !== "Pending"}
-                            onClick={() =>
-                              handleOpenViewDetailsDialog(transaction)
-                            }
-                            className={
-                              transaction.status !== "Pending"
-                                ? "opacity-50 cursor-not-allowed"
-                                : ""
-                            }
-                          >
-                            View details
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-                <CustomPagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  totalRecords={totalTransactions}
-                  recordsPerPage={recordsPerPage}
-                  onPageChange={setCurrentPage}
-                  onRecordsPerPageChange={(newRecordsPerPage) => {
-                    setRecordsPerPage(newRecordsPerPage);
-                    setCurrentPage(1);
-                  }}
-                />
-              </div>
-            ) : (
-              <div className="text-center">No Transactions Found.</div>
+                  <Button
+                    onClick={handleOpenWithdrawDialog}
+                    className="bg-red-500 hover:bg-red-600 text-white shadow-sm transition-all duration-200 hover:shadow-md"
+                  >
+                    <TrendingDown className="mr-2 h-5 w-5" />
+                    Withdraw
+                  </Button>
+                </div>
+              </>
             )}
-          </>
-        )}
-      </div>
+          </div>
+        </CardContent>
+      </Card>
+      {/* end */}
+      {memberId && (
+        <>
+          <Card className="mx-auto mt- sm:mt-10">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-4 text-green-700">
+                <Wallet className="w-5 h-5" /> {/* Larger icon */}
+                <span className=" font-bold">Wallet Balance</span>{" "}
+                {/* Larger text */}
+              </CardTitle>
+              <CardDescription className=" text-gray-600">
+                Current wallet balance
+              </CardDescription>
+              {isLoading ? (
+                <p className=" font-bold text-green-700">Loading...</p>
+              ) : (
+                <p className=" font-extrabold text-lg text-green-700">
+                  {formatCurrency(memberData.walletBalance) || "N/A"}
+                </p>
+              )}
+            </CardHeader>
+          </Card>
+        </>
+      )}
+      {/* Show table and buttons only when a member is selected */}
+      {memberId && (
+        <Card className="mx-auto mt-6 sm:mt-10">
+          <CardContent>
+            <>
+              {/* Table Section */}
+              {isLoading ? (
+                <div className="flex justify-center items-center h-32">
+                  <Loader className="mr-2 h-8 w-8 animate-spin" />
+                </div>
+              ) : isError ? (
+                <div className="text-center text-red-500">
+                  Failed to load Transactions.
+                </div>
+              ) : walletTransactions.length > 0 ? (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
+                          <div className="flex items-center">
+                            <span>Date</span>
+                          </div>
+                        </TableHead>
+                        <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
+                          <div className="flex items-center">
+                            <span>Amount</span>
+                          </div>
+                        </TableHead>
+                        <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
+                          <div className="flex items-center">
+                            <span>Type</span>
+                          </div>
+                        </TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Payment Method</TableHead>
+                        <TableHead>Reference Number</TableHead>
+                        <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
+                          Note
+                        </TableHead>
+                        <TableHead>Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {walletTransactions.map((transaction) => (
+                        <TableRow key={transaction.id}>
+                          <TableCell className="max-w-[250px] break-words whitespace-normal">
+                            {transaction.transactionDate
+                              ? dayjs(transaction.transactionDate).format(
+                                  "DD/MM/YYYY"
+                                )
+                              : "N/A"}{" "}
+                          </TableCell>
+                          <TableCell className="max-w-[250px] break-words whitespace-normal">
+                            {formatCurrency(transaction.amount) || "N/A"}
+                          </TableCell>
+                          <TableCell>
+                            <span
+                              className={`px-2 py-1 text-xs font-medium rounded-full ${
+                                transaction.type === DEBIT
+                                  ? "bg-red-100 text-red-700"
+                                  : transaction.type === CREDIT
+                                  ? "bg-green-100 text-green-700"
+                                  : "bg-gray-100 text-gray-600"
+                              }`}
+                            >
+                              {transaction.type
+                                ? transaction.type.toUpperCase()
+                                : "N/A"}
+                            </span>
+                          </TableCell>
+                          <TableCell>
+                            <span
+                              className={`px-2 py-1 text-xs font-medium rounded-full ${
+                                transaction.status === PENDING
+                                  ? "bg-yellow-100 text-yellow-800"
+                                  : transaction.status === APPROVED
+                                  ? "bg-green-100 text-green-700"
+                                  : transaction.status === REJECTED
+                                  ? "bg-red-100 text-red-700"
+                                  : "bg-gray-100 text-gray-600"
+                              }`}
+                            >
+                              {transaction.status
+                                ? transaction.status.toUpperCase()
+                                : "N/A"}
+                            </span>
+                          </TableCell>
+                          <TableCell>
+                            {transaction.paymentMethod || "N/A"}
+                          </TableCell>
+                          <TableCell>
+                            {transaction.referenceNumber || "N/A"}
+                          </TableCell>
+                          <TableCell className="w-60 max-w-[240px] whitespace-normal break-words">
+                            {transaction.notes || "N/A"}
+                          </TableCell>{" "}
+                          <TableCell>
+                            <Button
+                              size="sm"
+                              disabled={transaction.status !== "Pending"}
+                              onClick={() =>
+                                handleOpenViewDetailsDialog(transaction)
+                              }
+                              className={
+                                transaction.status !== "Pending"
+                                  ? "opacity-50 cursor-not-allowed"
+                                  : ""
+                              }
+                            >
+                              View details
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                  <CustomPagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    totalRecords={totalTransactions}
+                    recordsPerPage={recordsPerPage}
+                    onPageChange={setCurrentPage}
+                    onRecordsPerPageChange={(newRecordsPerPage) => {
+                      setRecordsPerPage(newRecordsPerPage);
+                      setCurrentPage(1);
+                    }}
+                  />
+                </div>
+              ) : (
+                <div className="text-center">No Transactions Found.</div>
+              )}
+            </>
+          </CardContent>
+        </Card>
+      )}
+      {/* </div> */}
       <Deposit
         open={openDepositDialog}
         onClose={() => setOpenDepositDialog(false)}

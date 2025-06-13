@@ -263,6 +263,23 @@ const MemberList = () => {
                       </div>
                     </TableHead>
                     <TableHead
+                      onClick={() => handleSort("parent")}
+                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
+                    >
+                      <div className="flex items-center">
+                        <span>Parent</span>
+                        {sortBy === "parent" && (
+                          <span className="ml-1">
+                            {sortOrder === "asc" ? (
+                              <ChevronUp size={16} />
+                            ) : (
+                              <ChevronDown size={16} />
+                            )}
+                          </span>
+                        )}
+                      </div>
+                    </TableHead>
+                    <TableHead
                       onClick={() => handleSort("positionToParent")}
                       className="cursor-pointer max-w-[250px] break-words whitespace-normal"
                     >
@@ -279,58 +296,82 @@ const MemberList = () => {
                         )}
                       </div>
                     </TableHead>
-                    <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
+                    <TableHead
+                      onClick={() => handleSort("leftCount")}
+                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
+                    >
                       <div className="flex items-center">
                         <span>LC</span>
+                        {sortBy === "leftCount" && (
+                          <span className="ml-1">
+                            {sortOrder === "asc" ? (
+                              <ChevronUp size={16} />
+                            ) : (
+                              <ChevronDown size={16} />
+                            )}
+                          </span>
+                        )}
                       </div>
                     </TableHead>
-                    <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
+                    <TableHead
+                      onClick={() => handleSort("rightCount")}
+                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
+                    >
                       <div className="flex items-center">
                         <span>RC</span>
+                        {sortBy === "rightCount" && (
+                          <span className="ml-1">
+                            {sortOrder === "asc" ? (
+                              <ChevronUp size={16} />
+                            ) : (
+                              <ChevronDown size={16} />
+                            )}
+                          </span>
+                        )}
                       </div>
                     </TableHead>
-                    <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
+                    <TableHead
+                      onClick={() => handleSort("leftDirectCount")}
+                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
+                    >
                       <div className="flex items-center">
                         <span>LDC</span>
+                        {sortBy === "leftDirectCount" && (
+                          <span className="ml-1">
+                            {sortOrder === "asc" ? (
+                              <ChevronUp size={16} />
+                            ) : (
+                              <ChevronDown size={16} />
+                            )}
+                          </span>
+                        )}
+                      </div>
+                    </TableHead>
+                    <TableHead
+                      onClick={() => handleSort("rightDirectCount")}
+                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
+                    >
+                      <div className="flex items-center">
+                        <span>RDC</span>
+                        {sortBy === "rightDirectCount" && (
+                          <span className="ml-1">
+                            {sortOrder === "asc" ? (
+                              <ChevronUp size={16} />
+                            ) : (
+                              <ChevronDown size={16} />
+                            )}
+                          </span>
+                        )}
                       </div>
                     </TableHead>
                     <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
                       <div className="flex items-center">
-                        <span>RDC</span>
-                      </div>
-                    </TableHead>
-                    <TableHead
-                      onClick={() => handleSort("password")}
-                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
-                    >
-                      <div className="flex items-center">
                         <span>Password</span>
-                        {sortBy === "password" && (
-                          <span className="ml-1">
-                            {sortOrder === "asc" ? (
-                              <ChevronUp size={16} />
-                            ) : (
-                              <ChevronDown size={16} />
-                            )}
-                          </span>
-                        )}
                       </div>
                     </TableHead>
-                    <TableHead
-                      onClick={() => handleSort("tPin")}
-                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
-                    >
+                    <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
                       <div className="flex items-center">
                         <span>T Pin</span>
-                        {sortBy === "tPin" && (
-                          <span className="ml-1">
-                            {sortOrder === "asc" ? (
-                              <ChevronUp size={16} />
-                            ) : (
-                              <ChevronDown size={16} />
-                            )}
-                          </span>
-                        )}
                       </div>
                     </TableHead>
 
@@ -372,7 +413,7 @@ const MemberList = () => {
                     <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
-                <TableBody>
+                <TableBody className="text-xs">
                   {members.map((member) => (
                     <TableRow key={member.id}>
                       <TableCell className="max-w-[250px] break-words whitespace-normal">
@@ -383,6 +424,9 @@ const MemberList = () => {
                       </TableCell>
                       <TableCell className="max-w-[250px] break-words whitespace-normal">
                         {member?.sponsor?.memberUsername || "N/A"}
+                      </TableCell>
+                      <TableCell className="max-w-[250px] break-words whitespace-normal">
+                        {member?.parent?.memberUsername || "N/A"}
                       </TableCell>
                       <TableCell className="max-w-[250px] break-words whitespace-normal">
                         {member?.positionToParent || "N/A"}
@@ -481,7 +525,7 @@ const MemberList = () => {
                                   <span>Edit</span>
                                 </div>
                               </DropdownMenuItem>
-                              <DropdownMenuItem
+                              {/* <DropdownMenuItem
                                 // onClick={() => confirmDelete(booking.id)}
                                 onClick={() => {
                                   // setDropdownOpen(false); // Close the dropdown
@@ -492,7 +536,7 @@ const MemberList = () => {
                                   <Trash2 className="h-4 w-4" />
                                   <span>Delete</span>
                                 </div>
-                              </DropdownMenuItem>
+                              </DropdownMenuItem> */}
                             </DropdownMenuGroup>
                           </DropdownMenuContent>
                         </DropdownMenu>

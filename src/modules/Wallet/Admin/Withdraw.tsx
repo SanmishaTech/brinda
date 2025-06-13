@@ -127,8 +127,13 @@ const Withdraw: React.FC<WithdrawProps> = ({
     debitWalletMutation.mutate(data);
   };
 
+  const handleClose = () => {
+    reset(); // Clears all form inputs
+    onClose(); // Executes parent-provided close logic
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onClose}>
+    <Dialog open={open} onOpenChange={(isOpen) => !isOpen && handleClose()}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">

@@ -476,7 +476,7 @@ const UpdateUserProfile = () => {
                 id="memberPincode"
                 type="text"
                 maxLength={6}
-                placeholder="560001"
+                placeholder="Enter Pincode"
                 {...register("memberPincode")}
               />
               {errors.memberPincode && (
@@ -582,7 +582,7 @@ const UpdateUserProfile = () => {
               <Input
                 id="panNumber"
                 type="text"
-                placeholder="ABCDE1234F"
+                placeholder="Pan Number"
                 {...register("panNumber")}
               />
               {errors.panNumber && (
@@ -599,7 +599,7 @@ const UpdateUserProfile = () => {
                 id="aadharNumber"
                 type="text"
                 maxLength={12}
-                placeholder="123412341234"
+                placeholder="Aadhar Number"
                 {...register("aadharNumber")}
               />
               {errors.aadharNumber && (
@@ -615,7 +615,7 @@ const UpdateUserProfile = () => {
               <Input
                 id="bankName"
                 type="text"
-                placeholder="State Bank of India"
+                placeholder="Bank Name"
                 {...register("bankName")}
               />
               {errors.bankName && (
@@ -631,7 +631,7 @@ const UpdateUserProfile = () => {
               <Input
                 id="bankAccountNumber"
                 type="text"
-                placeholder="123456789012"
+                placeholder="Account Number"
                 {...register("bankAccountNumber")}
               />
               {errors.bankAccountNumber && (
@@ -647,7 +647,7 @@ const UpdateUserProfile = () => {
               <Input
                 id="bankIfscCode"
                 type="text"
-                placeholder="SBIN0001234"
+                placeholder="IFSC Code"
                 {...register("bankIfscCode")}
               />
               {errors.bankIfscCode && (
