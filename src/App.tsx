@@ -29,6 +29,7 @@ import CreateMember from "./modules/Member/CreateMember";
 import EditMember from "./modules/Member/EditMember";
 import UserWalletPage from "./modules/Wallet/UserWalletPage"; // Adjust the import path as needed
 import AdminWalletPage from "./modules/Wallet/AdminWalletPage";
+import Purchase from "./modules/Purchase/User/Purchase";
 
 const App = () => {
   useEffect(() => {
@@ -136,6 +137,14 @@ const App = () => {
               element={
                 <ProtectedRoute>
                   <UserWalletPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/purchase"
+              element={
+                <ProtectedRoute>
+                  <Purchase />
                 </ProtectedRoute>
               }
             />

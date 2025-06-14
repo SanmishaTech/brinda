@@ -36,21 +36,11 @@ const agencyDetailsId = UserData?.agency?.id;
 // This is sample data.
 const initialData = {
   roles: {
-    super_admin: {
+    member: {
       projects: [
         {
-          name: "Packages",
-          url: "/packages",
-          icon: UsersRound,
-        },
-        {
-          name: "Agencies",
-          url: "/agencies",
-          icon: UsersRound,
-        },
-        {
-          name: "Manage Users",
-          url: "/users",
+          name: "Purchase",
+          url: "/purchase",
           icon: UsersRound,
         },
       ],
