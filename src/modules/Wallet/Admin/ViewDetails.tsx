@@ -137,9 +137,9 @@ const ViewDetails: React.FC<ViewDetailsProps> = ({
               <span
                 className={`font-semibold ${
                   transaction?.type === "Debit"
-                    ? "text-red-600"
-                    : transaction?.type === "Credit"
                     ? "text-green-600"
+                    : transaction?.type === "Credit"
+                    ? "text-red-600"
                     : "text-gray-800"
                 }`}
               >

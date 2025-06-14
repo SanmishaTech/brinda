@@ -67,8 +67,10 @@ const updateProfileSchema = z.object({
     }),
   tPin: z
     .string()
-    .min(6, "T Pin must be at least 6 characters long.")
-    .max(50, "T Pin must not exceed 50 characters."),
+    .length(4, "T Pin must be exactly 4 digits.")
+    .refine((val) => /^\d{4}$/.test(val), {
+      message: "T Pin must contain only digits (0-9).",
+    }),
   memberAddress: z
     .string()
     .max(200, "Address cannot exceed 200 characters")
@@ -347,6 +349,7 @@ const UpdateUserProfile = () => {
                 id="tPin"
                 {...register("tPin")} // RHF validation triggers on change/blur
                 required
+                maxLength={4}
                 disabled={isLoading}
                 aria-invalid={errors.tPin ? "true" : "false"} // Accessibility
               />

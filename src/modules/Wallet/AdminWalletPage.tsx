@@ -301,16 +301,10 @@ const AdminWalletPage = () => {
                             <span>Date</span>
                           </div>
                         </TableHead>
-                        <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
-                          <div className="flex items-center">
-                            <span>Amount</span>
-                          </div>
-                        </TableHead>
-                        <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
-                          <div className="flex items-center">
-                            <span>Type</span>
-                          </div>
-                        </TableHead>
+
+                        <TableHead className="text-right">Credited</TableHead>
+                        <TableHead className="text-right">Debited</TableHead>
+                        {/* <TableHead>Type</TableHead> */}
                         <TableHead>Status</TableHead>
                         <TableHead>Payment Method</TableHead>
                         <TableHead>Reference Number</TableHead>
@@ -330,16 +324,39 @@ const AdminWalletPage = () => {
                                 )
                               : "N/A"}{" "}
                           </TableCell>
-                          <TableCell className="max-w-[250px] break-words whitespace-normal">
-                            {formatCurrency(transaction.amount) || "N/A"}
+                          <TableCell
+                            className={`text-right ${
+                              transaction.type === CREDIT
+                                ? "text-red-500"
+                                : "text-muted-foreground"
+                            }`}
+                          >
+                            {transaction.type === CREDIT ? (
+                              formatCurrency(transaction.amount)
+                            ) : (
+                              <span className="text-muted-foreground">0</span>
+                            )}
                           </TableCell>
-                          <TableCell>
+                          <TableCell
+                            className={`text-right ${
+                              transaction.type === DEBIT
+                                ? "text-green-500"
+                                : "text-muted-foreground"
+                            }`}
+                          >
+                            {transaction.type === DEBIT ? (
+                              formatCurrency(transaction.amount)
+                            ) : (
+                              <span className="text-muted-foreground">0</span>
+                            )}
+                          </TableCell>
+                          {/* <TableCell>
                             <span
                               className={`px-2 py-1 text-xs font-medium rounded-full ${
                                 transaction.type === DEBIT
-                                  ? "bg-red-100 text-red-700"
-                                  : transaction.type === CREDIT
                                   ? "bg-green-100 text-green-700"
+                                  : transaction.type === CREDIT
+                                  ? "bg-red-100 text-red-700"
                                   : "bg-gray-100 text-gray-600"
                               }`}
                             >
@@ -347,7 +364,7 @@ const AdminWalletPage = () => {
                                 ? transaction.type.toUpperCase()
                                 : "N/A"}
                             </span>
-                          </TableCell>
+                          </TableCell> */}
                           <TableCell>
                             <span
                               className={`px-2 py-1 text-xs font-medium rounded-full ${

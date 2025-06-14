@@ -13,7 +13,13 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { Wallet, Loader2, PlusCircle, CheckCircle } from "lucide-react";
+import {
+  Wallet,
+  Loader2,
+  PlusCircle,
+  CheckCircle,
+  CheckCircle2,
+} from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { get, post } from "@/services/apiService";
 import { toast } from "sonner";
@@ -28,16 +34,14 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { APPROVED, PENDING, REJECTED, CREDIT, DEBIT } from "@/config/data";
 import { formatCurrency, formatDate, formatDateTime } from "@/lib/formatter.js";
-
+import TransactionPinDialog from "./User/TransactionPinDialog";
 const fetchTransactions = async (
   page: number,
-  sortBy: string,
-  sortOrder: string,
-  search: string,
+
   recordsPerPage: number
 ) => {
   const response = await get(
-    `/wallet-transactions/member/?page=${page}&sortBy=${sortBy}&sortOrder=${sortOrder}&search=${search}&limit=${recordsPerPage}`
+    `/wallet-transactions/member/?page=${page}&limit=${recordsPerPage}`
   );
   return response;
 };
@@ -50,12 +54,11 @@ const UserWalletPage = () => {
   );
   const [recipientEmail, setRecipientEmail] = useState<string | null>(null);
   const [recipientMobile, setRecipientMobile] = useState<string | null>(null);
+  const [tPinDialogOpen, setTPinDialogOpen] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [recordsPerPage, setRecordsPerPage] = useState(10); // Add recordsPerPage state
-  const [sortBy, setSortBy] = useState(""); // Default sort column
-  const [sortOrder, setSortOrder] = useState("asc"); // Default sort order
-  const [search, setSearch] = useState(""); // Search query
+
   const [username, setUsername] = useState("");
   const [amountToTransfer, setAmountToTransfer] = useState<number | string>("");
   const [recipientName, setRecipientName] = useState<string | null>(null);
@@ -84,16 +87,8 @@ const UserWalletPage = () => {
     isError,
     refetch,
   } = useQuery({
-    queryKey: [
-      "memberWalletTransactions",
-      currentPage,
-      sortBy,
-      sortOrder,
-      search,
-      recordsPerPage,
-    ],
-    queryFn: () =>
-      fetchTransactions(currentPage, sortBy, sortOrder, search, recordsPerPage),
+    queryKey: ["memberWalletTransactions", currentPage, recordsPerPage],
+    queryFn: () => fetchTransactions(currentPage, recordsPerPage),
   });
 
   const transactions = transactionData?.walletTransactions || [];
@@ -106,9 +101,18 @@ const UserWalletPage = () => {
       await post("/wallet-transactions", { amount });
     },
     onSuccess: () => {
-      setAmount("");
       queryClient.invalidateQueries(["memberWalletTransactions"]);
-      toast.success("Request has been send to Add Amount to your Wallet!");
+      // toast.success("Request has been send to Add Amount to your Wallet!");
+      toast.success(
+        `Top-up request for ${formatCurrency(
+          amount
+        )} submitted. It will reflect in your balance after approval.`,
+        {
+          duration: 7000, // Slightly longer for more text
+          icon: <CheckCircle2 className="h-4 w-4" />,
+        }
+      );
+      setAmount("");
     },
     onError: (err: any) => {
       const errorMessage =
@@ -158,10 +162,11 @@ const UserWalletPage = () => {
 
   // Transfer money mutation
   const transferMoneyMutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (tPin: string) => {
       await post("/wallet-transactions/transfer", {
         amount: Number(amountToTransfer),
         memberId: recipientMemberId, // Assuming recipientName is the memberId
+        tPin,
       });
     },
     onSuccess: () => {
@@ -200,7 +205,30 @@ const UserWalletPage = () => {
       toast.error("Please enter a valid amount.");
       return;
     }
-    transferMoneyMutation.mutate();
+
+    if (!walletBalance && walletBalance !== 0) {
+      toast.error("Wallet balance is not available. Please try again.");
+      return;
+    }
+
+    if (amountToTransfer > walletBalance) {
+      toast.error("Insufficient wallet balance for this transfer.");
+      return;
+    }
+
+    if (!recipientName || !recipientMemberId) {
+      toast.error("Please select a valid recipient before transferring.");
+      return;
+    }
+    setTPinDialogOpen(true);
+  };
+
+  const handleResetForm = () => {
+    setAmountToTransfer("");
+    setUsername("");
+    setAmountToTransfer("");
+    setRecipientName(null);
+    setRecipientMemberId("");
   };
 
   return (
@@ -232,10 +260,7 @@ const UserWalletPage = () => {
               <p className="text-lg font-bold text-green-700">Loading...</p>
             ) : (
               <p className="text-4xl font-bold text-green-700">
-                ₹
-                {typeof walletBalance === "number" && !isNaN(walletBalance)
-                  ? walletBalance.toFixed(2)
-                  : "N/A"}
+                {formatCurrency(walletBalance)}
               </p>
             )}
           </CardContent>
@@ -273,7 +298,7 @@ const UserWalletPage = () => {
                     className="w-full"
                     onClick={() => handleQuickAdd(value)}
                   >
-                    ₹{value}
+                    {formatCurrency(value)}
                   </Button>
                 ))}
               </div>
@@ -382,6 +407,7 @@ const UserWalletPage = () => {
             >
               {transferMoneyMutation.isLoading ? "Transferring..." : "Transfer"}
             </Button>
+
             <Input
               type="number"
               placeholder="Enter amount"
@@ -407,25 +433,22 @@ const UserWalletPage = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Date</TableHead>
+                      <TableHead>Date & Time</TableHead>
 
-                      <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
-                        <div className="flex items-center">
-                          <span>Type</span>
-                        </div>
-                      </TableHead>
+                      <TableHead className="text-right">Credited</TableHead>
+                      <TableHead className="text-right">Debited</TableHead>
                       <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
                         <div className="flex items-center">
                           <span>Status</span>
                         </div>
                       </TableHead>
-                      <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
-                        <div className="flex items-center">
-                          <span>Amount</span>
-                        </div>
-                      </TableHead>
+
                       <TableHead>Payment Method</TableHead>
                       <TableHead>Reference Number</TableHead>
+                      <TableHead>Narration</TableHead>
+                      {/* <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
+                        Note
+                      </TableHead> */}
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -434,33 +457,17 @@ const UserWalletPage = () => {
                         <TableCell>
                           {transaction.transactionDate
                             ? dayjs(transaction.transactionDate).format(
-                                "DD/MM/YYYY"
+                                "DD/MM/YYYY hh:mm:ss A"
                               )
-                            : "N/A"}{" "}
+                            : "N/A"}
                         </TableCell>
-                        {/* <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {transaction.type}
-                      </TableCell>
-                      <TableCell>
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            transaction.status === APPROVED
-                              ? "bg-green-100 text-green-700"
-                              : transaction.status === PENDING
-                              ? "bg-yellow-100 text-yellow-700"
-                              : "bg-red-100 text-red-700"
-                          }`}
-                        >
-                          {transaction.status}
-                        </span>
-                      </TableCell> */}
-                        <TableCell>
+                        {/* <TableCell>
                           <span
                             className={`px-2 py-1 text-xs font-medium rounded-full ${
                               transaction.type === DEBIT
-                                ? "bg-red-100 text-red-700"
-                                : transaction.type === CREDIT
                                 ? "bg-green-100 text-green-700"
+                                : transaction.type === CREDIT
+                                ? "bg-red-100 text-red-700"
                                 : "bg-gray-100 text-gray-600"
                             }`}
                           >
@@ -468,6 +475,32 @@ const UserWalletPage = () => {
                               ? transaction.type.toUpperCase()
                               : "N/A"}
                           </span>
+                        </TableCell> */}
+                        <TableCell
+                          className={`text-right ${
+                            transaction.type === CREDIT
+                              ? "text-red-500"
+                              : "text-muted-foreground"
+                          }`}
+                        >
+                          {transaction.type === CREDIT ? (
+                            formatCurrency(transaction.amount)
+                          ) : (
+                            <span className="text-muted-foreground">0</span>
+                          )}
+                        </TableCell>
+                        <TableCell
+                          className={`text-right ${
+                            transaction.type === DEBIT
+                              ? "text-green-500"
+                              : "text-muted-foreground"
+                          }`}
+                        >
+                          {transaction.type === DEBIT ? (
+                            formatCurrency(transaction.amount)
+                          ) : (
+                            <span className="text-muted-foreground">0</span>
+                          )}
                         </TableCell>
                         <TableCell>
                           <span
@@ -486,15 +519,15 @@ const UserWalletPage = () => {
                               : "N/A"}
                           </span>
                         </TableCell>
-                        <TableCell className="">
-                          {formatCurrency(transaction.amount)}
-                        </TableCell>
                         <TableCell>
                           {transaction.paymentMethod || "N/A"}
                         </TableCell>
                         <TableCell>
                           {transaction.referenceNumber || "N/A"}
                         </TableCell>
+                        <TableCell className="w-60 max-w-[240px] whitespace-normal break-words">
+                          {transaction.notes || "N/A"}
+                        </TableCell>{" "}
                       </TableRow>
                     ))}
                   </TableBody>
@@ -517,6 +550,13 @@ const UserWalletPage = () => {
           </CardContent>
         </Card>
       </div>
+      <TransactionPinDialog
+        open={tPinDialogOpen}
+        onOpenChange={setTPinDialogOpen}
+        mutation={(tPin) => transferMoneyMutation.mutateAsync(tPin)}
+        isLoading={transferMoneyMutation.isLoading}
+        onCancel={handleResetForm} // <-- reset parent form fields on cancel
+      />
     </div>
   );
 };

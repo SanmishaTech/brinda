@@ -245,7 +245,7 @@ const Withdraw: React.FC<WithdrawProps> = ({
               className="w-full bg-red-500 hover:bg-red-600 text-white"
               disabled={debitWalletMutation.isLoading}
             >
-              {debitWalletMutation.isLoading ? "Debiting..." : "Debit Wallet"}
+              {debitWalletMutation.isLoading ? "Loading..." : "Credit Wallet"}
             </Button>
           </DialogFooter>
         </form>

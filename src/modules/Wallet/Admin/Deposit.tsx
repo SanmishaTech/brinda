@@ -245,9 +245,7 @@ const Deposit: React.FC<DepositProps> = ({
               className="w-full bg-green-500 hover:bg-green-600 text-white"
               disabled={creditWalletMutation.isLoading}
             >
-              {creditWalletMutation.isLoading
-                ? "Crediting..."
-                : "Credit Wallet"}
+              {creditWalletMutation.isLoading ? "Loading..." : "Debit Wallet"}
             </Button>
           </DialogFooter>
         </form>

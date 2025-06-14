@@ -3,7 +3,13 @@ import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle, KeySquare, Copy } from "lucide-react";
+import {
+  CheckCircle,
+  KeySquare,
+  Copy,
+  ClipboardCopy,
+  CheckCircle2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -93,8 +99,7 @@ const Register = () => {
     password: "",
   });
   const [sponsorName, setSponsorName] = useState<string | null>(null);
-
-  const [copiedField, setCopiedField] = useState(null);
+  const [copied, setCopied] = useState(false);
 
   const defaultValues = {
     sponsorId: "",
@@ -177,7 +182,7 @@ const Register = () => {
   });
 
   const isSponsorValid =
-    sponsorId.length === 8 && sponsorName && !sponsorLookupMutation.isLoading;
+    sponsorId.length === 10 && sponsorName && !sponsorLookupMutation.isLoading;
 
   const registerMutation = useMutation<
     RegisterResponse,
@@ -202,10 +207,11 @@ const Register = () => {
     },
   });
 
-  const handleCopy = (text, field) => {
-    navigator.clipboard.writeText(text).then(() => {
-      setCopiedField(field);
-      setTimeout(() => setCopiedField(null), 2000); // reset after 2 seconds
+  const handleCopyDetails = () => {
+    const copyText = `Username: ${credentials.username}\nPassword: ${credentials.password}`;
+    navigator.clipboard.writeText(copyText).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000); // Reset after 2s
     });
   };
 
@@ -239,8 +245,8 @@ const Register = () => {
                 className="min-w-[110px] flex items-center gap-2"
                 onClick={() => {
                   const id = watch("sponsorId");
-                  if (id.length !== 8) {
-                    toast.error("Sponsor ID must be exactly 8 characters");
+                  if (id.length !== 10) {
+                    toast.error("Sponsor ID must be exactly 10 characters");
                     return;
                   }
                   sponsorLookupMutation.mutate(id);
@@ -575,17 +581,6 @@ const Register = () => {
                     </p>
                   </div>
                 </div>
-                <button
-                  onClick={() => handleCopy(credentials.username, "username")}
-                  aria-label="Copy username"
-                  className="p-1 rounded hover:bg-gray-200"
-                >
-                  {copiedField === "username" ? (
-                    <Check className="w-4 h-4 text-green-500" />
-                  ) : (
-                    <Copy className="w-4 h-4 text-gray-500" />
-                  )}
-                </button>
               </div>
 
               {/* Password Card */}
@@ -599,29 +594,36 @@ const Register = () => {
                     </p>
                   </div>
                 </div>
-                <button
-                  onClick={() => handleCopy(credentials.password, "password")}
-                  aria-label="Copy password"
-                  className="p-1 rounded hover:bg-gray-200"
-                >
-                  {copiedField === "password" ? (
-                    <Check className="w-4 h-4 text-green-500" />
-                  ) : (
-                    <Copy className="w-4 h-4 text-gray-500" />
-                  )}
-                </button>
               </div>
             </div>
+            <div className="space-y-1">
+              <Button
+                onClick={handleCopyDetails}
+                className=" w-full inline-flex items-center justify-center gap-2 rounded-md  px-4 py-2  shadow transition-colors  focus:outline-none"
+              >
+                {copied ? (
+                  <>
+                    <CheckCircle className="w-4 h-4" />
+                    Credentials Copied!
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-4 h-4" />
+                    Copy Credentials
+                  </>
+                )}
+              </Button>
 
-            <AlertDialogAction
-              onClick={() => {
-                setShowDialog(false);
-                navigate("/");
-              }}
-              className="mt-4 w-full"
-            >
-              OK
-            </AlertDialogAction>
+              <AlertDialogAction
+                onClick={() => {
+                  setShowDialog(false);
+                  navigate("/");
+                }}
+                className=" w-full"
+              >
+                OK
+              </AlertDialogAction>
+            </div>
           </AlertDialogContent>
         </AlertDialog>
       </div>
