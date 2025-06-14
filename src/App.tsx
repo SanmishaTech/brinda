@@ -124,18 +124,18 @@ const App = () => {
               }
             />
             <Route
-              path="/member/wallet"
+              path="/members/:id/wallet"
               element={
                 <ProtectedRoute>
-                  <UserWalletPage />
+                  <AdminWalletPage />
                 </ProtectedRoute>
               }
             />
             <Route
-              path="/admin/wallet"
+              path="/member/wallet"
               element={
                 <ProtectedRoute>
-                  <AdminWalletPage />
+                  <UserWalletPage />
                 </ProtectedRoute>
               }
             />

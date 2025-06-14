@@ -454,7 +454,7 @@ const UserWalletPage = () => {
                   <TableBody>
                     {transactions.map((transaction: any) => (
                       <TableRow key={transaction.id}>
-                        <TableCell>
+                        <TableCell className="py-4">
                           {transaction.transactionDate
                             ? dayjs(transaction.transactionDate).format(
                                 "DD/MM/YYYY hh:mm:ss A"

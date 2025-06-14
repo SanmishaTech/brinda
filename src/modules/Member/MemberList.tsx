@@ -33,6 +33,7 @@ import {
   ChevronDown,
   Edit,
   Trash2,
+  Wallet,
   Filter,
   Download,
   SquarePen,
@@ -527,18 +528,16 @@ const MemberList = () => {
                                   <span>Edit</span>
                                 </div>
                               </DropdownMenuItem>
-                              {/* <DropdownMenuItem
-                                // onClick={() => confirmDelete(booking.id)}
-                                onClick={() => {
-                                  // setDropdownOpen(false); // Close the dropdown
-                                  setTimeout(() => confirmDelete(member.id), 0); // Open dialog after dropdown closes
-                                }}
+                              <DropdownMenuItem
+                                onClick={() =>
+                                  navigate(`/members/${member.id}/wallet`)
+                                }
                               >
                                 <div className="flex items-center gap-2">
-                                  <Trash2 className="h-4 w-4" />
-                                  <span>Delete</span>
+                                  <Wallet className="h-4 w-4" />
+                                  <span>Wallet</span>
                                 </div>
-                              </DropdownMenuItem> */}
+                              </DropdownMenuItem>
                             </DropdownMenuGroup>
                           </DropdownMenuContent>
                         </DropdownMenu>

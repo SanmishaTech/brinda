@@ -43,7 +43,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { get } from "@/services/apiService";
 import { Separator } from "@/components/ui/separator";
@@ -55,34 +55,44 @@ import ViewDetails from "./Admin/ViewDetails";
 import dayjs from "dayjs";
 import { APPROVED, CREDIT, DEBIT, PENDING, REJECTED } from "@/config/data";
 
+const fetchTransactions = async (
+  page: number,
+  sortBy: string,
+  sortOrder: string,
+  search: string,
+  memberId: string,
+  recordsPerPage: number
+) => {
+  const response = await get(
+    `/wallet-transactions/member/${memberId}/?page=${page}&sortBy=${sortBy}&sortOrder=${sortOrder}&search=${search}&limit=${recordsPerPage}`
+  );
+  return response;
+};
+
 const AdminWalletPage = () => {
-  const { id: memberId } = useParams();
   const [openMember, setOpenMember] = useState(false);
   const [openViewDetailsDialog, setOpenViewDetailsDialog] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<any>(null);
   const [openWithdrawDialog, setOpenWithdrawDialog] = useState(false);
+
   const [openDepositDialog, setOpenDepositDialog] = useState(false);
   const [selectedMemberName, setSelectedMemberName] = useState("");
+  const [memberId, setMemberId] = useState(""); // Track selected member ID
   const [currentPage, setCurrentPage] = useState(1);
   const [recordsPerPage, setRecordsPerPage] = useState(10);
-  const [sortBy, setSortBy] = useState("transactionDate");
-  const [sortOrder, setSortOrder] = useState("desc");
+  const [sortBy, setSortBy] = useState("status");
+  const [sortOrder, setSortOrder] = useState("asc");
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
 
-  const fetchTransactions = async (
-    page: number,
-    sortBy: string,
-    sortOrder: string,
-    search: string,
-    memberId: string,
-    recordsPerPage: number
-  ) => {
-    const response = await get(
-      `/wallet-transactions/member/${memberId}/?page=${page}&sortBy=${sortBy}&sortOrder=${sortOrder}&search=${search}&limit=${recordsPerPage}`
-    );
-    return response;
-  };
+  // Fetch members for the combobox
+  const { data: members } = useQuery({
+    queryKey: ["allMembers"],
+    queryFn: async () => {
+      const response = await get(`/members/all`);
+      return response;
+    },
+  });
 
   // Fetch transactions only when a member is selected
   const { data, isLoading, isError } = useQuery({
@@ -124,15 +134,17 @@ const AdminWalletPage = () => {
   };
 
   const handleOpenDepositDialog = () => {
-    if (memberData?.memberName) {
-      setSelectedMemberName(memberData?.memberName);
+    const selectedMember = members?.find((m) => m.id === parseInt(memberId));
+    if (selectedMember) {
+      setSelectedMemberName(selectedMember.memberName);
       setOpenDepositDialog(true);
     }
   };
 
   const handleOpenWithdrawDialog = () => {
-    if (memberData?.memberName) {
-      setSelectedMemberName(memberData.memberName);
+    const selectedMember = members?.find((m) => m.id === parseInt(memberId));
+    if (selectedMember) {
+      setSelectedMemberName(selectedMember.memberName);
       setOpenWithdrawDialog(true);
     }
   };
@@ -154,6 +166,67 @@ const AdminWalletPage = () => {
           {/* Member Combobox */}
           <div className="flex justify-between items-center">
             {/* Wrap icon, label, and combobox in a flex container for horizontal alignment */}
+            <div className="flex items-center gap-2">
+              {/* User icon added */}
+              <User className="w-5 h-5 text-blue-600" />
+
+              {/* Label "User:" added */}
+              <span className="text-gray-700 font-medium select-none">
+                Member:
+              </span>
+
+              {/* Existing Popover Combobox unchanged */}
+              <Popover open={openMember} onOpenChange={setOpenMember}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={openMember}
+                    className="w-[250px] justify-between"
+                  >
+                    {memberId
+                      ? members?.find((m) => m.id === parseInt(memberId))
+                          ?.memberName
+                      : "Select Member..."}
+                    <ChevronsUpDown className="opacity-50 ml-2 h-4 w-4" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[250px] p-0">
+                  <Command>
+                    <CommandInput
+                      placeholder="Search member..."
+                      className="h-9"
+                    />
+                    <CommandList>
+                      <CommandEmpty>No member found.</CommandEmpty>
+                      <CommandGroup>
+                        {members?.map((member) => (
+                          <CommandItem
+                            key={member.id}
+                            value={member.memberName}
+                            onSelect={() => {
+                              setMemberId(String(member.id));
+                              setCurrentPage(1);
+                              setOpenMember(false);
+                            }}
+                          >
+                            {member.memberName}
+                            <Check
+                              className={cn(
+                                "ml-auto h-4 w-4",
+                                String(member.id) === memberId
+                                  ? "opacity-100"
+                                  : "opacity-0"
+                              )}
+                            />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+            </div>
 
             {/* Existing buttons remain unchanged */}
             {memberId && (
@@ -225,7 +298,7 @@ const AdminWalletPage = () => {
                       <TableRow>
                         <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
                           <div className="flex items-center">
-                            <span>Date & Time</span>
+                            <span>Date</span>
                           </div>
                         </TableHead>
 
@@ -244,12 +317,12 @@ const AdminWalletPage = () => {
                     <TableBody>
                       {walletTransactions.map((transaction) => (
                         <TableRow key={transaction.id}>
-                          <TableCell>
+                          <TableCell className="max-w-[250px] break-words whitespace-normal">
                             {transaction.transactionDate
                               ? dayjs(transaction.transactionDate).format(
-                                  "DD/MM/YYYY hh:mm:ss A"
+                                  "DD/MM/YYYY"
                                 )
-                              : "N/A"}
+                              : "N/A"}{" "}
                           </TableCell>
                           <TableCell
                             className={`text-right ${
