@@ -30,6 +30,7 @@ import EditMember from "./modules/Member/EditMember";
 import UserWalletPage from "./modules/Wallet/UserWalletPage"; // Adjust the import path as needed
 import AdminWalletPage from "./modules/Wallet/AdminWalletPage";
 import Purchase from "./modules/Purchase/User/Purchase";
+import PurchaseHistoryList from "./modules/Purchase/User/PurchaseHistoryList";
 
 const App = () => {
   useEffect(() => {
@@ -145,6 +146,14 @@ const App = () => {
               element={
                 <ProtectedRoute>
                   <Purchase />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/purchase/history"
+              element={
+                <ProtectedRoute>
+                  <PurchaseHistoryList />
                 </ProtectedRoute>
               }
             />
