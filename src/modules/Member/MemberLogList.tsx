@@ -54,7 +54,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import dayjs from "dayjs";
 
-const fetchProducts = async (
+const fetchMemberLogs = async (
   page: number,
   sortBy: string,
   sortOrder: string,
@@ -62,12 +62,12 @@ const fetchProducts = async (
   recordsPerPage: number
 ) => {
   const response = await get(
-    `/purchases?page=${page}&sortBy=${sortBy}&sortOrder=${sortOrder}&search=${search}&limit=${recordsPerPage}`
+    `/members/logs?page=${page}&sortBy=${sortBy}&sortOrder=${sortOrder}&search=${search}&limit=${recordsPerPage}`
   );
   return response;
 };
 
-const PurchaseHistoryList = () => {
+const MemberLogList = () => {
   const queryClient = useQueryClient();
   const [currentPage, setCurrentPage] = useState(1);
   const [recordsPerPage, setRecordsPerPage] = useState(10); // Add recordsPerPage state
@@ -80,21 +80,14 @@ const PurchaseHistoryList = () => {
 
   // Fetch users using react-query
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: [
-      "purchases",
-      currentPage,
-      sortBy,
-      sortOrder,
-      search,
-      recordsPerPage,
-    ],
+    queryKey: ["logs", currentPage, sortBy, sortOrder, search, recordsPerPage],
     queryFn: () =>
-      fetchProducts(currentPage, sortBy, sortOrder, search, recordsPerPage),
+      fetchMemberLogs(currentPage, sortBy, sortOrder, search, recordsPerPage),
   });
 
-  const purchases = data?.purchases || [];
+  const memberLogs = data?.memberLogs || [];
   const totalPages = data?.totalPages || 1;
-  const totalPurchases = data?.totalPurchases || 0;
+  const totalMemberLogs = data?.totalMemberLogs || 0;
 
   // Handle sorting
   const handleSort = (column: string) => {
@@ -114,41 +107,10 @@ const PurchaseHistoryList = () => {
     setCurrentPage(1); // Reset to the first page
   };
 
-  const handlePurchaseInvoice = async (purchaseId) => {
-    try {
-      const response = await get(
-        `/purchases/${purchaseId}/generate-invoice`,
-        {},
-        { responseType: "blob" } // must be in config
-      );
-
-      if (response.status === 200) {
-        const blob = new Blob([response.data], { type: "application/pdf" });
-
-        const url = window.URL.createObjectURL(blob);
-
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `invoice-${purchaseId}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-
-        window.URL.revokeObjectURL(url);
-      } else {
-        console.error("Failed to generate invoice");
-        alert("Failed to generate invoice");
-      }
-    } catch (error) {
-      console.error("Error downloading invoice:", error);
-      alert("Failed to download invoice");
-    }
-  };
-
   return (
     <div className="mt-2 p-4 sm:p-6">
       <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">
-        Purchase History
+        Member Logs
       </h1>
       <Card className="mx-auto mt-6 sm:mt-10">
         <CardContent>
@@ -175,20 +137,20 @@ const PurchaseHistoryList = () => {
             </div>
           ) : isError ? (
             <div className="text-center text-red-500">
-              Failed to load Purchase History.
+              Failed to load Member Logs.
             </div>
-          ) : purchases.length > 0 ? (
+          ) : memberLogs.length > 0 ? (
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead
-                      onClick={() => handleSort("purchaseDate")}
+                      onClick={() => handleSort("createdAt")}
                       className="cursor-pointer max-w-[250px] break-words whitespace-normal"
                     >
                       <div className="flex items-center">
-                        <span>Purchase Date</span>
-                        {sortBy === "purchaseDate" && (
+                        <span>Date & Time</span>
+                        {sortBy === "createdAt" && (
                           <span className="ml-1">
                             {sortOrder === "asc" ? (
                               <ChevronUp size={16} />
@@ -201,12 +163,12 @@ const PurchaseHistoryList = () => {
                     </TableHead>
 
                     <TableHead
-                      onClick={() => handleSort("invoiceNumber")}
+                      onClick={() => handleSort("message")}
                       className="cursor-pointer max-w-[250px] break-words whitespace-normal"
                     >
                       <div className="flex items-center">
-                        <span>Invoice Number</span>
-                        {sortBy === "invoiceNumber" && (
+                        <span>Message</span>
+                        {sortBy === "message" && (
                           <span className="ml-1">
                             {sortOrder === "asc" ? (
                               <ChevronUp size={16} />
@@ -219,12 +181,12 @@ const PurchaseHistoryList = () => {
                     </TableHead>
 
                     <TableHead
-                      onClick={() => handleSort("totalAmountWithoutGst")}
+                      onClick={() => handleSort("totalPv")}
                       className="cursor-pointer max-w-[250px] break-words whitespace-normal"
                     >
                       <div className="flex items-center">
-                        <span>Total Amount (No Gst)</span>
-                        {sortBy === "totalAmountWithoutGst" && (
+                        <span>Total PV</span>
+                        {sortBy === "totalPv" && (
                           <span className="ml-1">
                             {sortOrder === "asc" ? (
                               <ChevronUp size={16} />
@@ -235,79 +197,21 @@ const PurchaseHistoryList = () => {
                         )}
                       </div>
                     </TableHead>
-
-                    <TableHead
-                      onClick={() => handleSort("totalGstAmount")}
-                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
-                    >
-                      <div className="flex items-center">
-                        <span>Gst Amount</span>
-                        {sortBy === "totalGstAmount" && (
-                          <span className="ml-1">
-                            {sortOrder === "asc" ? (
-                              <ChevronUp size={16} />
-                            ) : (
-                              <ChevronDown size={16} />
-                            )}
-                          </span>
-                        )}
-                      </div>
-                    </TableHead>
-
-                    <TableHead
-                      onClick={() => handleSort("totalAmountWithGst")}
-                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
-                    >
-                      <div className="flex items-center">
-                        <span>Total Amount</span>
-                        {sortBy === "totalAmountWithGst" && (
-                          <span className="ml-1">
-                            {sortOrder === "asc" ? (
-                              <ChevronUp size={16} />
-                            ) : (
-                              <ChevronDown size={16} />
-                            )}
-                          </span>
-                        )}
-                      </div>
-                    </TableHead>
-
-                    <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {purchases.map((purchase) => (
-                    <TableRow key={purchase.id}>
+                  {memberLogs.map((log) => (
+                    <TableRow key={log.id}>
                       <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {purchase.purchaseDate
-                          ? dayjs(purchase.purchaseDate).format(
-                              "DD/MM/YYYY hh:mm:ss A"
-                            )
+                        {log.createdAt
+                          ? dayjs(log.createdAt).format("DD/MM/YYYY hh:mm:ss A")
                           : "N/A"}
                       </TableCell>
                       <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {purchase.invoiceNumber || "N/A"}
+                        {log.message || "N/A"}
                       </TableCell>
                       <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {formatCurrency(purchase.totalAmountWithoutGst) ||
-                          "N/A"}
-                      </TableCell>
-                      <TableCell>
-                        {formatCurrency(purchase.totalGstAmount) || "N/A"}
-                      </TableCell>
-                      <TableCell>
-                        {formatCurrency(purchase.totalAmountWithGst) || "N/A"}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex gap-2">
-                          <Button
-                            // variant="ghost"
-                            size="sm"
-                            onClick={() => handlePurchaseInvoice(purchase.id)}
-                          >
-                            invoice
-                          </Button>
-                        </div>
+                        {log.totalPv || "N/A"}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -316,7 +220,7 @@ const PurchaseHistoryList = () => {
               <CustomPagination
                 currentPage={currentPage}
                 totalPages={totalPages}
-                totalRecords={totalPurchases}
+                totalRecords={totalMemberLogs}
                 recordsPerPage={recordsPerPage}
                 onPageChange={setCurrentPage} // Pass setCurrentPage directly
                 onRecordsPerPageChange={(newRecordsPerPage) => {
@@ -326,7 +230,7 @@ const PurchaseHistoryList = () => {
               />
             </div>
           ) : (
-            <div className="text-center">No Purchase Details Found.</div>
+            <div className="text-center">No Member Log Details Found.</div>
           )}
         </CardContent>
       </Card>
@@ -334,4 +238,4 @@ const PurchaseHistoryList = () => {
   );
 };
 
-export default PurchaseHistoryList;
+export default MemberLogList;

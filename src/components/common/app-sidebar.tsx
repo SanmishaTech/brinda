@@ -43,6 +43,11 @@ const initialData = {
           url: "/purchase",
           icon: UsersRound,
         },
+        {
+          name: "Member Logs",
+          url: "/member/logs",
+          icon: UsersRound,
+        },
       ],
       //   navMain: [
       //     {

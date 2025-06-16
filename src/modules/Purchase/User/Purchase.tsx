@@ -6,6 +6,8 @@ import {
   useFieldArray,
   useWatch,
 } from "react-hook-form";
+import { formatCurrency, formatDate, formatDateTime } from "@/lib/formatter.js";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
@@ -30,7 +32,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { LoaderCircle, Trash2, PlusCircle } from "lucide-react"; // Import the LoaderCircle icon
+import {
+  LoaderCircle,
+  Trash2,
+  PlusCircle,
+  User,
+  MapPin,
+  CalendarDays,
+  Wallet,
+} from "lucide-react"; // Import the LoaderCircle icon
 import { toast } from "sonner";
 import { useNavigate, useParams } from "react-router-dom";
 import { get } from "@/services/apiService";
@@ -178,6 +188,7 @@ const Purchase = () => {
     onSuccess: () => {
       queryClient.invalidateQueries(["purchases"]); // Refetch the users list
       toast.success("Products Purchased successfully");
+      navigate("/purchase/history");
     },
     onError: (error: any) => {
       Validate(error, setError);
@@ -375,7 +386,11 @@ const Purchase = () => {
                                   );
                                   setValue(
                                     `purchaseDetails.${index}.productId`,
-                                    value
+                                    value,
+                                    {
+                                      shouldValidate: true,
+                                      shouldTouch: true,
+                                    }
                                   );
                                   if (product) {
                                     const gst = parseFloat(product.gst);
@@ -513,8 +528,16 @@ const Purchase = () => {
                             variant="ghost"
                             size="icon"
                             onClick={() => remove(index)}
+                            disabled={fields.length === 1}
                           >
-                            <Trash2 className="text-red-500" size={18} />
+                            <Trash2
+                              className={`${
+                                fields.length === 1
+                                  ? "text-gray-400"
+                                  : "text-red-500"
+                              }`}
+                              size={18}
+                            />
                           </Button>
                         </TableCell>
                       </TableRow>
@@ -540,11 +563,104 @@ const Purchase = () => {
               </Button>
 
               {/* Totals */}
-              <div className="mt-6 p-4 bg-gray-100 dark:bg-gray-900 rounded-lg text-sm space-y-2">
-                <div>Total Amount Without GST: ₹ {totals.totalWithoutGst}</div>
-                <div>Total GST Amount: ₹ {totals.totalGst}</div>
-                <div>Total Amount With GST: ₹ {totals.totalWithGst}</div>
-                <div>Total Product PV: {totals.totalPV}</div>
+              {/* Totals */}
+              {/* <div className="flex justify-end">
+                <div className="mt-6 p-4 bg-gray-100 dark:bg-gray-900 rounded-lg text-sm space-y-2 border border-gray-200 dark:border-gray-700 w-full max-w-sm ml-auto">
+                  <div className="flex justify-between">
+                    <span className="font-medium">
+                      Total Amount Without GST:
+                    </span>
+                    <span>{totals.totalWithoutGst}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">Total GST Amount:</span>
+                    <span>{totals.totalGst}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">Total Amount With GST:</span>
+                    <span className="font-semibold">{totals.totalWithGst}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">Total Product PV:</span>
+                    <span>{totals.totalPV}</span>
+                  </div>
+                </div>
+              </div> */}
+              <div className="flex justify-between w-full mt-6 gap-2">
+                {/* Left Side: Icon + Info Grid */}
+                {/* <div className="p-4 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 w-full shadow-sm space-y-4">
+                  <div className="flex items-center gap-3">
+                    <User className="text-blue-600 dark:text-blue-400 h-5 w-5" />
+                    <div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        Member
+                      </p>
+                      <p className="font-medium text-sm">
+                        {memberState?.fullName || "N/A"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <MapPin className="text-emerald-600 dark:text-emerald-400 h-5 w-5" />
+                    <div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        State
+                      </p>
+                      <p className="font-medium text-sm">
+                        {memberState?.State || "N/A"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <Wallet className="text-yellow-600 dark:text-yellow-400 h-5 w-5" />
+                    <div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        Wallet Balance
+                      </p>
+                      <p className="font-medium text-sm">
+                        ₹ {walletBalance?.toFixed(2) || "0.00"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <CalendarDays className="text-purple-600 dark:text-purple-400 h-5 w-5" />
+                    <div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        Date
+                      </p>
+                      <p className="font-medium text-sm">
+                        {new Date().toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                </div> */}
+
+                {/* Right Side: Totals */}
+                <div className="p-4 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 w-full  ml-auto shadow-sm text-sm space-y-2">
+                  <div className="flex justify-between">
+                    <span className="font-medium">
+                      Total Amount Without GST:
+                    </span>
+                    <span>{formatCurrency(totals.totalWithoutGst)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">Total GST Amount:</span>
+                    <span>{formatCurrency(totals.totalGst)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">Total Amount With GST:</span>
+                    <span className="font-semibold">
+                      {formatCurrency(totals.totalWithGst)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">Total Product PV:</span>
+                    <span>{totals.totalPV}</span>
+                  </div>
+                </div>
               </div>
             </CardContent>
 

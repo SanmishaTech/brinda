@@ -31,6 +31,7 @@ import UserWalletPage from "./modules/Wallet/UserWalletPage"; // Adjust the impo
 import AdminWalletPage from "./modules/Wallet/AdminWalletPage";
 import Purchase from "./modules/Purchase/User/Purchase";
 import PurchaseHistoryList from "./modules/Purchase/User/PurchaseHistoryList";
+import MemberLogList from "./modules/Member/MemberLogList";
 
 const App = () => {
   useEffect(() => {
@@ -105,6 +106,14 @@ const App = () => {
               element={
                 <ProtectedRoute>
                   <MemberList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/member/logs"
+              element={
+                <ProtectedRoute>
+                  <MemberLogList />
                 </ProtectedRoute>
               }
             />
