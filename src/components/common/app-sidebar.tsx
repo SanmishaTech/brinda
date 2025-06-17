@@ -48,6 +48,11 @@ const initialData = {
           url: "/member/logs",
           icon: UsersRound,
         },
+        {
+          name: "Genealogy",
+          url: "/genealogy",
+          icon: UsersRound,
+        },
       ],
       //   navMain: [
       //     {

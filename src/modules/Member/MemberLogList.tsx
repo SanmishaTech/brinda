@@ -181,12 +181,12 @@ const MemberLogList = () => {
                     </TableHead>
 
                     <TableHead
-                      onClick={() => handleSort("totalPv")}
+                      onClick={() => handleSort("pv")}
                       className="cursor-pointer max-w-[250px] break-words whitespace-normal"
                     >
                       <div className="flex items-center">
                         <span>Total PV</span>
-                        {sortBy === "totalPv" && (
+                        {sortBy === "pv" && (
                           <span className="ml-1">
                             {sortOrder === "asc" ? (
                               <ChevronUp size={16} />
@@ -211,7 +211,7 @@ const MemberLogList = () => {
                         {log.message || "N/A"}
                       </TableCell>
                       <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {log.totalPv || "N/A"}
+                        {log.pv || "N/A"}
                       </TableCell>
                     </TableRow>
                   ))}

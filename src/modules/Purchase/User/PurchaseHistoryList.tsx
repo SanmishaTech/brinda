@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button, Input } from "@/components/ui";
+import path from "path-browserify";
+
 import {
   Select,
   SelectTrigger,
@@ -114,10 +116,13 @@ const PurchaseHistoryList = () => {
     setCurrentPage(1); // Reset to the first page
   };
 
-  const handlePurchaseInvoice = async (purchaseId) => {
+  const handlePurchaseInvoice = async (purchaseId, invoicePath) => {
+    const uuid = path.basename(path.dirname(invoicePath));
+    const filename = path.basename(invoicePath);
+
     try {
       const response = await get(
-        `/purchases/${purchaseId}/generate-invoice`,
+        `/purchases/${uuid}/${filename}/${purchaseId}/generate-invoice`,
         {},
         { responseType: "blob" } // must be in config
       );
@@ -303,7 +308,12 @@ const PurchaseHistoryList = () => {
                           <Button
                             // variant="ghost"
                             size="sm"
-                            onClick={() => handlePurchaseInvoice(purchase.id)}
+                            onClick={() =>
+                              handlePurchaseInvoice(
+                                purchase.id,
+                                purchase.invoicePath
+                              )
+                            }
                           >
                             invoice
                           </Button>

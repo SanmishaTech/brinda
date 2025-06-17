@@ -30,6 +30,8 @@ import EditMember from "./modules/Member/EditMember";
 import UserWalletPage from "./modules/Wallet/UserWalletPage"; // Adjust the import path as needed
 import AdminWalletPage from "./modules/Wallet/AdminWalletPage";
 import Purchase from "./modules/Purchase/User/Purchase";
+import Genealogy from "./modules/Genealogy/Genealogy";
+
 import PurchaseHistoryList from "./modules/Purchase/User/PurchaseHistoryList";
 import MemberLogList from "./modules/Member/MemberLogList";
 
@@ -106,6 +108,14 @@ const App = () => {
               element={
                 <ProtectedRoute>
                   <MemberList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/genealogy"
+              element={
+                <ProtectedRoute>
+                  <Genealogy />
                 </ProtectedRoute>
               }
             />
