@@ -34,6 +34,7 @@ import Genealogy from "./modules/Genealogy/Genealogy";
 
 import PurchaseHistoryList from "./modules/Purchase/User/PurchaseHistoryList";
 import MemberLogList from "./modules/Member/MemberLogList";
+import MyDirectReferralList from "./modules/MyDirectList/MyDirectReferralList";
 
 const App = () => {
   useEffect(() => {
@@ -157,6 +158,14 @@ const App = () => {
               element={
                 <ProtectedRoute>
                   <UserWalletPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/member/directReferrals"
+              element={
+                <ProtectedRoute>
+                  <MyDirectReferralList />
                 </ProtectedRoute>
               }
             />

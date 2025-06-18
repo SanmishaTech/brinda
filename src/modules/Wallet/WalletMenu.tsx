@@ -79,7 +79,7 @@ export default function WalletButton() {
           <ChevronDown className="w-4 h-4 text-gray-500" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56" align="end">
+      {/* <DropdownMenuContent className="w-56" align="end">
         <DropdownMenuLabel className="flex items-center gap-2">
           <Wallet className="w-4 h-4" />
           Wallet Balance: ₹{data !== null ? data.toFixed(2) : "N/A"}
@@ -91,6 +91,15 @@ export default function WalletButton() {
         >
           <Plus className="w-4 h-4" />
           Add Money
+        </DropdownMenuItem>
+      </DropdownMenuContent> */}
+      <DropdownMenuContent className="w-56" align="end">
+        <DropdownMenuItem
+          onClick={() => navigate("/member/wallet")}
+          className="flex items-center gap-2 cursor-pointer"
+        >
+          <Wallet className="w-4 h-4" />
+          Wallet Balance: ₹{data !== null ? data.toFixed(2) : "N/A"}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
