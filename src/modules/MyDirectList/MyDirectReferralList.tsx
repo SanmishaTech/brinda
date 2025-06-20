@@ -172,41 +172,6 @@ const MyDireactReferralList = () => {
                   </TableRow>
                   <TableRow>
                     <TableHead
-                      onClick={() => handleSort("memberName")}
-                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
-                    >
-                      <div className="flex items-center">
-                        <span>Name</span>
-                        {sortBy === "memberName" && (
-                          <span className="ml-1">
-                            {sortOrder === "asc" ? (
-                              <ChevronUp size={16} />
-                            ) : (
-                              <ChevronDown size={16} />
-                            )}
-                          </span>
-                        )}
-                      </div>
-                    </TableHead>
-
-                    <TableHead
-                      onClick={() => handleSort("status")}
-                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
-                    >
-                      <div className="flex items-center">
-                        <span>Status</span>
-                        {sortBy === "status" && (
-                          <span className="ml-1">
-                            {sortOrder === "asc" ? (
-                              <ChevronUp size={16} />
-                            ) : (
-                              <ChevronDown size={16} />
-                            )}
-                          </span>
-                        )}
-                      </div>
-                    </TableHead>
-                    <TableHead
                       onClick={() => handleSort("memberUsername")}
                       className="cursor-pointer max-w-[250px] break-words whitespace-normal"
                     >
@@ -258,6 +223,7 @@ const MyDireactReferralList = () => {
                         )}
                       </div>
                     </TableHead>
+
                     <TableHead
                       onClick={() => handleSort("memberUsername")}
                       className="cursor-pointer max-w-[250px] break-words whitespace-normal"
@@ -265,6 +231,40 @@ const MyDireactReferralList = () => {
                       <div className="flex items-center">
                         <span>Username</span>
                         {sortBy === "memberUsername" && (
+                          <span className="ml-1">
+                            {sortOrder === "asc" ? (
+                              <ChevronUp size={16} />
+                            ) : (
+                              <ChevronDown size={16} />
+                            )}
+                          </span>
+                        )}
+                      </div>
+                    </TableHead>
+                    <TableHead
+                      onClick={() => handleSort("memberName")}
+                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
+                    >
+                      <div className="flex items-center">
+                        <span>Name</span>
+                        {sortBy === "memberName" && (
+                          <span className="ml-1">
+                            {sortOrder === "asc" ? (
+                              <ChevronUp size={16} />
+                            ) : (
+                              <ChevronDown size={16} />
+                            )}
+                          </span>
+                        )}
+                      </div>
+                    </TableHead>
+                    <TableHead
+                      onClick={() => handleSort("status")}
+                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
+                    >
+                      <div className="flex items-center">
+                        <span>Status</span>
+                        {sortBy === "status" && (
                           <span className="ml-1">
                             {sortOrder === "asc" ? (
                               <ChevronUp size={16} />
@@ -291,24 +291,26 @@ const MyDireactReferralList = () => {
                       <TableRow key={index}>
                         {/* LEFT side */}
                         <TableCell className="max-w-[250px] break-words whitespace-normal">
+                          {left?.memberUsername || "N/A"}
+                        </TableCell>
+                        <TableCell className="max-w-[250px] break-words whitespace-normal">
                           {left?.memberName || "N/A"}
                         </TableCell>
+
                         <TableCell className="max-w-[250px] break-words whitespace-normal">
                           {left?.status || "N/A"}
                         </TableCell>
-                        <TableCell className="max-w-[250px] break-words whitespace-normal">
-                          {left?.memberUsername || "N/A"}
-                        </TableCell>
 
                         {/* RIGHT side */}
+
+                        <TableCell className="max-w-[250px] break-words whitespace-normal">
+                          {right?.memberUsername || "N/A"}
+                        </TableCell>
                         <TableCell className="max-w-[250px] break-words whitespace-normal">
                           {right?.memberName || "N/A"}
                         </TableCell>
                         <TableCell className="max-w-[250px] break-words whitespace-normal">
                           {right?.status || "N/A"}
-                        </TableCell>
-                        <TableCell className="max-w-[250px] break-words whitespace-normal">
-                          {right?.memberUsername || "N/A"}
                         </TableCell>
                       </TableRow>
                     );

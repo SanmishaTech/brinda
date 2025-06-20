@@ -9,7 +9,7 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { formatCurrency, formatDate, formatDateTime } from "@/lib/formatter.js";
-
+import { DIAMOND } from "@/config/data";
 import {
   Loader,
   Wallet,
@@ -18,7 +18,6 @@ import {
   UserCheck,
 } from "lucide-react";
 import { toast } from "sonner";
-
 const fetchDashboardData = async () => {
   const response = await get("/dashboards");
   return response;
@@ -80,20 +79,22 @@ const MemberDashboard = () => {
         </Card>
 
         {/* PV Balance */}
-        <Card className="bg-blue-100 border border-blue-300 shadow-md">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-4 text-blue-700">
-              <TrendingUp className="w-10 h-10" />
-              PV Balance
-            </CardTitle>
-            <CardDescription>Your current PV balance</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-4xl font-bold text-blue-700">
-              {Number(pvBalance).toFixed(2)}
-            </p>
-          </CardContent>
-        </Card>
+        {status !== DIAMOND && (
+          <Card className="bg-blue-100 border border-blue-300 shadow-md">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-4 text-blue-700">
+                <TrendingUp className="w-10 h-10" />
+                PV Balance
+              </CardTitle>
+              <CardDescription>Your current PV balance</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-4xl font-bold text-blue-700">
+                {Number(pvBalance).toFixed(2)}
+              </p>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Status */}
         <Card className="bg-yellow-100 border border-yellow-300 shadow-md">

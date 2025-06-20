@@ -56,6 +56,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuGroup,
 } from "@/components/ui/dropdown-menu";
+import { ASSOCIATE, DIAMOND, GOLD, INACTIVE, SILVER } from "@/config/data";
 
 const fetchMembers = async (
   page: number,
@@ -314,7 +315,7 @@ const MemberList = () => {
                         )}
                       </div>
                     </TableHead>
-                    <TableHead
+                    {/* <TableHead
                       onClick={() => handleSort("leftDirectCount")}
                       className="cursor-pointer max-w-[250px] break-words whitespace-normal"
                     >
@@ -330,7 +331,7 @@ const MemberList = () => {
                           </span>
                         )}
                       </div>
-                    </TableHead>
+                    </TableHead> */}
                     <TableHead
                       onClick={() => handleSort("rightCount")}
                       className="cursor-pointer max-w-[250px] break-words whitespace-normal"
@@ -349,7 +350,7 @@ const MemberList = () => {
                       </div>
                     </TableHead>
 
-                    <TableHead
+                    {/* <TableHead
                       onClick={() => handleSort("rightDirectCount")}
                       className="cursor-pointer max-w-[250px] break-words whitespace-normal"
                     >
@@ -365,7 +366,7 @@ const MemberList = () => {
                           </span>
                         )}
                       </div>
-                    </TableHead>
+                    </TableHead> */}
                     <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
                       <div className="flex items-center">
                         <span>Password</span>
@@ -377,7 +378,7 @@ const MemberList = () => {
                       </div>
                     </TableHead>
 
-                    <TableHead
+                    {/* <TableHead
                       onClick={() => handleSort("memberEmail")}
                       className="cursor-pointer max-w-[200px] break-words whitespace-normal"
                     >
@@ -401,6 +402,23 @@ const MemberList = () => {
                       <div className="flex items-center">
                         <span>Mobile</span>
                         {sortBy === "memberMobile" && (
+                          <span className="ml-1">
+                            {sortOrder === "asc" ? (
+                              <ChevronUp size={16} />
+                            ) : (
+                              <ChevronDown size={16} />
+                            )}
+                          </span>
+                        )}
+                      </div>
+                    </TableHead> */}
+                    <TableHead
+                      onClick={() => handleSort("status")}
+                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
+                    >
+                      <div className="flex items-center">
+                        <span>Status</span>
+                        {sortBy === "status" && (
                           <span className="ml-1">
                             {sortOrder === "asc" ? (
                               <ChevronUp size={16} />
@@ -434,18 +452,18 @@ const MemberList = () => {
                         {member?.positionToParent || "N/A"}
                       </TableCell>
                       <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {member?.leftCount}+ {member?.leftDirectCount}
+                        {member?.leftDirectCount}+ {member?.leftCount}
                       </TableCell>
 
-                      <TableCell className="max-w-[250px] break-words whitespace-normal">
+                      {/* <TableCell className="max-w-[250px] break-words whitespace-normal">
                         {member?.leftDirectCount}
-                      </TableCell>
+                      </TableCell> */}
                       <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {member?.rightCount} + {member?.rightDirectCount}
+                        {member?.rightDirectCount}+ {member?.rightCount}
                       </TableCell>
-                      <TableCell className="max-w-[250px] break-words whitespace-normal">
+                      {/* <TableCell className="max-w-[250px] break-words whitespace-normal">
                         {member?.rightDirectCount}
-                      </TableCell>
+                      </TableCell> */}
                       <TableCell className="max-w-[250px] break-words whitespace-normal">
                         <span>
                           {visiblePasswords[member.id]
@@ -482,33 +500,33 @@ const MemberList = () => {
                           )}
                         </button>
                       </TableCell>
-                      <TableCell className="max-w-[200px] break-words whitespace-normal">
+                      {/* <TableCell className="max-w-[200px] break-words whitespace-normal">
                         {member.memberEmail || "N/A"}
                       </TableCell>
                       <TableCell className="max-w-[250px] break-words whitespace-normal">
                         {member.memberMobile || "N/A"}
+                      </TableCell> */}
+                      <TableCell>
+                        <span
+                          className={`px-2 py-1 text-xs font-medium rounded-full  ${
+                            member.status === INACTIVE
+                              ? "bg-red-100 text-red-600"
+                              : member.status === ASSOCIATE
+                              ? "bg-blue-100 text-blue-600"
+                              : member.status === SILVER
+                              ? "bg-gray-200 text-gray-700"
+                              : member.status === GOLD
+                              ? "bg-yellow-200 text-yellow-800"
+                              : member.status === DIAMOND
+                              ? "bg-green-200 text-green-700"
+                              : "bg-gray-100 text-gray-500"
+                          }`}
+                        >
+                          {member.status ? member.status : "N/A"}
+                        </span>
                       </TableCell>
 
                       <TableCell>
-                        {/* <div className="flex gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() =>
-                              navigate(`/products/${member.id}/edit`)
-                            }
-                          >
-                            <Edit size={16} />
-                          </Button>
-
-                          <Button
-                            variant="destructive"
-                            size="sm"
-                            onClick={() => confirmDelete(member.id)}
-                          >
-                            <Trash2 size={16} />
-                          </Button>
-                        </div> */}
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" className="h-8 w-8 p-0">
@@ -564,16 +582,7 @@ const MemberList = () => {
         </CardContent>
       </Card>
 
-      <ConfirmDialog
-        isOpen={showConfirmation}
-        title="Confirm Deletion"
-        description="Are you sure you want to delete this Member? This action cannot be undone."
-        onCancel={() => {
-          setShowConfirmation(false);
-          setMemberToDelete(null);
-        }}
-        onConfirm={handleDelete}
-      />
+   
     </div>
   );
 };

@@ -48,11 +48,11 @@ const initialData = {
           url: "/member/directReferrals",
           icon: UsersRound,
         },
-        {
-          name: "Member Logs",
-          url: "/member/logs",
-          icon: UsersRound,
-        },
+        // {
+        //   name: "Member Logs",
+        //   url: "/member/logs",
+        //   icon: UsersRound,
+        // },
         {
           name: "Genealogy",
           url: "/genealogy",

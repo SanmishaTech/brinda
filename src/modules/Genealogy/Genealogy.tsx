@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { get } from "@/services/apiService";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { ASSOCIATE, DIAMOND, GOLD, INACTIVE, SILVER } from "@/config/data";
 
 // 🎯 Get memberId from localStorage
 const getLoggedInMemberId = () => {
@@ -111,15 +112,15 @@ const NodeCard = ({ label, status, onClick }) => (
       <div
         className={`text-[10px] mt-1 font-semibold px-2 py-0.5 rounded-full
     ${
-      status === "Inactive"
+      status === INACTIVE
         ? "bg-red-100 text-red-600"
-        : status === "Associate"
+        : status === ASSOCIATE
         ? "bg-blue-100 text-blue-600"
-        : status === "Silver"
+        : status === SILVER
         ? "bg-gray-200 text-gray-700"
-        : status === "Gold"
+        : status === GOLD
         ? "bg-yellow-200 text-yellow-800"
-        : status === "Diamond"
+        : status === DIAMOND
         ? "bg-green-200 text-green-700"
         : "bg-gray-100 text-gray-500"
     }
@@ -226,27 +227,26 @@ const generatePositions = (node, depth = 0, offset = 0, gap = 140) => {
 // 🎯 Chart renderer
 const BinaryTreeChart = ({ tree, onNodeClick }) => {
   const [_, positions] = generatePositions(tree);
-
   const maxY = Math.max(...Object.values(positions).map((p) => p.y)) + 100;
 
+  // Calculate total width based on max x position
+  const maxX = Math.max(...Object.values(positions).map((p) => p.x)) + 120;
+
   return (
-    // <div className="relative w-full h-auto overflow-x-auto">
-    //   <svg width="100%" height={maxY}>
-    //     <BinaryTreeNode
-    //       node={tree}
-    //       onNodeClick={onNodeClick}
-    //       positions={positions}
-    //     />
-    //   </svg>
-    // </div>
     <div className="relative w-full h-auto overflow-x-auto flex justify-center">
-      <svg width="auto" height={maxY}>
-        <BinaryTreeNode
-          node={tree}
-          onNodeClick={onNodeClick}
-          positions={positions}
-        />
-      </svg>
+      {/* Container with fixed width and scaling on mobile */}
+      <div
+        className="origin-top-left sm:scale-100 scale-50"
+        style={{ width: maxX, minWidth: maxX }}
+      >
+        <svg width={maxX} height={maxY}>
+          <BinaryTreeNode
+            node={tree}
+            onNodeClick={onNodeClick}
+            positions={positions}
+          />
+        </svg>
+      </div>
     </div>
   );
 };
