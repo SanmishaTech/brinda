@@ -74,7 +74,7 @@ const fetchMembers = async (
 const MemberList = () => {
   const queryClient = useQueryClient();
   const [currentPage, setCurrentPage] = useState(1);
-  const [recordsPerPage, setRecordsPerPage] = useState(10); // Add recordsPerPage state
+  const [recordsPerPage, setRecordsPerPage] = useState(50); // Add recordsPerPage state
   const [sortBy, setSortBy] = useState("memberUsername"); // Default sort column
   const [sortOrder, setSortOrder] = useState("asc"); // Default sort order
   const [search, setSearch] = useState(""); // Search query
@@ -350,6 +350,65 @@ const MemberList = () => {
                       </div>
                     </TableHead>
 
+                    <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
+                      <div className="flex items-center">
+                        <span>Left ASGD</span>
+                      </div>
+                    </TableHead>
+                    <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
+                      <div className="flex items-center">
+                        <span>Right ASGD</span>
+                      </div>
+                    </TableHead>
+                    <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
+                      <div className="flex items-center">
+                        <span>C ASGD</span>
+                      </div>
+                    </TableHead>
+                    <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
+                      <div className="flex items-center">
+                        <span>L1</span>
+                      </div>
+                    </TableHead>
+                    <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
+                      <div className="flex items-center">
+                        <span>L2</span>
+                      </div>
+                    </TableHead>
+                    <TableHead
+                      onClick={() => handleSort("matchingIncomeWalletBalance")}
+                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
+                    >
+                      <div className="flex items-center">
+                        <span>matching Income</span>
+                        {sortBy === "matchingIncomeWalletBalance" && (
+                          <span className="ml-1">
+                            {sortOrder === "asc" ? (
+                              <ChevronUp size={16} />
+                            ) : (
+                              <ChevronDown size={16} />
+                            )}
+                          </span>
+                        )}
+                      </div>
+                    </TableHead>
+                    <TableHead
+                      onClick={() => handleSort("")}
+                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
+                    >
+                      <div className="flex items-center">
+                        <span>2:1</span>
+                        {sortBy === "" && (
+                          <span className="ml-1">
+                            {sortOrder === "asc" ? (
+                              <ChevronUp size={16} />
+                            ) : (
+                              <ChevronDown size={16} />
+                            )}
+                          </span>
+                        )}
+                      </div>
+                    </TableHead>
                     {/* <TableHead
                       onClick={() => handleSort("rightDirectCount")}
                       className="cursor-pointer max-w-[250px] break-words whitespace-normal"
@@ -367,7 +426,7 @@ const MemberList = () => {
                         )}
                       </div>
                     </TableHead> */}
-                    <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
+                    {/* <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
                       <div className="flex items-center">
                         <span>Password</span>
                       </div>
@@ -376,7 +435,7 @@ const MemberList = () => {
                       <div className="flex items-center">
                         <span>T Pin</span>
                       </div>
-                    </TableHead>
+                    </TableHead> */}
 
                     {/* <TableHead
                       onClick={() => handleSort("memberEmail")}
@@ -454,17 +513,56 @@ const MemberList = () => {
                       <TableCell className="max-w-[250px] break-words whitespace-normal">
                         {member?.leftDirectCount}+ {member?.leftCount}
                       </TableCell>
-
-                      {/* <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {member?.leftDirectCount}
-                      </TableCell> */}
                       <TableCell className="max-w-[250px] break-words whitespace-normal">
                         {member?.rightDirectCount}+ {member?.rightCount}
                       </TableCell>
+
+                      <TableCell className="max-w-[250px] break-words whitespace-normal">
+                        {member?.leftAssociateBalance},
+                        {member?.leftSilverBalance},{member?.leftGoldBalance},
+                        {member?.leftDiamondBalance}
+                      </TableCell>
+                      <TableCell className="max-w-[250px] break-words whitespace-normal">
+                        {member?.rightAssociateBalance},
+                        {member?.rightSilverBalance},{member?.rightGoldBalance},
+                        {member?.rightDiamondBalance}
+                      </TableCell>
+                      <TableCell className="max-w-[250px] break-words whitespace-normal">
+                        {member?.associateCommissionCount},
+                        {member?.silverCommissionCount},
+                        {member?.goldCommissionCount},
+                        {member?.diamondCommissionCount}
+                      </TableCell>
+                      <TableCell className="max-w-[250px] break-words whitespace-normal">
+                        {member?.matchingMentorIncomeL1}
+                      </TableCell>
+                      <TableCell className="max-w-[250px] break-words whitespace-normal">
+                        {member?.matchingMentorIncomeL2}
+                      </TableCell>
+
+                      <TableCell className="max-w-[250px] break-words whitespace-normal">
+                        {formatCurrency(member?.matchingIncomeWalletBalance)}
+                      </TableCell>
+
+                      <TableCell>
+                        <span
+                          className={`px-2 py-1 text-xs font-medium rounded-full  ${
+                            member.is2_1Pass === false
+                              ? "bg-red-100 text-red-600"
+                              : "bg-green-100 text-green-600"
+                          }`}
+                        >
+                          {member.is2_1Pass ? "TRUE" : "FALSE"}
+                        </span>
+                      </TableCell>
+                      {/* <TableCell className="max-w-[250px] break-words whitespace-normal">
+                        {member?.leftDirectCount}
+                      </TableCell> */}
+
                       {/* <TableCell className="max-w-[250px] break-words whitespace-normal">
                         {member?.rightDirectCount}
                       </TableCell> */}
-                      <TableCell className="max-w-[250px] break-words whitespace-normal">
+                      {/* <TableCell className="max-w-[250px] break-words whitespace-normal">
                         <span>
                           {visiblePasswords[member.id]
                             ? member?.user?.password || "N/A"
@@ -481,8 +579,8 @@ const MemberList = () => {
                             <Eye size={16} />
                           )}
                         </button>
-                      </TableCell>
-                      <TableCell className="max-w-[250px] break-words whitespace-normal">
+                      </TableCell> */}
+                      {/* <TableCell className="max-w-[250px] break-words whitespace-normal">
                         <span>
                           {visibleTPins[member.id]
                             ? member?.tPin || "N/A"
@@ -499,7 +597,7 @@ const MemberList = () => {
                             <Eye size={16} />
                           )}
                         </button>
-                      </TableCell>
+                      </TableCell> */}
                       {/* <TableCell className="max-w-[200px] break-words whitespace-normal">
                         {member.memberEmail || "N/A"}
                       </TableCell>
@@ -581,8 +679,6 @@ const MemberList = () => {
           )}
         </CardContent>
       </Card>
-
-   
     </div>
   );
 };
