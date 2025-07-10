@@ -209,113 +209,114 @@ const MemberList = () => {
               Failed to load members.
             </div>
           ) : members.length > 0 ? (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead
-                      onClick={() => handleSort("memberName")}
-                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
-                    >
-                      <div className="flex items-center">
-                        <span>Name</span>
-                        {sortBy === "memberName" && (
-                          <span className="ml-1">
-                            {sortOrder === "asc" ? (
-                              <ChevronUp size={16} />
-                            ) : (
-                              <ChevronDown size={16} />
-                            )}
-                          </span>
-                        )}
-                      </div>
-                    </TableHead>
-                    <TableHead
-                      onClick={() => handleSort("memberUsername")}
-                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
-                    >
-                      <div className="flex items-center">
-                        <span>Username</span>
-                        {sortBy === "memberUsername" && (
-                          <span className="ml-1">
-                            {sortOrder === "asc" ? (
-                              <ChevronUp size={16} />
-                            ) : (
-                              <ChevronDown size={16} />
-                            )}
-                          </span>
-                        )}
-                      </div>
-                    </TableHead>
-                    <TableHead
-                      onClick={() => handleSort("sponsor")}
-                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
-                    >
-                      <div className="flex items-center">
-                        <span>Sponsor</span>
-                        {sortBy === "sponsor" && (
-                          <span className="ml-1">
-                            {sortOrder === "asc" ? (
-                              <ChevronUp size={16} />
-                            ) : (
-                              <ChevronDown size={16} />
-                            )}
-                          </span>
-                        )}
-                      </div>
-                    </TableHead>
-                    <TableHead
-                      onClick={() => handleSort("parent")}
-                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
-                    >
-                      <div className="flex items-center">
-                        <span>Parent</span>
-                        {sortBy === "parent" && (
-                          <span className="ml-1">
-                            {sortOrder === "asc" ? (
-                              <ChevronUp size={16} />
-                            ) : (
-                              <ChevronDown size={16} />
-                            )}
-                          </span>
-                        )}
-                      </div>
-                    </TableHead>
-                    <TableHead
-                      onClick={() => handleSort("positionToParent")}
-                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
-                    >
-                      <div className="flex items-center">
-                        <span>Position</span>
-                        {sortBy === "positionToParent" && (
-                          <span className="ml-1">
-                            {sortOrder === "asc" ? (
-                              <ChevronUp size={16} />
-                            ) : (
-                              <ChevronDown size={16} />
-                            )}
-                          </span>
-                        )}
-                      </div>
-                    </TableHead>
-                    <TableHead
-                      onClick={() => handleSort("leftCount")}
-                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
-                    >
-                      <div className="flex items-center">
-                        <span>LC</span>
-                        {sortBy === "leftCount" && (
-                          <span className="ml-1">
-                            {sortOrder === "asc" ? (
-                              <ChevronUp size={16} />
-                            ) : (
-                              <ChevronDown size={16} />
-                            )}
-                          </span>
-                        )}
-                      </div>
-                    </TableHead>
-                    {/* <TableHead
+            <div className=" w-full overflow-x-auto">
+              <div className="min-w-[1200px]">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead
+                        onClick={() => handleSort("memberName")}
+                        className="cursor-pointer max-w-[250px] break-words whitespace-normal"
+                      >
+                        <div className="flex items-center">
+                          <span>Name</span>
+                          {sortBy === "memberName" && (
+                            <span className="ml-1">
+                              {sortOrder === "asc" ? (
+                                <ChevronUp size={16} />
+                              ) : (
+                                <ChevronDown size={16} />
+                              )}
+                            </span>
+                          )}
+                        </div>
+                      </TableHead>
+                      <TableHead
+                        onClick={() => handleSort("memberUsername")}
+                        className="cursor-pointer max-w-[250px] break-words whitespace-normal"
+                      >
+                        <div className="flex items-center">
+                          <span>Username</span>
+                          {sortBy === "memberUsername" && (
+                            <span className="ml-1">
+                              {sortOrder === "asc" ? (
+                                <ChevronUp size={16} />
+                              ) : (
+                                <ChevronDown size={16} />
+                              )}
+                            </span>
+                          )}
+                        </div>
+                      </TableHead>
+                      <TableHead
+                        onClick={() => handleSort("sponsor")}
+                        className="cursor-pointer max-w-[250px] break-words whitespace-normal"
+                      >
+                        <div className="flex items-center">
+                          <span>Sponsor</span>
+                          {sortBy === "sponsor" && (
+                            <span className="ml-1">
+                              {sortOrder === "asc" ? (
+                                <ChevronUp size={16} />
+                              ) : (
+                                <ChevronDown size={16} />
+                              )}
+                            </span>
+                          )}
+                        </div>
+                      </TableHead>
+                      <TableHead
+                        onClick={() => handleSort("parent")}
+                        className="cursor-pointer max-w-[250px] break-words whitespace-normal"
+                      >
+                        <div className="flex items-center">
+                          <span>Parent</span>
+                          {sortBy === "parent" && (
+                            <span className="ml-1">
+                              {sortOrder === "asc" ? (
+                                <ChevronUp size={16} />
+                              ) : (
+                                <ChevronDown size={16} />
+                              )}
+                            </span>
+                          )}
+                        </div>
+                      </TableHead>
+                      <TableHead
+                        onClick={() => handleSort("positionToParent")}
+                        className="cursor-pointer max-w-[250px] break-words whitespace-normal"
+                      >
+                        <div className="flex items-center">
+                          <span>Position</span>
+                          {sortBy === "positionToParent" && (
+                            <span className="ml-1">
+                              {sortOrder === "asc" ? (
+                                <ChevronUp size={16} />
+                              ) : (
+                                <ChevronDown size={16} />
+                              )}
+                            </span>
+                          )}
+                        </div>
+                      </TableHead>
+                      <TableHead
+                        onClick={() => handleSort("leftCount")}
+                        className="cursor-pointer max-w-[250px] break-words whitespace-normal"
+                      >
+                        <div className="flex items-center">
+                          <span>LC</span>
+                          {sortBy === "leftCount" && (
+                            <span className="ml-1">
+                              {sortOrder === "asc" ? (
+                                <ChevronUp size={16} />
+                              ) : (
+                                <ChevronDown size={16} />
+                              )}
+                            </span>
+                          )}
+                        </div>
+                      </TableHead>
+                      {/* <TableHead
                       onClick={() => handleSort("leftDirectCount")}
                       className="cursor-pointer max-w-[250px] break-words whitespace-normal"
                     >
@@ -332,84 +333,86 @@ const MemberList = () => {
                         )}
                       </div>
                     </TableHead> */}
-                    <TableHead
-                      onClick={() => handleSort("rightCount")}
-                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
-                    >
-                      <div className="flex items-center">
-                        <span>RC</span>
-                        {sortBy === "rightCount" && (
-                          <span className="ml-1">
-                            {sortOrder === "asc" ? (
-                              <ChevronUp size={16} />
-                            ) : (
-                              <ChevronDown size={16} />
-                            )}
-                          </span>
-                        )}
-                      </div>
-                    </TableHead>
+                      <TableHead
+                        onClick={() => handleSort("rightCount")}
+                        className="cursor-pointer max-w-[250px] break-words whitespace-normal"
+                      >
+                        <div className="flex items-center">
+                          <span>RC</span>
+                          {sortBy === "rightCount" && (
+                            <span className="ml-1">
+                              {sortOrder === "asc" ? (
+                                <ChevronUp size={16} />
+                              ) : (
+                                <ChevronDown size={16} />
+                              )}
+                            </span>
+                          )}
+                        </div>
+                      </TableHead>
 
-                    <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
-                      <div className="flex items-center">
-                        <span>Left ASGD</span>
-                      </div>
-                    </TableHead>
-                    <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
-                      <div className="flex items-center">
-                        <span>Right ASGD</span>
-                      </div>
-                    </TableHead>
-                    <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
-                      <div className="flex items-center">
-                        <span>C ASGD</span>
-                      </div>
-                    </TableHead>
-                    <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
-                      <div className="flex items-center">
-                        <span>L1</span>
-                      </div>
-                    </TableHead>
-                    <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
-                      <div className="flex items-center">
-                        <span>L2</span>
-                      </div>
-                    </TableHead>
-                    <TableHead
-                      onClick={() => handleSort("matchingIncomeWalletBalance")}
-                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
-                    >
-                      <div className="flex items-center">
-                        <span>matching Income</span>
-                        {sortBy === "matchingIncomeWalletBalance" && (
-                          <span className="ml-1">
-                            {sortOrder === "asc" ? (
-                              <ChevronUp size={16} />
-                            ) : (
-                              <ChevronDown size={16} />
-                            )}
-                          </span>
-                        )}
-                      </div>
-                    </TableHead>
-                    <TableHead
-                      onClick={() => handleSort("")}
-                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
-                    >
-                      <div className="flex items-center">
-                        <span>2:1</span>
-                        {sortBy === "" && (
-                          <span className="ml-1">
-                            {sortOrder === "asc" ? (
-                              <ChevronUp size={16} />
-                            ) : (
-                              <ChevronDown size={16} />
-                            )}
-                          </span>
-                        )}
-                      </div>
-                    </TableHead>
-                    {/* <TableHead
+                      <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
+                        <div className="flex items-center">
+                          <span>Left ASGD</span>
+                        </div>
+                      </TableHead>
+                      <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
+                        <div className="flex items-center">
+                          <span>Right ASGD</span>
+                        </div>
+                      </TableHead>
+                      <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
+                        <div className="flex items-center">
+                          <span>C ASGD</span>
+                        </div>
+                      </TableHead>
+                      <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
+                        <div className="flex items-center">
+                          <span>L1</span>
+                        </div>
+                      </TableHead>
+                      <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
+                        <div className="flex items-center">
+                          <span>L2</span>
+                        </div>
+                      </TableHead>
+                      <TableHead
+                        onClick={() =>
+                          handleSort("matchingIncomeWalletBalance")
+                        }
+                        className="cursor-pointer max-w-[250px] break-words whitespace-normal"
+                      >
+                        <div className="flex items-center">
+                          <span>matching Income</span>
+                          {sortBy === "matchingIncomeWalletBalance" && (
+                            <span className="ml-1">
+                              {sortOrder === "asc" ? (
+                                <ChevronUp size={16} />
+                              ) : (
+                                <ChevronDown size={16} />
+                              )}
+                            </span>
+                          )}
+                        </div>
+                      </TableHead>
+                      <TableHead
+                        onClick={() => handleSort("")}
+                        className="cursor-pointer max-w-[250px] break-words whitespace-normal"
+                      >
+                        <div className="flex items-center">
+                          <span>2:1</span>
+                          {sortBy === "" && (
+                            <span className="ml-1">
+                              {sortOrder === "asc" ? (
+                                <ChevronUp size={16} />
+                              ) : (
+                                <ChevronDown size={16} />
+                              )}
+                            </span>
+                          )}
+                        </div>
+                      </TableHead>
+                      {/* <TableHead
                       onClick={() => handleSort("rightDirectCount")}
                       className="cursor-pointer max-w-[250px] break-words whitespace-normal"
                     >
@@ -426,7 +429,7 @@ const MemberList = () => {
                         )}
                       </div>
                     </TableHead> */}
-                    {/* <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
+                      {/* <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
                       <div className="flex items-center">
                         <span>Password</span>
                       </div>
@@ -437,7 +440,7 @@ const MemberList = () => {
                       </div>
                     </TableHead> */}
 
-                    {/* <TableHead
+                      {/* <TableHead
                       onClick={() => handleSort("memberEmail")}
                       className="cursor-pointer max-w-[200px] break-words whitespace-normal"
                     >
@@ -471,98 +474,99 @@ const MemberList = () => {
                         )}
                       </div>
                     </TableHead> */}
-                    <TableHead
-                      onClick={() => handleSort("status")}
-                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
-                    >
-                      <div className="flex items-center">
-                        <span>Status</span>
-                        {sortBy === "status" && (
-                          <span className="ml-1">
-                            {sortOrder === "asc" ? (
-                              <ChevronUp size={16} />
-                            ) : (
-                              <ChevronDown size={16} />
-                            )}
+                      <TableHead
+                        onClick={() => handleSort("status")}
+                        className="cursor-pointer max-w-[250px] break-words whitespace-normal"
+                      >
+                        <div className="flex items-center">
+                          <span>Status</span>
+                          {sortBy === "status" && (
+                            <span className="ml-1">
+                              {sortOrder === "asc" ? (
+                                <ChevronUp size={16} />
+                              ) : (
+                                <ChevronDown size={16} />
+                              )}
+                            </span>
+                          )}
+                        </div>
+                      </TableHead>
+
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody className="text-xs">
+                    {members.map((member) => (
+                      <TableRow key={member.id}>
+                        <TableCell className="max-w-[250px] break-words whitespace-normal">
+                          {member.memberName || "N/A"}
+                        </TableCell>
+                        <TableCell className="max-w-[250px] break-words whitespace-normal">
+                          {member.memberUsername || "N/A"}
+                        </TableCell>
+                        <TableCell className="max-w-[250px] break-words whitespace-normal">
+                          {member?.sponsor?.memberUsername || "N/A"}
+                        </TableCell>
+                        <TableCell className="max-w-[250px] break-words whitespace-normal">
+                          {member?.parent?.memberUsername || "N/A"}
+                        </TableCell>
+                        <TableCell className="max-w-[250px] break-words whitespace-normal">
+                          {member?.positionToParent || "N/A"}
+                        </TableCell>
+                        <TableCell className="max-w-[250px] break-words whitespace-normal">
+                          {member?.leftDirectCount}+ {member?.leftCount}
+                        </TableCell>
+                        <TableCell className="max-w-[250px] break-words whitespace-normal">
+                          {member?.rightDirectCount}+ {member?.rightCount}
+                        </TableCell>
+
+                        <TableCell className="max-w-[250px] break-words whitespace-normal">
+                          {member?.leftAssociateBalance},
+                          {member?.leftSilverBalance},{member?.leftGoldBalance},
+                          {member?.leftDiamondBalance}
+                        </TableCell>
+                        <TableCell className="max-w-[250px] break-words whitespace-normal">
+                          {member?.rightAssociateBalance},
+                          {member?.rightSilverBalance},
+                          {member?.rightGoldBalance},
+                          {member?.rightDiamondBalance}
+                        </TableCell>
+                        <TableCell className="max-w-[250px] break-words whitespace-normal">
+                          {member?.associateCommissionCount},
+                          {member?.silverCommissionCount},
+                          {member?.goldCommissionCount},
+                          {member?.diamondCommissionCount}
+                        </TableCell>
+                        <TableCell className="max-w-[250px] break-words whitespace-normal">
+                          {member?.matchingMentorIncomeL1}
+                        </TableCell>
+                        <TableCell className="max-w-[250px] break-words whitespace-normal">
+                          {member?.matchingMentorIncomeL2}
+                        </TableCell>
+
+                        <TableCell className="max-w-[250px] break-words whitespace-normal">
+                          {formatCurrency(member?.matchingIncomeWalletBalance)}
+                        </TableCell>
+
+                        <TableCell>
+                          <span
+                            className={`px-2 py-1 text-xs font-medium rounded-full  ${
+                              member.is2_1Pass === false
+                                ? "bg-red-100 text-red-600"
+                                : "bg-green-100 text-green-600"
+                            }`}
+                          >
+                            {member.is2_1Pass ? "TRUE" : "FALSE"}
                           </span>
-                        )}
-                      </div>
-                    </TableHead>
-
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody className="text-xs">
-                  {members.map((member) => (
-                    <TableRow key={member.id}>
-                      <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {member.memberName || "N/A"}
-                      </TableCell>
-                      <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {member.memberUsername || "N/A"}
-                      </TableCell>
-                      <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {member?.sponsor?.memberUsername || "N/A"}
-                      </TableCell>
-                      <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {member?.parent?.memberUsername || "N/A"}
-                      </TableCell>
-                      <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {member?.positionToParent || "N/A"}
-                      </TableCell>
-                      <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {member?.leftDirectCount}+ {member?.leftCount}
-                      </TableCell>
-                      <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {member?.rightDirectCount}+ {member?.rightCount}
-                      </TableCell>
-
-                      <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {member?.leftAssociateBalance},
-                        {member?.leftSilverBalance},{member?.leftGoldBalance},
-                        {member?.leftDiamondBalance}
-                      </TableCell>
-                      <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {member?.rightAssociateBalance},
-                        {member?.rightSilverBalance},{member?.rightGoldBalance},
-                        {member?.rightDiamondBalance}
-                      </TableCell>
-                      <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {member?.associateCommissionCount},
-                        {member?.silverCommissionCount},
-                        {member?.goldCommissionCount},
-                        {member?.diamondCommissionCount}
-                      </TableCell>
-                      <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {member?.matchingMentorIncomeL1}
-                      </TableCell>
-                      <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {member?.matchingMentorIncomeL2}
-                      </TableCell>
-
-                      <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {formatCurrency(member?.matchingIncomeWalletBalance)}
-                      </TableCell>
-
-                      <TableCell>
-                        <span
-                          className={`px-2 py-1 text-xs font-medium rounded-full  ${
-                            member.is2_1Pass === false
-                              ? "bg-red-100 text-red-600"
-                              : "bg-green-100 text-green-600"
-                          }`}
-                        >
-                          {member.is2_1Pass ? "TRUE" : "FALSE"}
-                        </span>
-                      </TableCell>
-                      {/* <TableCell className="max-w-[250px] break-words whitespace-normal">
+                        </TableCell>
+                        {/* <TableCell className="max-w-[250px] break-words whitespace-normal">
                         {member?.leftDirectCount}
                       </TableCell> */}
 
-                      {/* <TableCell className="max-w-[250px] break-words whitespace-normal">
+                        {/* <TableCell className="max-w-[250px] break-words whitespace-normal">
                         {member?.rightDirectCount}
                       </TableCell> */}
-                      {/* <TableCell className="max-w-[250px] break-words whitespace-normal">
+                        {/* <TableCell className="max-w-[250px] break-words whitespace-normal">
                         <span>
                           {visiblePasswords[member.id]
                             ? member?.user?.password || "N/A"
@@ -580,7 +584,7 @@ const MemberList = () => {
                           )}
                         </button>
                       </TableCell> */}
-                      {/* <TableCell className="max-w-[250px] break-words whitespace-normal">
+                        {/* <TableCell className="max-w-[250px] break-words whitespace-normal">
                         <span>
                           {visibleTPins[member.id]
                             ? member?.tPin || "N/A"
@@ -598,81 +602,83 @@ const MemberList = () => {
                           )}
                         </button>
                       </TableCell> */}
-                      {/* <TableCell className="max-w-[200px] break-words whitespace-normal">
+                        {/* <TableCell className="max-w-[200px] break-words whitespace-normal">
                         {member.memberEmail || "N/A"}
                       </TableCell>
                       <TableCell className="max-w-[250px] break-words whitespace-normal">
                         {member.memberMobile || "N/A"}
                       </TableCell> */}
-                      <TableCell>
-                        <span
-                          className={`px-2 py-1 text-xs font-medium rounded-full  ${
-                            member.status === INACTIVE
-                              ? "bg-red-100 text-red-600"
-                              : member.status === ASSOCIATE
-                              ? "bg-blue-100 text-blue-600"
-                              : member.status === SILVER
-                              ? "bg-gray-200 text-gray-700"
-                              : member.status === GOLD
-                              ? "bg-yellow-200 text-yellow-800"
-                              : member.status === DIAMOND
-                              ? "bg-green-200 text-green-700"
-                              : "bg-gray-100 text-gray-500"
-                          }`}
-                        >
-                          {member.status ? member.status : "N/A"}
-                        </span>
-                      </TableCell>
+                        <TableCell>
+                          <span
+                            className={`px-2 py-1 text-xs font-medium rounded-full  ${
+                              member.status === INACTIVE
+                                ? "bg-red-100 text-red-600"
+                                : member.status === ASSOCIATE
+                                ? "bg-blue-100 text-blue-600"
+                                : member.status === SILVER
+                                ? "bg-gray-200 text-gray-700"
+                                : member.status === GOLD
+                                ? "bg-yellow-200 text-yellow-800"
+                                : member.status === DIAMOND
+                                ? "bg-green-200 text-green-700"
+                                : "bg-gray-100 text-gray-500"
+                            }`}
+                          >
+                            {member.status ? member.status : "N/A"}
+                          </span>
+                        </TableCell>
 
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                              <span className="sr-only">Open menu</span>
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent className="w-56">
-                            <DropdownMenuGroup>
-                              <DropdownMenuItem
-                                onClick={() =>
-                                  navigate(`/members/${member.id}/edit`)
-                                }
-                              >
-                                <div className="flex items-center gap-2">
-                                  <SquarePen className="h-4 w-4" />
-                                  <span>Edit</span>
-                                </div>
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() =>
-                                  navigate(`/members/${member.id}/wallet`)
-                                }
-                              >
-                                <div className="flex items-center gap-2">
-                                  <Wallet className="h-4 w-4" />
-                                  <span>Wallet</span>
-                                </div>
-                              </DropdownMenuItem>
-                            </DropdownMenuGroup>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-              <CustomPagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                totalRecords={totalMembers}
-                recordsPerPage={recordsPerPage}
-                onPageChange={setCurrentPage} // Pass setCurrentPage directly
-                onRecordsPerPageChange={(newRecordsPerPage) => {
-                  setRecordsPerPage(newRecordsPerPage);
-                  setCurrentPage(1); // Reset to the first page when records per page changes
-                }}
-              />
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Open menu</span>
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="w-56">
+                              <DropdownMenuGroup>
+                                <DropdownMenuItem
+                                  onClick={() =>
+                                    navigate(`/members/${member.id}/edit`)
+                                  }
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <SquarePen className="h-4 w-4" />
+                                    <span>Edit</span>
+                                  </div>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onClick={() =>
+                                    navigate(`/members/${member.id}/wallet`)
+                                  }
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <Wallet className="h-4 w-4" />
+                                    <span>Wallet</span>
+                                  </div>
+                                </DropdownMenuItem>
+                              </DropdownMenuGroup>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+
+                <CustomPagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  totalRecords={totalMembers}
+                  recordsPerPage={recordsPerPage}
+                  onPageChange={setCurrentPage} // Pass setCurrentPage directly
+                  onRecordsPerPageChange={(newRecordsPerPage) => {
+                    setRecordsPerPage(newRecordsPerPage);
+                    setCurrentPage(1); // Reset to the first page when records per page changes
+                  }}
+                />
+              </div>
             </div>
           ) : (
             <div className="text-center">No Members Found.</div>

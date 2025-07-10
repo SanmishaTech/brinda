@@ -152,41 +152,40 @@ export default function MainLayout() {
 
   return (
     <SidebarProvider>
-      <div className="flex h-screen w-full overflow-hidden">
-        <AppSidebar />
-        <div className="flex-1 flex flex-col overflow-hidden">
-          {/* Sticky Header */}
-          <header className="sticky top-0 z-50 flex h-16 shrink-0 items-center gap-2 border-b bg-background shadow-sm transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
-            <div className="flex items-center gap-2 px-4 w-full justify-between">
-              {/* Sidebar Trigger and Breadcrumb */}
-              <div className="flex items-center gap-2">
-                <SidebarTrigger className="-ml-1" />
-                <Separator orientation="vertical" className="mr-2 h-4" />
-                <Breadcrumb>
-                  <BreadcrumbList>
-                    {getBreadcrumbs().map((crumb, index) => (
-                      <div key={crumb.path} className="flex items-center">
-                        <BreadcrumbItem className="hidden md:block">
-                          {crumb.isLast ? (
-                            <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
-                          ) : (
-                            <BreadcrumbLink href={crumb.path}>
-                              {crumb.label}
-                            </BreadcrumbLink>
-                          )}
-                        </BreadcrumbItem>
-                        {!crumb.isLast && (
-                          <BreadcrumbSeparator className="hidden md:block" />
+      <AppSidebar />
+      <SidebarInset>
+        {/* Sticky Header */}
+        <header className="sticky top-0 z-50 flex h-16 shrink-0 items-center gap-2 border-b bg-background shadow-sm transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+          <div className="flex items-center gap-2 px-4 w-full justify-between">
+            {/* Sidebar Trigger and Breadcrumb */}
+            <div className="flex items-center gap-2">
+              <SidebarTrigger className="-ml-1" />
+              <Separator orientation="vertical" className="mr-2 h-4" />
+              <Breadcrumb>
+                <BreadcrumbList>
+                  {getBreadcrumbs().map((crumb, index) => (
+                    <div key={crumb.path} className="flex items-center">
+                      <BreadcrumbItem className="hidden md:block">
+                        {crumb.isLast ? (
+                          <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
+                        ) : (
+                          <BreadcrumbLink href={crumb.path}>
+                            {crumb.label}
+                          </BreadcrumbLink>
                         )}
-                      </div>
-                    ))}
-                  </BreadcrumbList>
-                </Breadcrumb>
-              </div>
+                      </BreadcrumbItem>
+                      {!crumb.isLast && (
+                        <BreadcrumbSeparator className="hidden md:block" />
+                      )}
+                    </div>
+                  ))}
+                </BreadcrumbList>
+              </Breadcrumb>
+            </div>
 
-              <div>
-                <div className="flex items-center gap-2 w-full justify-between">
-                  {/* <Button
+            <div>
+              <div className="flex items-center gap-2 w-full justify-between">
+                {/* <Button
                   onClick={() => navigate("/wallet")}
                   className="size-7 cursor-pointer"
                   size="icon"
@@ -194,29 +193,26 @@ export default function MainLayout() {
                 >
                   <Wallet className="w-4 h-4" />
                 </Button> */}
-                  {!isAdmin && <WalletButton />}
-                  {/* Dark Mode Switcher */}
-                  <Button
-                    onClick={toggleDarkMode}
-                    className="size-7 cursor-pointer"
-                    variant="ghost"
-                    size="icon"
-                    aria-label="Toggle Dark Mode"
-                  >
-                    {isDarkMode ? <Moon /> : <Sun />}
-                  </Button>
-                </div>
+                {!isAdmin && <WalletButton />}
+                {/* Dark Mode Switcher */}
+                <Button
+                  onClick={toggleDarkMode}
+                  className="size-7 cursor-pointer"
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Toggle Dark Mode"
+                >
+                  {isDarkMode ? <Moon /> : <Sun />}
+                </Button>
               </div>
             </div>
-          </header>
+          </div>
+        </header>
 
-          <main className="pt-2 overflow-x-hidden">
-            <div className="px-1 sm:px-3 overflow-x-auto">
-              <Outlet />
-            </div>
-          </main>
-        </div>
-      </div>
+        <main className="pt-2">
+          <Outlet />
+        </main>
+      </SidebarInset>
     </SidebarProvider>
   );
 }
