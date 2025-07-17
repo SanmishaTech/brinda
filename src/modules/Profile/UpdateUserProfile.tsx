@@ -149,7 +149,6 @@ const UpdateUserProfile = () => {
   };
 
   const {
-    register,
     handleSubmit,
     setValue,
     setError,
@@ -284,11 +283,17 @@ const UpdateUserProfile = () => {
             {/* Name */}
             <div className="grid gap-2">
               <Label htmlFor="name">Full Name</Label>
-              <Input
-                id="name"
-                type="text"
-                placeholder="John Doe"
-                {...register("name")}
+              <Controller
+                name="name"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    id="name"
+                    type="text"
+                    placeholder="John Doe"
+                    {...field}
+                  />
+                )}
               />
               {errors.name && (
                 <span className="text-red-500 text-sm">
@@ -312,11 +317,17 @@ const UpdateUserProfile = () => {
             {/* Email */}
             <div className="grid gap-2">
               <Label htmlFor="email">Email Address</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="m@example.com"
-                {...register("email")}
+              <Controller
+                name="email"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="m@example.com"
+                    {...field}
+                  />
+                )}
               />
               {errors.email && (
                 <span className="text-red-500 text-sm">
@@ -328,12 +339,18 @@ const UpdateUserProfile = () => {
             {/* Mobile */}
             <div className="grid gap-2">
               <Label htmlFor="mobile">Mobile Number</Label>
-              <Input
-                id="mobile"
-                type="text"
-                maxLength={10}
-                placeholder="9876543210"
-                {...register("mobile")}
+              <Controller
+                name="mobile"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    id="mobile"
+                    type="text"
+                    maxLength={10}
+                    placeholder="9876543210"
+                    {...field}
+                  />
+                )}
               />
               {errors.mobile && (
                 <span className="text-red-500 text-sm">
@@ -345,13 +362,19 @@ const UpdateUserProfile = () => {
             {/* T Pin */}
             <div className="grid gap-2">
               <Label htmlFor="tPin">T Pin</Label>
-              <PasswordInput
-                id="tPin"
-                {...register("tPin")} // RHF validation triggers on change/blur
-                required
-                maxLength={4}
-                disabled={isLoading}
-                aria-invalid={errors.tPin ? "true" : "false"} // Accessibility
+              <Controller
+                name="tPin"
+                control={control}
+                render={({ field }) => (
+                  <PasswordInput
+                    id="tPin"
+                    required
+                    maxLength={4}
+                    disabled={isLoading}
+                    aria-invalid={errors.tPin ? "true" : "false"}
+                    {...field}
+                  />
+                )}
               />
               {errors.tPin && (
                 <span className="text-red-500 text-sm">
@@ -397,20 +420,6 @@ const UpdateUserProfile = () => {
               />
             </div>
 
-            {/* <div className="grid gap-2">
-              <Label htmlFor="memberGender">Gender</Label>
-              <Input
-                id="memberGender"
-                type="text"
-                placeholder="Male / Female / Other"
-                {...register("memberGender")}
-              />
-              {errors.memberGender && (
-                <span className="text-red-500 text-sm">
-                  {errors.memberGender.message}
-                </span>
-              )}
-            </div> */}
             {/* Gender */}
             <div className="grid gap-2">
               {" "}
@@ -442,7 +451,13 @@ const UpdateUserProfile = () => {
             {/* Date of Birth */}
             <div className="grid gap-2">
               <Label htmlFor="memberDob">Date of Birth</Label>
-              <Input id="memberDob" type="date" {...register("memberDob")} />
+              <Controller
+                name="memberDob"
+                control={control}
+                render={({ field }) => (
+                  <Input id="memberDob" type="date" {...field} />
+                )}
+              />
               {errors.memberDob && (
                 <span className="text-red-500 text-sm">
                   {errors.memberDob.message}
@@ -459,11 +474,17 @@ const UpdateUserProfile = () => {
             {/* Address */}
             <div className="grid gap-2">
               <Label htmlFor="memberAddress">Address</Label>
-              <Input
-                id="memberAddress"
-                type="text"
-                placeholder="123 Street, City"
-                {...register("memberAddress")}
+              <Controller
+                name="memberAddress"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    id="memberAddress"
+                    type="text"
+                    placeholder="123 Street, City"
+                    {...field}
+                  />
+                )}
               />
               {errors.memberAddress && (
                 <span className="text-red-500 text-sm">
@@ -475,12 +496,18 @@ const UpdateUserProfile = () => {
             {/* Pincode */}
             <div className="grid gap-2">
               <Label htmlFor="memberPincode">Pincode</Label>
-              <Input
-                id="memberPincode"
-                type="text"
-                maxLength={6}
-                placeholder="Enter Pincode"
-                {...register("memberPincode")}
+              <Controller
+                name="memberPincode"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    id="memberPincode"
+                    type="text"
+                    maxLength={6}
+                    placeholder="Enter Pincode"
+                    {...field}
+                  />
+                )}
               />
               {errors.memberPincode && (
                 <span className="text-red-500 text-sm">
@@ -489,22 +516,6 @@ const UpdateUserProfile = () => {
               )}
             </div>
 
-            {/* State */}
-            {/* <div className="grid gap-2">
-              <Label htmlFor="memberState">State</Label>
-              <Input
-                id="memberState"
-                type="text"
-                placeholder="Karnataka"
-                {...register("memberState")}
-              />
-              {errors.memberState && (
-                <span className="text-red-500 text-sm">
-                  {errors.memberState.message}
-                </span>
-              )}
-            </div>
-           */}
             <div className="grid gap-2">
               <Label htmlFor="memberState">State</Label>
 
@@ -582,11 +593,17 @@ const UpdateUserProfile = () => {
             {/* PAN Number */}
             <div className="grid gap-2">
               <Label htmlFor="panNumber">PAN Number</Label>
-              <Input
-                id="panNumber"
-                type="text"
-                placeholder="Pan Number"
-                {...register("panNumber")}
+              <Controller
+                name="panNumber"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    id="panNumber"
+                    type="text"
+                    placeholder="Pan Number"
+                    {...field}
+                  />
+                )}
               />
               {errors.panNumber && (
                 <span className="text-red-500 text-sm">
@@ -598,12 +615,18 @@ const UpdateUserProfile = () => {
             {/* Aadhar Number */}
             <div className="grid gap-2">
               <Label htmlFor="aadharNumber">Aadhar Number</Label>
-              <Input
-                id="aadharNumber"
-                type="text"
-                maxLength={12}
-                placeholder="Aadhar Number"
-                {...register("aadharNumber")}
+              <Controller
+                name="aadharNumber"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    id="aadharNumber"
+                    type="text"
+                    maxLength={12}
+                    placeholder="Aadhar Number"
+                    {...field}
+                  />
+                )}
               />
               {errors.aadharNumber && (
                 <span className="text-red-500 text-sm">
@@ -615,11 +638,17 @@ const UpdateUserProfile = () => {
             {/* Bank Name */}
             <div className="grid gap-2">
               <Label htmlFor="bankName">Bank Name</Label>
-              <Input
-                id="bankName"
-                type="text"
-                placeholder="Bank Name"
-                {...register("bankName")}
+              <Controller
+                name="bankName"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    id="bankName"
+                    type="text"
+                    placeholder="Bank Name"
+                    {...field}
+                  />
+                )}
               />
               {errors.bankName && (
                 <span className="text-red-500 text-sm">
@@ -631,11 +660,17 @@ const UpdateUserProfile = () => {
             {/* Bank Account Number */}
             <div className="grid gap-2">
               <Label htmlFor="bankAccountNumber">Account Number</Label>
-              <Input
-                id="bankAccountNumber"
-                type="text"
-                placeholder="Account Number"
-                {...register("bankAccountNumber")}
+              <Controller
+                name="bankAccountNumber"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    id="bankAccountNumber"
+                    type="text"
+                    placeholder="Account Number"
+                    {...field}
+                  />
+                )}
               />
               {errors.bankAccountNumber && (
                 <span className="text-red-500 text-sm">
@@ -647,11 +682,17 @@ const UpdateUserProfile = () => {
             {/* Bank IFSC Code */}
             <div className="grid gap-2">
               <Label htmlFor="bankIfscCode">IFSC Code</Label>
-              <Input
-                id="bankIfscCode"
-                type="text"
-                placeholder="IFSC Code"
-                {...register("bankIfscCode")}
+              <Controller
+                name="bankIfscCode"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    id="bankIfscCode"
+                    type="text"
+                    placeholder="IFSC Code"
+                    {...field}
+                  />
+                )}
               />
               {errors.bankIfscCode && (
                 <span className="text-red-500 text-sm">
@@ -663,11 +704,17 @@ const UpdateUserProfile = () => {
             {/* Bank Account Type */}
             <div className="grid gap-2">
               <Label htmlFor="bankAccountType">Account Type</Label>
-              <Input
-                id="bankAccountType"
-                type="text"
-                placeholder="Savings / Current"
-                {...register("bankAccountType")}
+              <Controller
+                name="bankAccountType"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    id="bankAccountType"
+                    type="text"
+                    placeholder="Savings / Current"
+                    {...field}
+                  />
+                )}
               />
               {errors.bankAccountType && (
                 <span className="text-red-500 text-sm">

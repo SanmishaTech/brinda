@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -31,7 +31,7 @@ const ForgotPassword = () => {
   const navigate = useNavigate();
 
   const {
-    register,
+    control,
     handleSubmit,
     setError,
     formState: { errors },
@@ -77,13 +77,18 @@ const ForgotPassword = () => {
         </div>
         <div className="grid gap-2">
           <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="m@example.com"
-            {...register("email")}
-            required
-            disabled={forgotPasswordMutation.isPending}
+          <Controller
+            name="email"
+            control={control}
+            render={({ field }) => (
+              <Input
+                id="email"
+                type="email"
+                placeholder="m@example.com"
+                disabled={forgotPasswordMutation.isPending}
+                {...field}
+              />
+            )}
           />
           {errors.email && (
             <span className="text-red-500">{errors.email.message}</span>

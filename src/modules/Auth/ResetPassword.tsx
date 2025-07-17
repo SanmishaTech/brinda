@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -39,7 +39,7 @@ type ResetPasswordFormInputs = z.infer<typeof resetPasswordSchema>;
 
 const ResetPassword = () => {
   const {
-    register,
+    control,
     setError,
     handleSubmit,
     formState: { errors },
@@ -93,13 +93,19 @@ const ResetPassword = () => {
         </div>
         <div className="grid gap-2">
           <Label htmlFor="password">New Password</Label>
-          <PasswordInput
-            id="password"
-            type="password"
-            placeholder="Enter new password"
-            {...register("password")}
-            required
-            disabled={resetPasswordMutation.isPending}
+          <Controller
+            name="password"
+            control={control}
+            render={({ field }) => (
+              <PasswordInput
+                id="password"
+                placeholder="Enter new password"
+                type="password"
+                disabled={resetPasswordMutation.isPending}
+                required
+                {...field}
+              />
+            )}
           />
           {errors.password && (
             <span className="text-red-500">{errors.password.message}</span>
@@ -107,13 +113,19 @@ const ResetPassword = () => {
         </div>
         <div className="grid gap-2">
           <Label htmlFor="confirmPassword">Confirm Password</Label>
-          <PasswordInput
-            id="confirmPassword"
-            type="password"
-            placeholder="Confirm new password"
-            {...register("confirmPassword")}
-            required
-            disabled={resetPasswordMutation.isPending}
+          <Controller
+            name="confirmPassword"
+            control={control}
+            render={({ field }) => (
+              <PasswordInput
+                id="confirmPassword"
+                placeholder="Confirm new password"
+                type="password"
+                disabled={resetPasswordMutation.isPending}
+                required
+                {...field}
+              />
+            )}
           />
           {errors.confirmPassword && (
             <span className="text-red-500">

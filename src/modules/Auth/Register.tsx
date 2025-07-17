@@ -111,7 +111,6 @@ const Register = () => {
   };
 
   const {
-    register,
     handleSubmit,
     setError,
     setValue,
@@ -182,7 +181,7 @@ const Register = () => {
   });
 
   const isSponsorValid =
-    sponsorId.length === 10 && sponsorName && !sponsorLookupMutation.isLoading;
+    sponsorId.length === 10 && sponsorName && !sponsorLookupMutation.isPending;
 
   const registerMutation = useMutation<
     RegisterResponse,
@@ -232,13 +231,20 @@ const Register = () => {
           <div className="grid gap-2">
             <Label htmlFor="sponsorId">Sponsor ID</Label>
             <div className="flex gap-2 items-center">
-              <Input
-                id="sponsorId"
-                type="text"
-                placeholder="Enter Sponsor ID"
-                {...register("sponsorId")}
-                disabled={registerMutation.isPending}
+              <Controller
+                name="sponsorId"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    id="sponsorId"
+                    type="text"
+                    placeholder="Enter Sponsor ID"
+                    disabled={registerMutation.isPending}
+                  />
+                )}
               />
+
               <Button
                 type="button"
                 variant="secondary"
@@ -333,14 +339,21 @@ const Register = () => {
 
           <div className="grid gap-2 relative">
             <Label htmlFor="name">Name</Label>
-            <Input
-              id="name"
-              type="text"
-              placeholder="John Doe"
-              {...register("name")}
-              required
-              disabled={registerMutation.isPending}
+            <Controller
+              name="name"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="John Doe"
+                  required
+                  disabled={registerMutation.isPending}
+                  {...field}
+                />
+              )}
             />
+
             {errors.name && (
               <span className="text-destructive text-xs absolute -bottom-5">
                 {errors.name.message}
@@ -450,13 +463,20 @@ const Register = () => {
           <div className="flex flex-col gap-4 md:flex-row">
             <div className="flex-1 grid gap-2 relative">
               <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="m@example.com"
-                {...register("email")}
-                disabled={registerMutation.isPending}
+              <Controller
+                name="email"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="m@example.com"
+                    disabled={registerMutation.isPending}
+                    {...field}
+                  />
+                )}
               />
+
               {errors.email && (
                 <p className="text-destructive text-xs absolute -bottom-5">
                   {errors.email.message}
@@ -466,12 +486,20 @@ const Register = () => {
 
             <div className="flex-1 grid gap-2 relative">
               <Label htmlFor="mobile">Mobile</Label>
-              <Input
-                id="mobile"
-                {...register("mobile")}
-                maxLength={10}
-                placeholder="Enter mobile number"
+              <Controller
+                name="mobile"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    id="mobile"
+                    maxLength={10}
+                    placeholder="Enter mobile number"
+                    disabled={registerMutation.isPending}
+                    {...field}
+                  />
+                )}
               />
+
               {errors.mobile && (
                 <p className="text-destructive text-xs absolute -bottom-5">
                   {errors.mobile.message}

@@ -165,11 +165,12 @@ const UserForm = ({ mode, userId, onSuccess, className }: UserFormProps) => {
         {/* Name Field */}
         <div className="grid gap-2 relative">
           <Label htmlFor="name">Full Name</Label>
-          <Input
-            id="name"
-            type="text"
-            placeholder="John Doe"
-            {...register("name")}
+          <Controller
+            name="name"
+            control={control}
+            render={({ field }) => (
+              <Input id="name" type="text" placeholder="John Doe" {...field} />
+            )}
           />
           {errors.name && (
             <span className="text-red-500 text-[10px] absolute bottom-0 translate-y-[105%]">
@@ -181,11 +182,17 @@ const UserForm = ({ mode, userId, onSuccess, className }: UserFormProps) => {
         {/* Email Field */}
         <div className="grid gap-2 relative">
           <Label htmlFor="email">Email Address</Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="m@example.com"
-            {...register("email")}
+          <Controller
+            name="email"
+            control={control}
+            render={({ field }) => (
+              <Input
+                id="email"
+                type="email"
+                placeholder="m@example.com"
+                {...field}
+              />
+            )}
           />
           {errors.email && (
             <span className="text-red-500 text-[10px] absolute bottom-0 translate-y-[105%]">
@@ -198,10 +205,16 @@ const UserForm = ({ mode, userId, onSuccess, className }: UserFormProps) => {
         {mode === "create" && (
           <div className="grid gap-2 relative">
             <Label htmlFor="password">Password</Label>
-            <PasswordInput
-              id="password"
-              placeholder="Enter a secure password"
-              {...register("password")}
+            <Controller
+              name="password"
+              control={control}
+              render={({ field }) => (
+                <PasswordInput
+                  id="password"
+                  placeholder="Enter a secure password"
+                  {...field}
+                />
+              )}
             />
             {errors.password && (
               <span className="text-red-500 text-[10px] absolute bottom-0 translate-y-[105%]">

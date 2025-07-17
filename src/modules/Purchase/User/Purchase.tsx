@@ -129,7 +129,6 @@ const Purchase = () => {
   };
 
   const {
-    register,
     handleSubmit,
     setValue,
     watch,
@@ -457,10 +456,20 @@ const Purchase = () => {
 
                         {/* Quantity */}
                         <TableCell className="text-center">
-                          <Input
-                            type="number"
-                            {...register(`purchaseDetails.${index}.quantity`)}
-                            className=""
+                          <Controller
+                            name={`purchaseDetails.${index}.quantity`}
+                            control={control}
+                            render={({ field }) => (
+                              <Input
+                                type="number"
+                                {...field}
+                                className=""
+                                onChange={(e) => {
+                                  const value = e.target.value;
+                                  field.onChange(value);
+                                }}
+                              />
+                            )}
                           />
                           {errors.purchaseDetails?.[index]?.quantity && (
                             <p className="text-red-500 text-xs mt-1">
@@ -472,9 +481,12 @@ const Purchase = () => {
                         {/* Rate */}
                         <TableCell className="text-right">
                           ₹ {watch(`purchaseDetails.${index}.rate`) || "—"}
-                          <input
-                            type="hidden"
-                            {...register(`purchaseDetails.${index}.rate`)}
+                          <Controller
+                            name={`purchaseDetails.${index}.rate`}
+                            control={control}
+                            render={({ field }) => (
+                              <input type="hidden" {...field} />
+                            )}
                           />
                         </TableCell>
 
@@ -483,10 +495,11 @@ const Purchase = () => {
                           ₹{" "}
                           {watch(`purchaseDetails.${index}.amountWithoutGst`) ||
                             "—"}
-                          <input
-                            type="hidden"
-                            {...register(
-                              `purchaseDetails.${index}.amountWithoutGst`
+                          <Controller
+                            name={`purchaseDetails.${index}.amountWithoutGst`}
+                            control={control}
+                            render={({ field }) => (
+                              <input type="hidden" {...field} />
                             )}
                           />
                         </TableCell>

@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-
+import { formatCurrency, formatDateTime } from "@/lib/formatter";
 import { Wallet, Plus, ChevronDown, Loader2 } from "lucide-react";
 import { get } from "@/services/apiService"; // Assuming you have an apiService
 import { toast } from "sonner";
@@ -68,16 +68,17 @@ export default function WalletButton() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
+        <button
           variant="outline"
-          className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+          className="flex text-sm items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
         >
           <Wallet className="w-5 h-5 text-orange-500" />
           <span className="font-medium">
-            ₹{data !== null ? data.toFixed(2) : "N/A"}
+            {/* ₹{data !== null ? data.toFixed(2) : "N/A"} */}
+            {formatCurrency(data)}
           </span>
           <ChevronDown className="w-4 h-4 text-gray-500" />
-        </Button>
+        </button>
       </DropdownMenuTrigger>
       {/* <DropdownMenuContent className="w-56" align="end">
         <DropdownMenuLabel className="flex items-center gap-2">

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -38,7 +38,7 @@ const UpdateProfile = () => {
   const [userId, setUserId] = useState<string | null>(null);
 
   const {
-    register,
+    control,
     handleSubmit,
     setValue,
     setError,
@@ -108,11 +108,17 @@ const UpdateProfile = () => {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid gap-2">
             <Label htmlFor="name">Full Name</Label>
-            <Input
-              id="name"
-              type="text"
-              placeholder="John Doe"
-              {...register("name")}
+            <Controller
+              name="name"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="John Doe"
+                  {...field}
+                />
+              )}
             />
             {errors.name && (
               <span className="text-red-500 text-sm">
@@ -122,11 +128,17 @@ const UpdateProfile = () => {
           </div>
           <div className="grid gap-2">
             <Label htmlFor="email">Email Address</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="m@example.com"
-              {...register("email")}
+            <Controller
+              name="email"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="m@example.com"
+                  {...field}
+                />
+              )}
             />
             {errors.email && (
               <span className="text-red-500 text-sm">

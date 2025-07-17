@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -51,7 +51,7 @@ const ChangePassword = () => {
   const navigate = useNavigate();
 
   const {
-    register,
+    control,
     handleSubmit,
     setError,
     formState: { errors },
@@ -90,11 +90,18 @@ const ChangePassword = () => {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid gap-2">
             <Label htmlFor="currentPassword">Current Password</Label>
-            <PasswordInput
-              id="currentPassword"
-              placeholder="Enter your current password"
-              {...register("currentPassword")}
+            <Controller
+              name="currentPassword"
+              control={control}
+              render={({ field }) => (
+                <PasswordInput
+                  id="currentPassword"
+                  placeholder="Enter your current password"
+                  {...field}
+                />
+              )}
             />
+
             {errors.currentPassword && (
               <span className="text-red-500 text-sm">
                 {errors.currentPassword.message}
@@ -103,11 +110,18 @@ const ChangePassword = () => {
           </div>
           <div className="grid gap-2">
             <Label htmlFor="newPassword">New Password</Label>
-            <PasswordInput
-              id="newPassword"
-              placeholder="Enter your new password"
-              {...register("newPassword")}
+            <Controller
+              name="newPassword"
+              control={control}
+              render={({ field }) => (
+                <PasswordInput
+                  id="newPassword"
+                  placeholder="Enter your new password"
+                  {...field}
+                />
+              )}
             />
+
             {errors.newPassword && (
               <span className="text-red-500 text-sm">
                 {errors.newPassword.message}
@@ -116,12 +130,19 @@ const ChangePassword = () => {
           </div>
           <div className="grid gap-2">
             <Label htmlFor="confirmPassword">Confirm New Password</Label>
-            <Input
-              id="confirmPassword"
-              type="password"
-              placeholder="Confirm your new password"
-              {...register("confirmPassword")}
+            <Controller
+              name="confirmPassword"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  placeholder="Confirm your new password"
+                  {...field}
+                />
+              )}
             />
+
             {errors.confirmPassword && (
               <span className="text-red-500 text-sm">
                 {errors.confirmPassword.message}

@@ -21,7 +21,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PasswordInput } from "@/components/ui/password-input";
 
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
@@ -49,7 +49,7 @@ export default function TransactionPinDialog({
   onCancel = () => {}, // Default to no-op if not provided
 }: TransactionPinDialogProps) {
   const {
-    register,
+    control,
     handleSubmit,
     reset,
     formState: { errors },
@@ -100,14 +100,20 @@ export default function TransactionPinDialog({
           </AlertDialogHeader>
 
           <div className="my-4 space-y-2">
-            <PasswordInput
-              id="tPin"
-              {...register("tPin")}
-              required
-              maxLength={4}
-              disabled={isLoading}
-              placeholder="Enter 4-digit PIN"
-              aria-invalid={errors.tPin ? "true" : "false"}
+            <Controller
+              name="tPin"
+              control={control}
+              rules={{ required: true, maxLength: 4 }}
+              render={({ field }) => (
+                <PasswordInput
+                  id="tPin"
+                  {...field}
+                  disabled={isLoading}
+                  placeholder="Enter 4-digit PIN"
+                  aria-invalid={errors.tPin ? "true" : "false"}
+                  maxLength={4}
+                />
+              )}
             />
             {errors.tPin && (
               <p className="text-sm text-red-600 mt-1">{errors.tPin.message}</p>

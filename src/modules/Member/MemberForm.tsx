@@ -74,7 +74,6 @@ const MemberForm = ({ mode }: { mode: "create" | "edit" }) => {
   };
 
   const {
-    register,
     handleSubmit,
     setValue,
     watch,
@@ -171,10 +170,12 @@ const MemberForm = ({ mode }: { mode: "create" | "edit" }) => {
                 >
                   Name <span className="text-red-500">*</span>
                 </Label>
-                <Input
-                  id="name"
-                  {...register("name")}
-                  placeholder="Enter Name"
+                <Controller
+                  name="name"
+                  control={control}
+                  render={({ field }) => (
+                    <Input id="name" placeholder="Enter Name" {...field} />
+                  )}
                 />
                 {errors.name && (
                   <p className="text-red-500 text-xs mt-1">
@@ -203,11 +204,17 @@ const MemberForm = ({ mode }: { mode: "create" | "edit" }) => {
                 >
                   Email
                 </Label>
-                <Input
-                  id="email"
-                  {...register("email")}
-                  type="email"
-                  placeholder="Enter Email"
+                <Controller
+                  name="email"
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="Enter Email"
+                      {...field}
+                    />
+                  )}
                 />
                 {errors.email && (
                   <p className="text-red-500 text-xs mt-1">
@@ -222,11 +229,17 @@ const MemberForm = ({ mode }: { mode: "create" | "edit" }) => {
                 >
                   Mobile
                 </Label>
-                <Input
-                  id="mobile"
-                  {...register("mobile")}
-                  maxLength={10}
-                  placeholder="Enter mobile number"
+                <Controller
+                  name="mobile"
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      id="mobile"
+                      maxLength={10}
+                      placeholder="Enter mobile number"
+                      {...field}
+                    />
+                  )}
                 />
                 {errors.mobile && (
                   <p className="text-red-500 text-xs mt-1">
@@ -241,14 +254,20 @@ const MemberForm = ({ mode }: { mode: "create" | "edit" }) => {
                 >
                   T Pin
                 </Label>
-                <PasswordInput
-                  id="tPin"
-                  {...register("tPin")} // RHF validation triggers on change/blur
-                  required
-                  value={editMemberData?.tPin || ""}
-                  disabled={isLoading}
-                  className="bg-gray-200  dark:bg-gray-700 cursor-not-allowed"
-                  aria-invalid={errors.tPin ? "true" : "false"} // Accessibility
+                <Controller
+                  name="tPin"
+                  control={control}
+                  render={({ field }) => (
+                    <PasswordInput
+                      id="tPin"
+                      required
+                      disabled={isLoading}
+                      value={editMemberData?.tPin || ""}
+                      className="bg-gray-200 dark:bg-gray-700 cursor-not-allowed"
+                      aria-invalid={errors.tPin ? "true" : "false"}
+                      {...field}
+                    />
+                  )}
                 />
               </div>
               <div className="grid gap-2">
@@ -341,12 +360,18 @@ const MemberForm = ({ mode }: { mode: "create" | "edit" }) => {
                 >
                   Password <span className="text-red-500">*</span>
                 </Label>
-                <PasswordInput
-                  id="password"
-                  {...register("password")} // RHF validation triggers on change/blur
-                  required
-                  disabled={isLoading}
-                  aria-invalid={errors.password ? "true" : "false"} // Accessibility
+                <Controller
+                  name="password"
+                  control={control}
+                  render={({ field }) => (
+                    <PasswordInput
+                      id="password"
+                      required
+                      disabled={isLoading}
+                      aria-invalid={errors.password ? "true" : "false"}
+                      {...field}
+                    />
+                  )}
                 />
                 {errors.password && (
                   <p className="text-red-500 text-xs mt-1">

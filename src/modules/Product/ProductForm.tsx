@@ -87,7 +87,6 @@ const ProductForm = ({ mode }: { mode: "create" | "edit" }) => {
   };
 
   const {
-    register,
     handleSubmit,
     setValue,
     watch,
@@ -196,11 +195,18 @@ const ProductForm = ({ mode }: { mode: "create" | "edit" }) => {
                 >
                   Product Name <span className="text-red-500">*</span>
                 </Label>
-                <Input
-                  id="productName"
-                  {...register("productName")}
-                  placeholder="Enter product name"
+                <Controller
+                  name="productName"
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      id="productName"
+                      placeholder="Enter product name"
+                      {...field}
+                    />
+                  )}
                 />
+
                 {errors.productName && (
                   <p className="text-red-500 text-xs mt-1">
                     {errors.productName.message}
@@ -214,13 +220,20 @@ const ProductForm = ({ mode }: { mode: "create" | "edit" }) => {
                 >
                   MRP <span className="text-red-500">*</span>
                 </Label>
-                <Input
-                  id="mrp"
-                  {...register("mrp")}
-                  type="number"
-                  step="0.01"
-                  placeholder="MRP"
+                <Controller
+                  name="mrp"
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      id="mrp"
+                      type="number"
+                      step="0.01"
+                      placeholder="MRP"
+                      {...field}
+                    />
+                  )}
                 />
+
                 {errors.mrp && (
                   <p className="text-red-500 text-xs mt-1">
                     {errors.mrp.message}
@@ -238,12 +251,19 @@ const ProductForm = ({ mode }: { mode: "create" | "edit" }) => {
                   >
                     HSN Code <span className="text-red-500">*</span>
                   </Label>
-                  <Input
-                    id="hsnCode"
-                    {...register("hsnCode")}
-                    type="number"
-                    placeholder="HSN Code"
+                  <Controller
+                    name="hsnCode"
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        id="hsnCode"
+                        type="number"
+                        placeholder="HSN Code"
+                        {...field}
+                      />
+                    )}
                   />
+
                   {errors.hsnCode && (
                     <p className="text-red-500 text-xs mt-1">
                       {errors.hsnCode.message}
@@ -257,13 +277,20 @@ const ProductForm = ({ mode }: { mode: "create" | "edit" }) => {
                   >
                     DSP Rate<span className="text-red-500">*</span>
                   </Label>
-                  <Input
-                    id="dspRate"
-                    {...register("dspRate")}
-                    type="number"
-                    step="0.01"
-                    placeholder="DSP Rate"
+                  <Controller
+                    name="dspRate"
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        id="dspRate"
+                        type="number"
+                        step="0.01"
+                        placeholder="DSP Rate"
+                        {...field}
+                      />
+                    )}
                   />
+
                   {errors.dspRate && (
                     <p className="text-red-500 text-xs mt-1">
                       {errors.dspRate.message}
@@ -277,13 +304,20 @@ const ProductForm = ({ mode }: { mode: "create" | "edit" }) => {
                   >
                     MFG Rate <span className="text-red-500">*</span>
                   </Label>
-                  <Input
-                    id="mfgRate"
-                    {...register("mfgRate")}
-                    type="number"
-                    step="0.01"
-                    placeholder="MFG Rate"
+                  <Controller
+                    name="mfgRate"
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        id="mfgRate"
+                        type="number"
+                        step="0.01"
+                        placeholder="MFG Rate"
+                        {...field}
+                      />
+                    )}
                   />
+
                   {errors.mfgRate && (
                     <p className="text-red-500 text-xs mt-1">
                       {errors.mfgRate.message}
@@ -297,14 +331,21 @@ const ProductForm = ({ mode }: { mode: "create" | "edit" }) => {
                   >
                     GST(%) <span className="text-red-500">*</span>
                   </Label>
-                  <Input
-                    id="gst"
-                    {...register("gst")}
-                    type="number"
-                    step="0.01"
-                    max={100}
-                    placeholder="GST(%)"
+                  <Controller
+                    name="gst"
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        id="gst"
+                        type="number"
+                        step="0.01"
+                        max={100}
+                        placeholder="GST(%)"
+                        {...field}
+                      />
+                    )}
                   />
+
                   {errors.gst && (
                     <p className="text-red-500 text-xs mt-1">
                       {errors.gst.message}
@@ -318,13 +359,20 @@ const ProductForm = ({ mode }: { mode: "create" | "edit" }) => {
                   >
                     PV <span className="text-red-500">*</span>
                   </Label>
-                  <Input
-                    id="pv"
-                    {...register("pv")}
-                    type="number"
-                    step="0.01"
-                    placeholder="PV"
+                  <Controller
+                    name="pv"
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        id="pv"
+                        type="number"
+                        step="0.01"
+                        placeholder="PV"
+                        {...field}
+                      />
+                    )}
                   />
+
                   {errors.pv && (
                     <p className="text-red-500 text-xs mt-1">
                       {errors.pv.message}
@@ -338,13 +386,20 @@ const ProductForm = ({ mode }: { mode: "create" | "edit" }) => {
                   >
                     BV <span className="text-red-500">*</span>
                   </Label>
-                  <Input
-                    id="bv"
-                    {...register("bv")}
-                    type="number"
-                    step="0.01"
-                    placeholder="BV"
+                  <Controller
+                    name="bv"
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        id="bv"
+                        type="number"
+                        step="0.01"
+                        placeholder="BV"
+                        {...field}
+                      />
+                    )}
                   />
+
                   {errors.bv && (
                     <p className="text-red-500 text-xs mt-1">
                       {errors.bv.message}
@@ -358,13 +413,20 @@ const ProductForm = ({ mode }: { mode: "create" | "edit" }) => {
                   >
                     BV Price <span className="text-red-500">*</span>
                   </Label>
-                  <Input
-                    id="bvPrice"
-                    {...register("bvPrice")}
-                    type="number"
-                    step="0.01"
-                    placeholder="BV Price"
+                  <Controller
+                    name="bvPrice"
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        id="bvPrice"
+                        type="number"
+                        step="0.01"
+                        placeholder="BV Price"
+                        {...field}
+                      />
+                    )}
                   />
+
                   {errors.bvPrice && (
                     <p className="text-red-500 text-xs mt-1">
                       {errors.bvPrice.message}

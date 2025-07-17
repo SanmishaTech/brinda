@@ -1,6 +1,6 @@
 import { useEffect } from "react"; // Removed useState as it's not needed for isLoading
 import { useLocation, useNavigate } from "react-router-dom";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -93,7 +93,7 @@ const Login = () => {
 
   // Get setError from useForm
   const {
-    register,
+    control,
     handleSubmit,
     setError, // <-- Destructure setError
     formState: { errors },
@@ -168,14 +168,20 @@ const Login = () => {
           {" "}
           {/* Added pb-3 for error spacing */}
           <Label htmlFor="username">Username</Label>
-          <Input
-            id="username"
-            type="username"
-            placeholder="Enter Username"
-            {...register("username")} // RHF validation triggers on change/blur
-            required
-            disabled={isLoading}
-            aria-invalid={errors.username ? "true" : "false"} // Accessibility
+          <Controller
+            name="username"
+            control={control}
+            render={({ field }) => (
+              <Input
+                id="username"
+                type="text"
+                placeholder="Enter Username"
+                required
+                disabled={isLoading}
+                aria-invalid={errors.username ? "true" : "false"}
+                {...field}
+              />
+            )}
           />
           {/* Display RHF errors (client OR server-set) */}
           {errors.username && (
@@ -201,12 +207,18 @@ const Login = () => {
               Forgot your password?
             </a>
           </div>
-          <PasswordInput
-            id="password"
-            {...register("password")} // RHF validation triggers on change/blur
-            required
-            disabled={isLoading}
-            aria-invalid={errors.password ? "true" : "false"} // Accessibility
+          <Controller
+            name="password"
+            control={control}
+            render={({ field }) => (
+              <PasswordInput
+                id="password"
+                required
+                disabled={isLoading}
+                aria-invalid={errors.password ? "true" : "false"}
+                {...field}
+              />
+            )}
           />
           {/* Display RHF errors (client OR server-set) */}
           {errors.password && (
