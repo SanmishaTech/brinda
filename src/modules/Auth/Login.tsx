@@ -167,7 +167,7 @@ const Login = () => {
         <div className="grid gap-2 relative pb-3">
           {" "}
           {/* Added pb-3 for error spacing */}
-          <Label htmlFor="username">Username</Label>
+          <Label htmlFor="username">ID Number</Label>
           <Controller
             name="username"
             control={control}
