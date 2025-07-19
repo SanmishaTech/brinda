@@ -59,6 +59,11 @@ export const walletPaymentModeOptions = [
   { label: "UPI", value: "UPI" },
 ];
 
+export const accountTypeOptions = [
+  { label: "Savings Account", value: "Savings Account" },
+  { label: "Current Account", value: "Current Account" },
+];
+
 export const CASH = "Cash";
 export const BANK_TRANSFER = "Bank Transfer";
 export const UPI = "UPI";

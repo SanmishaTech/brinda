@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ASSOCIATE, DIAMOND, GOLD, INACTIVE, SILVER } from "@/config/data";
 
-// Get memberId from localStorage
+// 🎯 Get memberId from localStorage
 const getLoggedInMemberId = () => {
   try {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -15,47 +15,29 @@ const getLoggedInMemberId = () => {
   }
 };
 
-// Format name: only first word of memberName
-const formatLabel = (name, username) => {
-  const firstName = name?.split(" ")[0] || name;
-  return `${firstName} (${username})`;
-};
-
-// Map API response to tree structure
+// 🎯 Map backend response to tree structure
 const mapApiDataToTree = (data) => {
   if (!data.rootMember) return null;
 
   return {
-    label: formatLabel(
-      data.rootMember.memberName,
-      data.rootMember.memberUsername
-    ),
+    label: `${data.rootMember.memberName} (${data.rootMember.memberUsername})`,
     status: data.rootMember.status,
     id: data.rootMember.id,
     left: data.leftMember
       ? {
-          label: formatLabel(
-            data.leftMember.memberName,
-            data.leftMember.memberUsername
-          ),
+          label: `${data.leftMember.memberName} (${data.leftMember.memberUsername})`,
           status: data.leftMember.status,
           id: data.leftMember.id,
           left: data.leftsLeftMember
             ? {
-                label: formatLabel(
-                  data.leftsLeftMember.memberName,
-                  data.leftsLeftMember.memberUsername
-                ),
+                label: `${data.leftsLeftMember.memberName} (${data.leftsLeftMember.memberUsername})`,
                 status: data.leftsLeftMember.status,
                 id: data.leftsLeftMember.id,
               }
             : null,
           right: data.leftsRightMember
             ? {
-                label: formatLabel(
-                  data.leftsRightMember.memberName,
-                  data.leftsRightMember.memberUsername
-                ),
+                label: `${data.leftsRightMember.memberName} (${data.leftsRightMember.memberUsername})`,
                 status: data.leftsRightMember.status,
                 id: data.leftsRightMember.id,
               }
@@ -64,28 +46,19 @@ const mapApiDataToTree = (data) => {
       : null,
     right: data.rightMember
       ? {
-          label: formatLabel(
-            data.rightMember.memberName,
-            data.rightMember.memberUsername
-          ),
+          label: `${data.rightMember.memberName} (${data.rightMember.memberUsername})`,
           status: data.rightMember.status,
           id: data.rightMember.id,
           left: data.rightsLeftMember
             ? {
-                label: formatLabel(
-                  data.rightsLeftMember.memberName,
-                  data.rightsLeftMember.memberUsername
-                ),
+                label: `${data.rightsLeftMember.memberName} (${data.rightsLeftMember.memberUsername})`,
                 status: data.rightsLeftMember.status,
                 id: data.rightsLeftMember.id,
               }
             : null,
           right: data.rightsRightMember
             ? {
-                label: formatLabel(
-                  data.rightsRightMember.memberName,
-                  data.rightsRightMember.memberUsername
-                ),
+                label: `${data.rightsRightMember.memberName} (${data.rightsRightMember.memberUsername})`,
                 status: data.rightsRightMember.status,
                 id: data.rightsRightMember.id,
               }
@@ -95,7 +68,7 @@ const mapApiDataToTree = (data) => {
   };
 };
 
-// Main Component
+// 📦 Main component
 export default function OrgChartBinary() {
   const initialMemberId = getLoggedInMemberId();
   const [selectedMemberId, setSelectedMemberId] = useState(initialMemberId);
@@ -123,7 +96,7 @@ export default function OrgChartBinary() {
   );
 }
 
-// Node card
+// 🎯 Node visual component
 const NodeCard = ({ label, status, onClick }) => (
   <Card className="bg-white shadow-md border rounded-md w-full h-full">
     <CardContent className="p-2 h-full flex flex-col justify-center items-center text-center">
@@ -156,7 +129,7 @@ const NodeCard = ({ label, status, onClick }) => (
   </Card>
 );
 
-// Draw line
+// 🎯 Line component
 const Line = ({ from, to }) => (
   <line
     x1={from.x}
@@ -168,7 +141,7 @@ const Line = ({ from, to }) => (
   />
 );
 
-// Recursive binary tree node
+// 🎯 Recursive node rendering
 const BinaryTreeNode = ({ node, onNodeClick, positions, parentPos }) => {
   const nodeKey = node.label;
   const currentPos = positions[nodeKey];
@@ -221,7 +194,7 @@ const BinaryTreeNode = ({ node, onNodeClick, positions, parentPos }) => {
   );
 };
 
-// Generate positions
+// 🎯 Position calculator
 const generatePositions = (node, depth = 0, offset = 0, gap = 140) => {
   if (!node) return [0, {}];
   const [leftWidth, leftPos] = generatePositions(
@@ -247,8 +220,6 @@ const generatePositions = (node, depth = 0, offset = 0, gap = 140) => {
 
   return [leftWidth + 1 + rightWidth, { ...leftPos, ...rightPos, ...pos }];
 };
-
-// Binary tree chart
 const BinaryTreeChart = ({ tree, onNodeClick }) => {
   const [_, positions] = generatePositions(tree);
   const maxY = Math.max(...Object.values(positions).map((p) => p.y)) + 100;
@@ -260,11 +231,13 @@ const BinaryTreeChart = ({ tree, onNodeClick }) => {
     const container = containerRef.current;
     if (!container) return;
 
+    // On desktop: auto-center normally
     if (window.innerWidth >= 640) {
       container.scrollLeft =
         (container.scrollWidth - container.clientWidth) / 2;
     } else {
-      container.scrollLeft = 100; // tweak for mobile if needed
+      // On mobile: push content more right by manually offsetting scroll
+      container.scrollLeft = 100; // Adjust this value if needed
     }
   }, [tree]);
 
@@ -275,7 +248,7 @@ const BinaryTreeChart = ({ tree, onNodeClick }) => {
       style={{ scrollBehavior: "smooth" }}
     >
       <div
-        className="origin-top-center sm:scale-[0.85] scale-[0.95] pl-[200px] sm:pl-0"
+        className="origin-top-center sm:scale-100 scale-50 pl-[200px] sm:pl-0"
         style={{ width: maxX, minWidth: maxX }}
       >
         <svg width={maxX} height={maxY}>

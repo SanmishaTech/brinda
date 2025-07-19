@@ -32,7 +32,7 @@ import {
 } from "@/components/ui/sidebar";
 import { appName } from "@/config";
 const UserData = JSON.parse(localStorage.getItem("user") || "{}");
-const agencyDetailsId = UserData?.agency?.id;
+const username = UserData?.username;
 // This is sample data.
 const initialData = {
   roles: {
@@ -150,11 +150,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              className="data-[slot=sidebar-menu-button]:!p-1.5"
+              className="data-[slot=sidebar-menu-button]:!p-1.5 h-10"
             >
-              <a href="/dashboard">
+              {/* <a href="/dashboard">
                 <ArrowUpCircleIcon className="h-5 w-5" />
                 <span className="text-base font-semibold">{appName}</span>
+              </a> */}
+              <a href="/dashboard" className="flex mt-2 items-center space-x-2">
+                <ArrowUpCircleIcon className="h-5 w-5" />
+                <div className="flex flex-col">
+                  <span className="text-base font-semibold">{appName}</span>
+                  <span className="text-xs font-semibold">ID: {username}</span>
+                </div>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>

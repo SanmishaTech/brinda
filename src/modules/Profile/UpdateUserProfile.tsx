@@ -41,7 +41,7 @@ import { LoaderCircle, ChevronsUpDown, Check } from "lucide-react";
 import Validate from "@/lib/Handlevalidation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { PasswordInput } from "@/components/ui/password-input";
-import { genderOptions } from "@/config/data";
+import { genderOptions, accountTypeOptions } from "@/config/data";
 
 const updateProfileSchema = z.object({
   name: z
@@ -656,6 +656,38 @@ const UpdateUserProfile = () => {
                 </span>
               )}
             </div>
+            {/* Bank Account Type */}
+            <div className="grid gap-2">
+              <Label htmlFor="bankAccountType">Account Type</Label>
+              <Controller
+                name="bankAccountType"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    onValueChange={(value) =>
+                      setValue("bankAccountType", value)
+                    }
+                    value={field.value}
+                  >
+                    <SelectTrigger id="bankAccountType" className="w-full">
+                      <SelectValue placeholder="Select Account Type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {accountTypeOptions.map((type) => (
+                        <SelectItem key={type.value} value={type.value}>
+                          {type.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.bankAccountType && (
+                <span className="text-red-500 text-sm">
+                  {errors.bankAccountType.message}
+                </span>
+              )}
+            </div>
 
             {/* Bank Account Number */}
             <div className="grid gap-2">
@@ -697,28 +729,6 @@ const UpdateUserProfile = () => {
               {errors.bankIfscCode && (
                 <span className="text-red-500 text-sm">
                   {errors.bankIfscCode.message}
-                </span>
-              )}
-            </div>
-
-            {/* Bank Account Type */}
-            <div className="grid gap-2">
-              <Label htmlFor="bankAccountType">Account Type</Label>
-              <Controller
-                name="bankAccountType"
-                control={control}
-                render={({ field }) => (
-                  <Input
-                    id="bankAccountType"
-                    type="text"
-                    placeholder="Savings / Current"
-                    {...field}
-                  />
-                )}
-              />
-              {errors.bankAccountType && (
-                <span className="text-red-500 text-sm">
-                  {errors.bankAccountType.message}
                 </span>
               )}
             </div>
