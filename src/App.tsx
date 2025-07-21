@@ -35,6 +35,8 @@ import Genealogy from "./modules/Genealogy/Genealogy";
 import PurchaseHistoryList from "./modules/Purchase/User/PurchaseHistoryList";
 import MemberLogList from "./modules/Member/MemberLogList";
 import MyDirectReferralList from "./modules/MyDirectList/MyDirectReferralList";
+import Repurchase from "./modules/Repurchase/User/Repurchase";
+import RepurchaseHistoryList from "./modules/Repurchase/User/RepurchaseHistoryList";
 
 const App = () => {
   useEffect(() => {
@@ -182,6 +184,22 @@ const App = () => {
               element={
                 <ProtectedRoute>
                   <PurchaseHistoryList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/repurchase"
+              element={
+                <ProtectedRoute>
+                  <Repurchase />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/repurchase/history"
+              element={
+                <ProtectedRoute>
+                  <RepurchaseHistoryList />
                 </ProtectedRoute>
               }
             />

@@ -44,6 +44,11 @@ const initialData = {
           icon: UsersRound,
         },
         {
+          name: "Repurchase",
+          url: "/repurchase",
+          icon: UsersRound,
+        },
+        {
           name: "My Direct List",
           url: "/member/directReferrals",
           icon: UsersRound,
