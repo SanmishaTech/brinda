@@ -29,6 +29,26 @@ import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css"; // Import styles for the phone input
 import { PasswordInput } from "@/components/ui/password-input";
 
+const decimalString = (
+  fieldName: string,
+  maxDigits: number,
+  decimalPlaces: number
+) =>
+  z
+    .string()
+    .nonempty(`${fieldName} is required.`)
+    .refine(
+      (val) => {
+        const regex = new RegExp(
+          `^\\d{1,${maxDigits - decimalPlaces}}(\\.\\d{1,${decimalPlaces}})?$`
+        );
+        return regex.test(val);
+      },
+      {
+        message: `${fieldName} must be a valid number with up to ${decimalPlaces} decimal places.`,
+      }
+    );
+
 export const FormSchema = z.object({
   name: z
     .string()
@@ -57,6 +77,7 @@ export const FormSchema = z.object({
     .string()
     .min(6, "Password must be at least 6 characters long.")
     .max(50, "Password must not exceed 50 characters."),
+  percentage: decimalString("Percentage", 5, 2),
 });
 
 type FormInputs = z.infer<typeof FormSchema>;
@@ -71,6 +92,7 @@ const MemberForm = ({ mode }: { mode: "create" | "edit" }) => {
     mobile: "",
     email: "",
     password: "",
+    percentage: "",
   };
 
   const {
@@ -107,6 +129,9 @@ const MemberForm = ({ mode }: { mode: "create" | "edit" }) => {
           : "",
         password: editMemberData?.user?.password
           ? editMemberData?.user?.password
+          : "",
+        percentage: editMemberData?.percentage
+          ? editMemberData?.percentage
           : "",
       });
     }
@@ -265,7 +290,7 @@ const MemberForm = ({ mode }: { mode: "create" | "edit" }) => {
                       value={editMemberData?.tPin || ""}
                       className="bg-gray-200 dark:bg-gray-700 cursor-not-allowed"
                       aria-invalid={errors.tPin ? "true" : "false"}
-                      {...field}
+                      // {...field}
                     />
                   )}
                 />
@@ -352,6 +377,34 @@ const MemberForm = ({ mode }: { mode: "create" | "edit" }) => {
                   }
                   readOnly
                 />
+              </div>
+              <div>
+                <Label
+                  htmlFor="percentage"
+                  className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
+                  Percentage <span className="text-red-500">*</span>
+                </Label>
+                <Controller
+                  name="percentage"
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      id="percentage"
+                      type="number"
+                      step="0.01"
+                      max={100}
+                      placeholder="Enter Percentage"
+                      {...field}
+                    />
+                  )}
+                />
+
+                {errors.percentage && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.percentage.message}
+                  </p>
+                )}
               </div>
               <div>
                 <Label

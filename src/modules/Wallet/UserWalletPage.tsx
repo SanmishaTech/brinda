@@ -35,6 +35,7 @@ import { Separator } from "@/components/ui/separator";
 import { APPROVED, PENDING, REJECTED, CREDIT, DEBIT } from "@/config/data";
 import { formatCurrency, formatDate, formatDateTime } from "@/lib/formatter.js";
 import TransactionPinDialog from "./User/TransactionPinDialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 const fetchTransactions = async (
   page: number,
 
@@ -55,21 +56,22 @@ const UserWalletPage = () => {
   const [recipientEmail, setRecipientEmail] = useState<string | null>(null);
   const [recipientMobile, setRecipientMobile] = useState<string | null>(null);
   const [tPinDialogOpen, setTPinDialogOpen] = useState(false);
-
   const [currentPage, setCurrentPage] = useState(1);
   const [recordsPerPage, setRecordsPerPage] = useState(10); // Add recordsPerPage state
-
   const [username, setUsername] = useState("");
   const [amountToTransfer, setAmountToTransfer] = useState<number | string>("");
   const [recipientName, setRecipientName] = useState<string | null>(null);
   const [recipientMemberId, setRecipientMemberId] = useState("");
+  const [transferSource, setTransferSource] = useState<"wallet" | "matching">(
+    "wallet"
+  );
 
   // Fetch wallet balance using React Query
-  const { data: walletBalance, isLoading } = useQuery({
-    queryKey: ["walletBalance"],
+  const { data: walletData, isLoading } = useQuery({
+    queryKey: ["walletData"],
     queryFn: async () => {
       const response = await get("/wallet-transactions/wallet-amount");
-      return response.walletBalance;
+      return response;
     },
     onError: (err: any) => {
       const errorMessage =
@@ -175,7 +177,7 @@ const UserWalletPage = () => {
       setRecipientName(null);
       setRecipientMemberId("");
 
-      queryClient.invalidateQueries(["walletBalance"]); // Refetch wallet balance
+      queryClient.invalidateQueries(["walletData"]); // Refetch wallet balance
       toast.success("Money transferred successfully!");
     },
     onError: (err: any) => {
@@ -206,12 +208,12 @@ const UserWalletPage = () => {
       return;
     }
 
-    if (!walletBalance && walletBalance !== 0) {
+    if (!walletData?.walletBalance && walletData?.walletBalance !== 0) {
       toast.error("Wallet balance is not available. Please try again.");
       return;
     }
 
-    if (amountToTransfer > walletBalance) {
+    if (amountToTransfer > walletData?.walletBalance) {
       toast.error("Insufficient wallet balance for this transfer.");
       return;
     }
@@ -245,9 +247,9 @@ const UserWalletPage = () => {
       </div>
 
       {/* Wallet and Add Balance Boxes */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className=" grid grid-cols-1 mb-4 md:grid-cols-2 gap-6">
         {/* Wallet Balance Box */}
-        <Card className="bg-green-100 border border-green-300 shadow-md dark:bg-card dark:border-border">
+        <Card className="bg-green-100 h-52 border border-green-300 shadow-md dark:bg-card dark:border-border">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-green-700">
               <CheckCircle className="w-6 h-6" />
@@ -260,12 +262,34 @@ const UserWalletPage = () => {
               <p className="text-lg font-bold text-green-700">Loading...</p>
             ) : (
               <p className="text-4xl font-bold text-green-700">
-                {formatCurrency(walletBalance)}
+                {formatCurrency(walletData?.walletBalance)}
               </p>
             )}
           </CardContent>
         </Card>
 
+        {/* Matching income wallet balance box */}
+        <Card className="bg-green-100 border border-green-300 shadow-md dark:bg-card dark:border-border">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-green-700">
+              <CheckCircle className="w-6 h-6" />
+              Matching Income Wallet Balance
+            </CardTitle>
+            <CardDescription>Your current wallet balance</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {isLoading ? (
+              <p className="text-lg font-bold text-green-700">Loading...</p>
+            ) : (
+              <p className="text-4xl font-bold text-green-700">
+                {formatCurrency(walletData?.matchingIncomeWalletBalance)}
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="mt-6 grid grid-cols-1 gap-6">
         {/* Add Balance Box */}
         <Card className="bg-gray-100 dark:bg-card border border-gray-300 dark:border-border shadow-md">
           <CardHeader>
