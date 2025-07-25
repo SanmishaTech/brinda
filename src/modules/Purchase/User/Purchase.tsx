@@ -395,7 +395,7 @@ const Purchase = () => {
                                     const gst = parseFloat(product.gst);
                                     setValue(
                                       `purchaseDetails.${index}.rate`,
-                                      product.mrp.toString()
+                                      product.dspRate.toString()
                                     );
                                     if (memberState?.State === "Maharashtra") {
                                       setValue(
