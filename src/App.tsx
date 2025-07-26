@@ -37,6 +37,8 @@ import MemberLogList from "./modules/Member/MemberLogList";
 import MyDirectReferralList from "./modules/MyDirectList/MyDirectReferralList";
 import Repurchase from "./modules/Repurchase/User/Repurchase";
 import RepurchaseHistoryList from "./modules/Repurchase/User/RepurchaseHistoryList";
+import MatchingIncomePayoutList from "./modules/Commission/MatchingIncomePayoutList";
+import AdminPaidCommissionList from "./modules/Commission/AdminPaidCommissionList";
 
 const App = () => {
   useEffect(() => {
@@ -203,6 +205,25 @@ const App = () => {
                 </ProtectedRoute>
               }
             />
+
+            {/* commission start */}
+            <Route
+              path="/commissions/matchingIncomePayout"
+              element={
+                <ProtectedRoute>
+                  <MatchingIncomePayoutList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/commissions/adminPaidCommissions"
+              element={
+                <ProtectedRoute>
+                  <AdminPaidCommissionList />
+                </ProtectedRoute>
+              }
+            />
+            {/* commission end */}
           </Route>
         </Routes>
       </Router>

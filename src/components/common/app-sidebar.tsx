@@ -79,16 +79,33 @@ const initialData = {
       //   ],
     },
     admin: {
-      projects: [],
+      projects: [
+        {
+          name: "Products",
+          url: "/products",
+          icon: UsersRound,
+        },
+        {
+          name: "Members",
+          url: "/members",
+          icon: UsersRound,
+        },
+      ],
       navMain: [
         {
-          title: "Masters",
+          title: "Commissions",
           url: "#",
           icon: SquareTerminal,
           isActive: false,
           items: [
-            { title: "Products", url: "/products" },
-            { title: "Members", url: "/members" },
+            {
+              title: "Matching Payout",
+              url: "/commissions/matchingIncomePayout",
+            },
+            {
+              title: "Admin Paid",
+              url: "/commissions/adminPaidCommissions",
+            },
           ],
         },
       ],
@@ -173,8 +190,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain || []} />
         <NavProjects projects={data.projects || []} />
+        <NavMain items={data.navMain || []} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />
