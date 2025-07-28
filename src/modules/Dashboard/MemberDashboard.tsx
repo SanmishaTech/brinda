@@ -48,7 +48,13 @@ const MemberDashboard = () => {
     );
   }
 
-  const { walletBalance, pvBalance, status, totalPurchase } = data;
+  const {
+    walletBalance,
+    pvBalance,
+    status,
+    totalPurchase,
+    matchingIncomeEarned,
+  } = data;
 
   return (
     <div className="p-4 sm:p-6">
@@ -122,6 +128,22 @@ const MemberDashboard = () => {
           <CardContent>
             <p className="text-4xl font-bold text-purple-700">
               ₹{totalPurchase.toFixed(2)}
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Total Purchase */}
+        <Card className="bg-orange-100 border border-orange-300 shadow-md">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-4 text-orange-700">
+              <Wallet className="w-10 h-10" />
+              Matching Income Earned
+            </CardTitle>
+            <CardDescription>Matching Income Earned</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-4xl font-bold text-orange-700">
+              {formatCurrency(matchingIncomeEarned)}
             </p>
           </CardContent>
         </Card>

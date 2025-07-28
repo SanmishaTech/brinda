@@ -43,11 +43,11 @@ const initialData = {
           url: "/purchase",
           icon: UsersRound,
         },
-        {
-          name: "Repurchase",
-          url: "/repurchase",
-          icon: UsersRound,
-        },
+        // {
+        //   name: "Repurchase",
+        //   url: "/repurchase",
+        //   icon: UsersRound,
+        // },
         {
           name: "My Direct List",
           url: "/member/directReferrals",

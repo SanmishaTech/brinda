@@ -70,7 +70,7 @@ export default function WalletButton() {
       <DropdownMenuTrigger asChild>
         <button
           variant="outline"
-          className="flex text-sm items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+          className="flex text-sm items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900"
         >
           <Wallet className="w-5 h-5 text-orange-500" />
           <span className="font-medium">

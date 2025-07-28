@@ -1,6 +1,6 @@
 import axios from "axios";
 import { backendUrl } from "../config";
-
+import { toast } from "sonner";
 const api = axios.create({
   baseURL: backendUrl,
   headers: {
@@ -16,6 +16,32 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
+
+// Response interceptor: handle 401 errors globally
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const originalRequest = error.config;
+
+    const isLoginRequest = originalRequest?.url?.includes("/auth/login");
+    if (error.response?.status === 401 && !isLoginRequest) {
+      // Clear localStorage tokens
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("user");
+      localStorage.removeItem("refreshToken");
+
+      // Optional: show toast
+      toast.error("Session expired. Please log in again.");
+
+      // Redirect to login page after short delay
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 1500);
+    }
+
+    return Promise.reject(error);
+  }
+);
 
 export const get = async (url: string, params?: any, config?: any) => {
   try {

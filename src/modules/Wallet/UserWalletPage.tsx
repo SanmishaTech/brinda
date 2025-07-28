@@ -19,6 +19,9 @@ import {
   PlusCircle,
   CheckCircle,
   CheckCircle2,
+  AtSign,
+  User,
+  Phone,
 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { get, post } from "@/services/apiService";
@@ -351,39 +354,8 @@ const UserWalletPage = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex justify-between items-center">
-            {/* Recipient Name Display */}
-            {/* <div className="flex flex-col items-start">
-              {recipientName ? (
-                <p className="text-green-700 font-medium">
-                  Recipient: <span className="font-bold">{recipientName}</span>
-                </p>
-              ) : (
-                <p className="text-gray-500">
-                  Enter a username to find the recipient.
-                </p>
-              )}
-            </div> */}
-            <div className="flex flex-col items-end space-y-4">
-              <Input
-                type="text"
-                placeholder="Enter username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="w-full md:w-64"
-              />
-              <Button
-                variant="outline"
-                className="w-full md:w-64 text-blue-600 border-blue-600 hover:bg-blue-50"
-                onClick={handleFetchRecipient}
-                disabled={fetchRecipientMutation.isLoading}
-              >
-                {fetchRecipientMutation.isLoading
-                  ? "Fetching..."
-                  : "Find Recipient"}
-              </Button>
-            </div>
-            <div className="flex flex-col items-start space-y-1 mt-2">
+          <div className="lg:flex lg:flex-row-reverse lg:justify-between items-center">
+            {/* <div className="flex flex-col mb-4 items-start space-y-1 mt-2">
               {recipientName ? (
                 <>
                   <p className="text-base text-gray-800">
@@ -411,17 +383,90 @@ const UserWalletPage = () => {
                   Enter a username to find the recipient.
                 </p>
               )}
-            </div>
+            </div> */}
 
+            <div className="w-full mb-4 lg:mb-0 max-w-[500px]">
+              <Card className="shadow-md bg-gray-100 dark:bg-gray-900 border dark:border-gray-700">
+                <CardHeader>
+                  <CardTitle className="text-lg mb-0 pb-0 font-semibold">
+                    Recipient Details
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {recipientName ? (
+                    <div className="flex flex-col space-y-">
+                      <div className="flex items-center gap-2 text-sm text-gray-800 dark:text-gray-100">
+                        <User className="h-4 w-4 text-muted-foreground" />
+                        <span>
+                          <strong>Name:</strong> {recipientName}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-gray-800 dark:text-gray-100">
+                        <User className="h-4 w-4 text-muted-foreground" />
+                        <span>
+                          <strong>Username:</strong> {recipientUsername}
+                        </span>
+                      </div>
+                      {recipientEmail && (
+                        <div className="flex items-center gap-2 text-sm text-gray-800 dark:text-gray-100">
+                          <AtSign className="h-4 w-4 text-muted-foreground" />
+                          <span>
+                            <strong>Email:</strong> {recipientEmail}
+                          </span>
+                        </div>
+                      )}
+                      {recipientMobile && (
+                        <div className="flex items-center gap-2 text-sm text-gray-800 dark:text-gray-100">
+                          <Phone className="h-4 w-4 text-muted-foreground" />
+                          <span>
+                            <strong>Mobile:</strong> {recipientMobile}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">
+                      Enter a username to find the recipient.
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+            <div className="flex flex-col items-end space-y-4">
+              <Input
+                type="text"
+                placeholder="Enter username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="w-full md:w-64"
+              />
+              <Button
+                variant="outline"
+                className="w-full md:w-64 text-blue-600 border-blue-600 hover:bg-blue-50"
+                onClick={handleFetchRecipient}
+                disabled={fetchRecipientMutation.isLoading}
+              >
+                {fetchRecipientMutation.isLoading
+                  ? "Fetching..."
+                  : "Find Recipient"}
+              </Button>
+            </div>
             {/* Username Input */}
           </div>
 
           <Separator className="my-4" />
 
           {/* Amount Input and Transfer Button */}
-          <div className="flex justify-between items-center">
+          <div className="lg:flex lg:flex-row-reverse  justify-between items-center">
+            <Input
+              type="number"
+              placeholder="Enter amount"
+              value={amountToTransfer}
+              onChange={(e) => setAmountToTransfer(e.target.value)}
+              className="w-full md:w-64"
+            />
             <Button
-              className="w-full md:w-64 bg-green-500 hover:bg-green-600 text-white dark:bg-primary dark:hover:bg-primary/90"
+              className="w-full mt-4 md:w-64 bg-green-500 hover:bg-green-600 text-white dark:bg-primary dark:hover:bg-primary/90"
               onClick={handleTransferMoney}
               disabled={
                 !recipientName ||
@@ -431,14 +476,6 @@ const UserWalletPage = () => {
             >
               {transferMoneyMutation.isLoading ? "Transferring..." : "Transfer"}
             </Button>
-
-            <Input
-              type="number"
-              placeholder="Enter amount"
-              value={amountToTransfer}
-              onChange={(e) => setAmountToTransfer(e.target.value)}
-              className="w-full md:w-64"
-            />
           </div>
         </CardContent>
       </Card>
