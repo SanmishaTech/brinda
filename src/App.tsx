@@ -39,6 +39,7 @@ import Repurchase from "./modules/Repurchase/User/Repurchase";
 import RepurchaseHistoryList from "./modules/Repurchase/User/RepurchaseHistoryList";
 import MatchingIncomePayoutList from "./modules/Commission/MatchingIncomePayoutList";
 import AdminPaidCommissionList from "./modules/Commission/AdminPaidCommissionList";
+import GuestRoute from "./components/common/guest-route";
 
 const App = () => {
   useEffect(() => {
@@ -51,10 +52,38 @@ const App = () => {
       <Router>
         <Routes>
           <Route element={<AuthLayout />}>
-            <Route path="/" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password/:token" element={<ResetPassword />} />
+            <Route
+              path="/"
+              element={
+                <GuestRoute>
+                  <Login />
+                </GuestRoute>
+              }
+            />
+            <Route
+              path="/register"
+              element={
+                <GuestRoute>
+                  <Register />
+                </GuestRoute>
+              }
+            />
+            <Route
+              path="/forgot-password"
+              element={
+                <GuestRoute>
+                  <ForgotPassword />
+                </GuestRoute>
+              }
+            />
+            <Route
+              path="/reset-password/:token"
+              element={
+                <GuestRoute>
+                  <ResetPassword />
+                </GuestRoute>
+              }
+            />
             {/* Add other auth routes here */}
           </Route>
           <Route element={<MainLayout />}>

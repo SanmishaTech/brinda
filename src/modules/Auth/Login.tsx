@@ -199,13 +199,13 @@ const Login = () => {
           {/* Added pb-3 for error spacing */}
           <div className="flex items-center">
             <Label htmlFor="password">Password</Label>
-            <a
+            {/* <a
               href="/forgot-password"
               tabIndex={isLoading ? -1 : 0} // Prevent tabbing when disabled
               className="ml-auto text-sm underline-offset-2 hover:underline"
             >
               Forgot your password?
-            </a>
+            </a> */}
           </div>
           <Controller
             name="password"
