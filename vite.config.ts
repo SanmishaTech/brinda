@@ -11,4 +11,16 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  // server: {
+  //   host: true, // allow external access (mobile)
+  //   proxy: {
+  //     "/api": {
+  //       target: "http://localhost:3000", // local backend
+  //       changeOrigin: true,
+  //     },
+  //   },
+  //   allowedHosts: [
+  //     "3bf9e7c82234.ngrok-free.app", // optional (for Vite v5+)
+  //   ],
+  // },
 });

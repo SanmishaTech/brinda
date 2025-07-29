@@ -168,14 +168,14 @@ const Purchase = () => {
     mutationFn: (data: FormInputs) => post("/purchases", data),
     onSuccess: () => {
       queryClient.invalidateQueries(["purchases"]);
-      toast.success("Products Purchased successfully");
+      toast.success(
+        "Purchase successful. Please wait while the invoice is being generated."
+      );
       navigate("/purchase/history");
     },
     onError: (error: any) => {
       Validate(error, setError);
-      toast.error(
-        error.response?.data?.message || "Failed to Purchase Product"
-      );
+      toast.error(error?.message || "Failed to Purchase Product");
     },
   });
 
