@@ -303,6 +303,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       url: "/genealogy",
       icon: UsersRound,
     },
+    {
+      name: "Repurchase",
+      url: "/repurchase",
+      icon: UsersRound,
+    },
   ];
 
   const adminProjects = [

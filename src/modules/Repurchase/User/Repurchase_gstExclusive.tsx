@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   useForm,
   SubmitHandler,
@@ -6,12 +6,13 @@ import {
   useFieldArray,
   useWatch,
 } from "react-hook-form";
-import { formatCurrency } from "@/lib/formatter.js";
+import { formatCurrency, formatDate, formatDateTime } from "@/lib/formatter.js";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 
 import {
@@ -21,6 +22,7 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import Validate from "@/lib/Handlevalidation";
 import {
   Table,
@@ -30,12 +32,22 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { LoaderCircle, Trash2, PlusCircle } from "lucide-react";
+import {
+  LoaderCircle,
+  Trash2,
+  PlusCircle,
+  User,
+  MapPin,
+  CalendarDays,
+  Wallet,
+} from "lucide-react"; // Import the LoaderCircle icon
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { get } from "@/services/apiService";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { post } from "@/services/apiService";
+import { post, put } from "@/services/apiService";
+import { set } from "date-fns";
+import RepurchaseHistoryList from "./RepurchaseHistoryList";
 
 const decimalString = (
   fieldName: string,
@@ -57,14 +69,13 @@ const decimalString = (
       }
     );
 
-const purchaseDetailSchema = z.object({
+const repurchaseDetailSchema = z.object({
   productId: z.string().min(1, "Product Field is required."),
   quantity: z.coerce
     .number()
     .min(1, "Quantity must be at least 1.")
     .max(100, "Quantity must be at max 100"),
-  rate: decimalString("Rate", 10, 2), // This is inclusive price per unit
-  netUnitRate: decimalString("Net Unit Rate", 10, 2), // without gst
+  rate: decimalString("Rate", 10, 2),
   cgstPercent: decimalString("CGST Percent", 5, 2),
   sgstPercent: decimalString("SGST Percent", 5, 2),
   igstPercent: decimalString("IGST Percent", 5, 2),
@@ -78,9 +89,13 @@ const purchaseDetailSchema = z.object({
 });
 
 const FormSchema = z.object({
+  // totalAmountWithoutGst: decimalString("Total Amount Without GST", 10, 2),
+  // totalAmountWithGst: decimalString("Total Amount With GST", 10, 2),
+  // totalGstAmount: decimalString("Total GST Amount", 10, 2),
+  // totalProductPV: decimalString("Total PV", 10, 2),
   repurchaseDetails: z
-    .array(purchaseDetailSchema)
-    .min(1, "At least one purchase detail is required."),
+    .array(repurchaseDetailSchema)
+    .min(1, "At least one repurchase detail is required."),
 });
 
 type FormInputs = z.infer<typeof FormSchema>;
@@ -90,12 +105,15 @@ const Repurchase = () => {
   const queryClient = useQueryClient();
 
   const defaultValues = {
+    // totalAmountWithoutGst: "",
+    // totalAmountWithGst: "",
+    // totalGstAmount: "",
+    // totalProductPV: "",
     repurchaseDetails: [
       {
         productId: "",
         quantity: "",
         rate: "",
-        netUnitRate: "",
         cgstPercent: "",
         sgstPercent: "",
         igstPercent: "",
@@ -114,86 +132,81 @@ const Repurchase = () => {
     handleSubmit,
     setValue,
     watch,
+    reset,
     control,
     setError,
     formState: { errors },
   } = useForm<FormInputs>({
     resolver: zodResolver(FormSchema),
-    defaultValues,
+    defaultValues: defaultValues, // Use default values in create mode
   });
 
   const { fields, append, remove } = useFieldArray({
     control,
-    name: "repurchaseDetails",
+    name: "repurchaseDetails", // Name of the array in the form schema
   });
-
   const watchedDetails = useWatch({ control, name: "repurchaseDetails" });
 
-  // Fetch wallet balance
-  const { data: walletBalance } = useQuery({
+  // Fetch wallet balance using React Query
+  const { data: walletBalance, isLoading: isWalletBalanceLoading } = useQuery({
     queryKey: ["walletBalance"],
     queryFn: async () => {
       const response = await get("/wallet-transactions/wallet-amount");
       return response.walletBalance;
     },
     onError: (err: any) => {
-      toast.error(
+      const errorMessage =
         err.response?.data?.message ||
-          err.message ||
-          "Failed to fetch wallet balance"
-      );
+        err.message ||
+        "Failed to fetch wallet balance";
+      toast.error(errorMessage);
     },
   });
 
-  // Fetch member state
-  const { data: memberState } = useQuery({
+  // states
+  const { data: memberState, isLoading: isMemberStateLoading } = useQuery({
     queryKey: ["memberState"],
     queryFn: async () => {
       const response = await get(`/states/member`);
-      return response;
+      return response; // API returns the sector object directly
     },
   });
 
-  // Fetch products
-  const { data: products } = useQuery({
+  // products
+  const { data: products, isLoading: isAllProductsLoading } = useQuery({
     queryKey: ["products"],
     queryFn: async () => {
       const response = await get(`/products/all`);
-      return response;
+      return response; // API returns the sector object directly
     },
   });
 
-  // Mutation for creating purchase
+  // Mutation for creating a user
   const createMutation = useMutation({
     mutationFn: (data: FormInputs) => post("/repurchases", data),
     onSuccess: () => {
-      queryClient.invalidateQueries(["repurchases"]);
-      toast.success(
-        "Purchase successful. Please wait while the invoice is being generated."
-      );
+      queryClient.invalidateQueries(["repurchases"]); // Refetch the users list
+      toast.success("Products Repurchased successfully");
       navigate("/repurchase/history");
     },
     onError: (error: any) => {
       Validate(error, setError);
-      toast.error(error?.message || "Failed to Purchase Product");
+      toast.error(
+        error.response?.data?.message || "Failed to Repurchase Product"
+      );
     },
   });
+
+  useEffect(() => {
+    console.log("Form Errors", errors);
+  }, [errors]);
 
   useEffect(() => {
     if (!watchedDetails) return;
 
     watchedDetails.forEach((detail, index) => {
-      // start
-      // Normalize qty - if invalid, treat as 0
-      const qty =
-        isNaN(parseFloat(detail.quantity)) ||
-        detail.quantity === undefined ||
-        detail.quantity === null
-          ? 0
-          : parseFloat(detail.quantity);
-      // const qty = parseFloat(String(detail.quantity));
-      // end
-      const rateInclusive = parseFloat(detail.rate); // Inclusive GST price per unit
+      const qty = parseFloat(detail.quantity);
+      const rate = parseFloat(detail.rate);
       const cgst = parseFloat(detail.cgstPercent);
       const sgst = parseFloat(detail.sgstPercent);
       const igst = parseFloat(detail.igstPercent);
@@ -201,82 +214,58 @@ const Repurchase = () => {
       const selectedProduct = products?.find(
         (product) => String(product.id) === String(detail.productId)
       );
-      const round2 = (num: number) => num.toFixed(2);
 
-      if (!isNaN(rateInclusive)) {
-        const totalGstPercent = cgst + sgst + igst;
-        const netUnitRate = rateInclusive / (1 + totalGstPercent / 100);
+      if (!isNaN(qty) && !isNaN(rate)) {
+        const amount = qty * rate;
+        const newAmountWithoutGst = amount.toFixed(2);
+        const cgstAmt = ((amount * cgst) / 100).toFixed(2);
+        const sgstAmt = ((amount * sgst) / 100).toFixed(2);
+        const igstAmt = ((amount * igst) / 100).toFixed(2);
+        const totalGstAmt =
+          parseFloat(cgstAmt) + parseFloat(sgstAmt) + parseFloat(igstAmt);
+        const newAmountWithGst = (amount + totalGstAmt).toFixed(2);
 
-        if (detail.netUnitRate !== round2(netUnitRate)) {
-          setValue(
-            `repurchaseDetails.${index}.netUnitRate`,
-            round2(netUnitRate)
-          );
-        }
-      }
-
-      if (!isNaN(qty) && !isNaN(rateInclusive)) {
-        // Total amount (inclusive)
-        const amountWithGst = qty * rateInclusive;
-
-        // Total GST percent (sum of CGST, SGST, IGST)
-        const totalGstPercent = cgst + sgst + igst;
-
-        // Calculate amount without GST (inclusive price / (1 + GST%/100))
-        const amountWithoutGst = amountWithGst / (1 + totalGstPercent / 100);
-
-        // GST Amount = amountWithGst - amountWithoutGst
-        const totalGstAmount = amountWithGst - amountWithoutGst;
-
-        // Calculate each GST component amounts
-        const cgstAmount = (amountWithoutGst * cgst) / 100;
-        const sgstAmount = (amountWithoutGst * sgst) / 100;
-        const igstAmount = (amountWithoutGst * igst) / 100;
-
-        // Update form values if changed
-        // const round2 = (num: number) => num.toFixed(2);
-
-        if (detail.amountWithGst !== round2(amountWithGst)) {
-          setValue(
-            `repurchaseDetails.${index}.amountWithGst`,
-            round2(amountWithGst)
-          );
-        }
-        if (detail.amountWithoutGst !== round2(amountWithoutGst)) {
+        if (detail.amountWithoutGst !== newAmountWithoutGst) {
           setValue(
             `repurchaseDetails.${index}.amountWithoutGst`,
-            round2(amountWithoutGst)
+            newAmountWithoutGst
           );
         }
-        if (detail.cgstAmount !== round2(cgstAmount)) {
-          setValue(`repurchaseDetails.${index}.cgstAmount`, round2(cgstAmount));
+        if (detail.cgstAmount !== cgstAmt) {
+          setValue(`repurchaseDetails.${index}.cgstAmount`, cgstAmt);
         }
-        if (detail.sgstAmount !== round2(sgstAmount)) {
-          setValue(`repurchaseDetails.${index}.sgstAmount`, round2(sgstAmount));
+        if (detail.sgstAmount !== sgstAmt) {
+          setValue(`repurchaseDetails.${index}.sgstAmount`, sgstAmt);
         }
-        if (detail.igstAmount !== round2(igstAmount)) {
-          setValue(`repurchaseDetails.${index}.igstAmount`, round2(igstAmount));
+        if (detail.igstAmount !== igstAmt) {
+          setValue(`repurchaseDetails.${index}.igstAmount`, igstAmt);
+        }
+        if (detail.amountWithGst !== newAmountWithGst) {
+          setValue(
+            `repurchaseDetails.${index}.amountWithGst`,
+            newAmountWithGst
+          );
         }
       }
 
-      // PV calculations
       if (selectedProduct && !isNaN(qty)) {
         const bvPerUnit = parseFloat(selectedProduct.bv);
-        const totalBV = qty * bvPerUnit;
+        const totalBV = (qty * bvPerUnit).toFixed(2);
 
-        const round2 = (num: number) => num.toFixed(2);
-
-        if (detail.bvPerUnit !== round2(bvPerUnit)) {
-          setValue(`repurchaseDetails.${index}.bvPerUnit`, round2(bvPerUnit));
+        if (detail.bvPerUnit !== bvPerUnit.toFixed(2)) {
+          setValue(
+            `repurchaseDetails.${index}.bvPerUnit`,
+            bvPerUnit.toFixed(2)
+          );
         }
-        if (detail.totalBV !== round2(totalBV)) {
-          setValue(`repurchaseDetails.${index}.totalBV`, round2(totalBV));
+
+        if (detail.totalBV !== totalBV) {
+          setValue(`repurchaseDetails.${index}.totalBV`, totalBV);
         }
       }
     });
-  }, [watchedDetails, products, setValue]);
+  }, [watchedDetails, products]);
 
-  // Calculate totals
   const totals = React.useMemo(() => {
     let totalGst = 0;
     let totalWithGst = 0;
@@ -309,21 +298,22 @@ const Repurchase = () => {
     };
   }, [watchedDetails]);
 
+  // Handle form submission
   const onSubmit: SubmitHandler<FormInputs> = (data) => {
-    // Add totals to data to submit if needed
-    (data as any).totalAmountWithoutGst = totals.totalWithoutGst;
-    (data as any).totalGstAmount = totals.totalGst;
-    (data as any).totalAmountWithGst = totals.totalWithGst;
-    (data as any).totalProductBV = totals.totalBV;
+    data.totalAmountWithoutGst = totals.totalWithoutGst;
+    data.totalGstAmount = totals.totalGst;
+    data.totalAmountWithGst = totals.totalWithGst;
+    data.totalProductBV = totals.totalBV;
 
-    if (walletBalance < parseFloat(totals.totalWithGst)) {
+    if (walletBalance < parseFloat(data.totalAmountWithGst)) {
       toast.error("Insufficient wallet balance to complete the purchase.");
       return;
     }
-    createMutation.mutate(data);
+    createMutation.mutate(data); // Trigger create mutation
   };
 
   const isLoading = createMutation.isPending;
+
   return (
     <>
       {Object.entries(errors).map(([field, error]) => (
@@ -411,7 +401,7 @@ const Repurchase = () => {
                                     const gst = parseFloat(product.gst);
                                     setValue(
                                       `repurchaseDetails.${index}.rate`,
-                                      product.bvPrice.toString()
+                                      product.mrp.toString()
                                     );
                                     if (memberState?.State === "Maharashtra") {
                                       setValue(
@@ -595,7 +585,82 @@ const Repurchase = () => {
                 Add Another Product
               </Button>
 
+              {/* Totals */}
+              {/* Totals */}
+              {/* <div className="flex justify-end">
+                <div className="mt-6 p-4 bg-gray-100 dark:bg-gray-900 rounded-lg text-sm space-y-2 border border-gray-200 dark:border-gray-700 w-full max-w-sm ml-auto">
+                  <div className="flex justify-between">
+                    <span className="font-medium">
+                      Total Amount Without GST:
+                    </span>
+                    <span>{totals.totalWithoutGst}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">Total GST Amount:</span>
+                    <span>{totals.totalGst}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">Total Amount With GST:</span>
+                    <span className="font-semibold">{totals.totalWithGst}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">Total Product PV:</span>
+                    <span>{totals.totalPV}</span>
+                  </div>
+                </div>
+              </div> */}
               <div className="flex justify-between w-full mt-6 gap-2">
+                {/* Left Side: Icon + Info Grid */}
+                {/* <div className="p-4 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 w-full shadow-sm space-y-4">
+                  <div className="flex items-center gap-3">
+                    <User className="text-blue-600 dark:text-blue-400 h-5 w-5" />
+                    <div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        Member
+                      </p>
+                      <p className="font-medium text-sm">
+                        {memberState?.fullName || "N/A"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <MapPin className="text-emerald-600 dark:text-emerald-400 h-5 w-5" />
+                    <div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        State
+                      </p>
+                      <p className="font-medium text-sm">
+                        {memberState?.State || "N/A"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <Wallet className="text-yellow-600 dark:text-yellow-400 h-5 w-5" />
+                    <div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        Wallet Balance
+                      </p>
+                      <p className="font-medium text-sm">
+                        ₹ {walletBalance?.toFixed(2) || "0.00"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <CalendarDays className="text-purple-600 dark:text-purple-400 h-5 w-5" />
+                    <div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        Date
+                      </p>
+                      <p className="font-medium text-sm">
+                        {new Date().toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                </div> */}
+
                 {/* Right Side: Totals */}
                 <div className="p-4 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 w-full  ml-auto shadow-sm text-sm space-y-2">
                   <div className="flex justify-between">
@@ -635,7 +700,7 @@ const Repurchase = () => {
                 {isLoading ? (
                   <LoaderCircle className="animate-spin h-4 w-4" />
                 ) : (
-                  "Purchase"
+                  " Repurchase"
                 )}
               </Button>
             </div>
