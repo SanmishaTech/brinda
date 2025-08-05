@@ -89,3 +89,6 @@ export const GOLD = "Gold";
 export const SILVER = "Silver";
 export const INACTIVE = "Inactive";
 export const ASSOCIATE = "Associate";
+
+export const FUND_WALLET = "FUND_WALLET";
+export const MATCHING_INCOME_WALLET = "MATCHING_INCOME_WALLET";
