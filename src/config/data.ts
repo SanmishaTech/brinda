@@ -92,3 +92,4 @@ export const ASSOCIATE = "Associate";
 
 export const FUND_WALLET = "FUND_WALLET";
 export const MATCHING_INCOME_WALLET = "MATCHING_INCOME_WALLET";
+export const UPGRADE_WALLET = "UPGRADE_WALLET";

@@ -12,13 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardContent,
-  CardTitle,
-  CardHeader,
-  CardDescription,
-} from "@/components/ui/card";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
 
 import {
   Select,
@@ -42,25 +36,6 @@ import { useNavigate } from "react-router-dom";
 import { get } from "@/services/apiService";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { post } from "@/services/apiService";
-import { useState } from "react";
-import CustomPagination from "@/components/common/custom-pagination";
-import dayjs from "dayjs";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { FUND_WALLET, MATCHING_INCOME_WALLET } from "@/config/data";
-import {
-  Wallet,
-  Loader2,
-  CheckCircle,
-  CheckCircle2,
-  AtSign,
-  User,
-  Phone,
-} from "lucide-react";
-import { Separator } from "@/components/ui/separator";
-import { APPROVED, PENDING, REJECTED, CREDIT, DEBIT } from "@/config/data";
-import { formatDate, formatDateTime } from "@/lib/formatter.js";
-import TransactionPinDialog from "./User/TransactionPinDialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const decimalString = (
   fieldName: string,
@@ -155,7 +130,7 @@ const Purchase = () => {
   const watchedDetails = useWatch({ control, name: "purchaseDetails" });
 
   // Fetch wallet balance
-  const { data: walletBalance, isLoading: isWalletDataLoading } = useQuery({
+  const { data: walletBalance } = useQuery({
     queryKey: ["walletBalance"],
     queryFn: async () => {
       const response = await get("/wallet-transactions/wallet-amount");
@@ -356,49 +331,6 @@ const Purchase = () => {
           </p>
         </div>
       ))}
-
-      {/* Wallet and Add Balance Boxes */}
-      <div className=" grid grid-cols-1 mb-4 md:grid-cols-2 gap-6">
-        {/* Wallet Balance Box */}
-        <Card className="bg-green-100 h-52 border border-green-300 shadow-md dark:bg-card dark:border-border">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-green-700">
-              <CheckCircle className="w-6 h-6" />
-              Wallet Balance
-            </CardTitle>
-            <CardDescription>Your current wallet balance</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {isWalletDataLoading ? (
-              <p className="text-lg font-bold text-green-700">Loading...</p>
-            ) : (
-              <p className="text-4xl font-bold text-green-700">
-                {formatCurrency(walletBalance?.walletBalance)}
-              </p>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Matching income wallet balance box */}
-        <Card className="bg-green-100 border border-green-300 shadow-md dark:bg-card dark:border-border">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-green-700">
-              <CheckCircle className="w-6 h-6" />
-              Matching Income Wallet Balance
-            </CardTitle>
-            <CardDescription>Your current wallet balance</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {isWalletDataLoading ? (
-              <p className="text-lg font-bold text-green-700">Loading...</p>
-            ) : (
-              <p className="text-4xl font-bold text-green-700">
-                {formatCurrency(walletBalance?.matchingIncomeWalletBalance)}
-              </p>
-            )}
-          </CardContent>
-        </Card>
-      </div>
 
       {/* JSX Code for HotelForm.tsx */}
       <div className="mt-2 p-6">

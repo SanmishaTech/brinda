@@ -7,20 +7,12 @@ import {
   useWatch,
 } from "react-hook-form";
 import { formatCurrency } from "@/lib/formatter.js";
-import clsx from "clsx"; // for conditional classNames
-import { LoaderCircle, Trash2, PlusCircle, ArrowUpCircle } from "lucide-react";
 
-import {
-  Card,
-  CardContent,
-  CardTitle,
-  CardHeader,
-  CardDescription,
-} from "@/components/ui/card";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
 
 import {
   Select,
@@ -38,36 +30,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { LoaderCircle, Trash2, PlusCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { get } from "@/services/apiService";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { post } from "@/services/apiService";
-import { useState } from "react";
-import CustomPagination from "@/components/common/custom-pagination";
-import dayjs from "dayjs";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import {
-  FUND_WALLET,
-  MATCHING_INCOME_WALLET,
-  UPGRADE_WALLET,
-} from "@/config/data";
-import {
-  Wallet,
-  Loader2,
-  CheckCircle,
-  CheckCircle2,
-  AtSign,
-  User,
-  TrendingUp,
-  BadgeDollarSign,
-  Phone,
-} from "lucide-react";
-import { Separator } from "@/components/ui/separator";
-import { APPROVED, PENDING, REJECTED, CREDIT, DEBIT } from "@/config/data";
-import { formatDate, formatDateTime } from "@/lib/formatter.js";
-import TransactionPinDialog from "./User/TransactionPinDialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 const decimalString = (
   fieldName: string,
   maxDigits: number,
@@ -117,9 +86,6 @@ const FormSchema = z.object({
 type FormInputs = z.infer<typeof FormSchema>;
 
 const Repurchase = () => {
-  const [selectedWallet, setSelectedWallet] = useState<
-    typeof FUND_WALLET | typeof MATCHING_INCOME_WALLET
-  >(FUND_WALLET);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -164,11 +130,11 @@ const Repurchase = () => {
   const watchedDetails = useWatch({ control, name: "repurchaseDetails" });
 
   // Fetch wallet balance
-  const { data: walletData, isLoading: isWalletDataLoading } = useQuery({
-    queryKey: ["walletData"],
+  const { data: walletBalance } = useQuery({
+    queryKey: ["walletBalance"],
     queryFn: async () => {
       const response = await get("/wallet-transactions/wallet-amount");
-      return response;
+      return response.walletBalance;
     },
     onError: (err: any) => {
       toast.error(
@@ -178,23 +144,6 @@ const Repurchase = () => {
       );
     },
   });
-
-  const wallets = [
-    {
-      key: FUND_WALLET,
-      label: "Fund Wallet",
-      balance: walletData?.walletBalance || 0,
-      icon: <Wallet className="w-6 h-6" />,
-      color: "blue",
-    },
-    {
-      key: MATCHING_INCOME_WALLET,
-      label: "Matching Income Wallet",
-      balance: walletData?.matchingIncomeWalletBalance || 0,
-      icon: <TrendingUp className="w-6 h-6" />,
-      color: "green",
-    },
-  ];
 
   // Fetch member state
   const { data: memberState } = useQuery({
@@ -361,42 +310,16 @@ const Repurchase = () => {
   }, [watchedDetails]);
 
   const onSubmit: SubmitHandler<FormInputs> = (data) => {
-    if (!selectedWallet) {
-      toast.error("Please select a wallet to complete the purchase.");
-      return;
-    }
     // Add totals to data to submit if needed
     (data as any).totalAmountWithoutGst = totals.totalWithoutGst;
     (data as any).totalGstAmount = totals.totalGst;
     (data as any).totalAmountWithGst = totals.totalWithGst;
     (data as any).totalProductBV = totals.totalBV;
-    (data as any).walletType = selectedWallet;
 
-    // satrt
-
-    const selectedBalance = (() => {
-      switch (selectedWallet) {
-        case FUND_WALLET:
-          return walletData?.walletBalance;
-        case MATCHING_INCOME_WALLET:
-          return walletData?.matchingIncomeWalletBalance;
-        default:
-          return 0;
-      }
-    })();
-    if (
-      isNaN(parseFloat(String(selectedBalance))) ||
-      isNaN(parseFloat(totals.totalWithGst)) ||
-      parseFloat(selectedBalance) < parseFloat(totals.totalWithGst)
-    ) {
-      const walletLabels: Record<string, string> = {
-        FUND_WALLET: "Fund Wallet",
-        MATCHING_INCOME_WALLET: "Matching Income Wallet",
-      };
-      toast.error(`Insufficient balance in ${walletLabels[selectedWallet]}`);
+    if (walletBalance < parseFloat(totals.totalWithGst)) {
+      toast.error("Insufficient wallet balance to complete the purchase.");
       return;
     }
-    // nd
     createMutation.mutate(data);
   };
 
@@ -412,61 +335,10 @@ const Repurchase = () => {
         </div>
       ))}
 
-      {/* Wallet satrt */}
-
-      <div className="p-6 grid grid-cols-1 mb-4 md:grid-cols-3 gap-4">
-        {wallets.map(({ key, label, balance, icon, color }) => {
-          const isSelected = selectedWallet === key;
-          return (
-            <Card
-              key={key}
-              onClick={() => {
-                setSelectedWallet(key);
-                toast.success(`${label} selected`);
-              }}
-              className={clsx(
-                "cursor-pointer shadow-md transition-all duration-200",
-                isSelected ? "border-4 scale-105" : "border",
-                `bg-${color}-100 border-${color}-300 dark:bg-${color}-900 dark:border-${color}-700`
-              )}
-              style={{ width: "100%", minHeight: "2rem" }} // 50% smaller height
-            >
-              <CardHeader className="">
-                <CardTitle
-                  className={clsx(
-                    "flex items-center gap-2 text-sm font-medium",
-                    `text-${color}-700 dark:text-${color}-200`
-                  )}
-                >
-                  {icon}
-                  {label}
-                </CardTitle>
-                <CardDescription
-                  className={clsx("text-xs", `dark:text-${color}-300`)}
-                >
-                  {isSelected ? "Selected" : "Click to select"}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p
-                  className={clsx(
-                    "text-xl font-semibold",
-                    `text-${color}-700 dark:text-${color}-100`
-                  )}
-                >
-                  {formatCurrency(balance)}
-                </p>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
-      {/* wallet end */}
-
       {/* JSX Code for HotelForm.tsx */}
-      <div className="mt-2 px-6 pb-6">
+      <div className="mt-2 p-6">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <Card className="mx-auto w-full max-w-7xl shadow-md">
+          <Card className="mx-auto mt-6 w-full max-w-7xl shadow-md">
             <CardContent className="pt-6">
               <div className="flex justify-between items-center mb-6">
                 <div>

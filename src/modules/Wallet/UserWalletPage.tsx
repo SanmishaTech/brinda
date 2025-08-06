@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import CustomPagination from "@/components/common/custom-pagination";
 import dayjs from "dayjs";
-
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { FUND_WALLET, MATCHING_INCOME_WALLET } from "@/config/data";
 import {
   Card,
   CardContent,
@@ -39,11 +40,7 @@ import { APPROVED, PENDING, REJECTED, CREDIT, DEBIT } from "@/config/data";
 import { formatCurrency, formatDate, formatDateTime } from "@/lib/formatter.js";
 import TransactionPinDialog from "./User/TransactionPinDialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-const fetchTransactions = async (
-  page: number,
-
-  recordsPerPage: number
-) => {
+const fetchTransactions = async (page: number, recordsPerPage: number) => {
   const response = await get(
     `/wallet-transactions/member/?page=${page}&limit=${recordsPerPage}`
   );
@@ -65,9 +62,9 @@ const UserWalletPage = () => {
   const [amountToTransfer, setAmountToTransfer] = useState<number | string>("");
   const [recipientName, setRecipientName] = useState<string | null>(null);
   const [recipientMemberId, setRecipientMemberId] = useState("");
-  const [transferSource, setTransferSource] = useState<"wallet" | "matching">(
-    "wallet"
-  );
+  const [transferSource, setTransferSource] = useState<
+    typeof FUND_WALLET | typeof MATCHING_INCOME_WALLET
+  >(FUND_WALLET);
 
   // Fetch wallet balance using React Query
   const { data: walletData, isLoading } = useQuery({
@@ -172,6 +169,8 @@ const UserWalletPage = () => {
         amount: Number(amountToTransfer),
         memberId: recipientMemberId, // Assuming recipientName is the memberId
         tPin,
+        walletType:
+          transferSource === FUND_WALLET ? FUND_WALLET : MATCHING_INCOME_WALLET, // <-- Here
       });
     },
     onSuccess: () => {
@@ -211,13 +210,27 @@ const UserWalletPage = () => {
       return;
     }
 
-    if (!walletData?.walletBalance && walletData?.walletBalance !== 0) {
-      toast.error("Wallet balance is not available. Please try again.");
+    const selectedBalance =
+      transferSource === FUND_WALLET
+        ? walletData?.walletBalance
+        : walletData?.matchingIncomeWalletBalance;
+    const selectedWalletName =
+      transferSource === FUND_WALLET ? "Fund Wallet" : "Matching Income Wallet";
+
+    if (
+      parseFloat(selectedBalance) === undefined ||
+      parseFloat(selectedBalance) === null
+    ) {
+      toast.error(
+        `${selectedWalletName} balance is not available. Please try again.`
+      );
       return;
     }
 
-    if (amountToTransfer > walletData?.walletBalance) {
-      toast.error("Insufficient wallet balance for this transfer.");
+    if (Number(amountToTransfer) > parseFloat(selectedBalance)) {
+      toast.error(
+        `Insufficient balance in ${selectedWalletName} for this transfer.`
+      );
       return;
     }
 
@@ -347,44 +360,49 @@ const UserWalletPage = () => {
       <Card className="mt-6 bg-gray-100 border border-gray-300 shadow-md dark:bg-card dark:border-border">
         <CardHeader>
           <CardTitle className="text-lg font-bold">
-            Transfer Money To Member
+            <div className="flex flex-col items-center gap-5 lg:flex-row lg:justify-between lg:items-center">
+              <div>Transfer Money To Member</div>
+              <div>
+                <ToggleGroup
+                  type="single"
+                  value={transferSource}
+                  onValueChange={(value) => {
+                    if (value) setTransferSource(value);
+                  }}
+                  className="flex space-x-2"
+                >
+                  <ToggleGroupItem
+                    value={FUND_WALLET}
+                    className={`px-4 py-2 rounded-md border text-sm font-medium transition-colors ${
+                      transferSource === FUND_WALLET
+                        ? "!bg-primary !text-white border-primary dark:bg-primary dark:text-white"
+                        : "bg-muted text-muted-foreground hover:bg-accent"
+                    }`}
+                  >
+                    Fund Wallet
+                  </ToggleGroupItem>
+
+                  <ToggleGroupItem
+                    value={MATCHING_INCOME_WALLET}
+                    className={`px-4 py-2 rounded-md border text-sm font-medium transition-colors ${
+                      transferSource === MATCHING_INCOME_WALLET
+                        ? "!bg-primary !text-white border-primary dark:bg-primary dark:text-white"
+                        : "bg-muted text-muted-foreground hover:bg-accent"
+                    }`}
+                  >
+                    Matching Wallet
+                  </ToggleGroupItem>
+                </ToggleGroup>
+              </div>
+            </div>
           </CardTitle>
+
           <CardDescription>
             Enter the username and amount to transfer money securely.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="lg:flex lg:flex-row-reverse lg:justify-between items-center">
-            {/* <div className="flex flex-col mb-4 items-start space-y-1 mt-2">
-              {recipientName ? (
-                <>
-                  <p className="text-base text-gray-800">
-                    <span className="font-semibold">Name:</span> {recipientName}
-                  </p>
-                  <p className="text-base text-gray-800">
-                    <span className="font-semibold">Username:</span>{" "}
-                    {recipientUsername}
-                  </p>
-                  {recipientEmail && (
-                    <p className="text-base text-gray-800">
-                      <span className="font-semibold">Email:</span>{" "}
-                      {recipientEmail}
-                    </p>
-                  )}
-                  {recipientMobile && (
-                    <p className="text-base text-gray-800">
-                      <span className="font-semibold">Mobile:</span>{" "}
-                      {recipientMobile}
-                    </p>
-                  )}
-                </>
-              ) : (
-                <p className="text-sm text-gray-500">
-                  Enter a username to find the recipient.
-                </p>
-              )}
-            </div> */}
-
             <div className="w-full mb-4 lg:mb-0 max-w-[500px]">
               <Card className="shadow-md bg-gray-100 dark:bg-gray-900 border dark:border-gray-700">
                 <CardHeader>

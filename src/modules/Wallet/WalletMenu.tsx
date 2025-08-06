@@ -19,7 +19,7 @@ export default function WalletButton() {
 
   // Use React Query to fetch wallet balance
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["walletBalance"],
+    queryKey: ["fundWalletData"],
     queryFn: async () => {
       const response = await get("/wallet-transactions/wallet-amount");
       const amount = Number(response.walletBalance);
@@ -34,7 +34,7 @@ export default function WalletButton() {
     },
   });
 
-  console.log("Wallet Balance Data:", data);
+  // console.log("Wallet Balance Data:", data);
 
   if (isLoading) {
     return (
