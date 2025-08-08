@@ -36,11 +36,43 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
   const startRecord = (currentPage - 1) * recordsPerPage + 1;
   const endRecord = Math.min(currentPage * recordsPerPage, totalRecords);
 
+  // Calculate visible page numbers
+  const visiblePages = () => {
+    const pages = [];
+    const maxVisible = 3;
+
+    if (totalPages <= maxVisible + 2) {
+      // Show all if few pages
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      // Always show first page
+      pages.push(1);
+
+      const start = Math.max(2, currentPage);
+      const end = Math.min(currentPage + 2, totalPages - 1);
+
+      if (start > 2) pages.push("...");
+
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+
+      if (end < totalPages - 1) pages.push("...");
+
+      // Always show last page
+      pages.push(totalPages);
+    }
+
+    return pages;
+  };
+
   return (
     <div className="flex flex-wrap justify-between items-center mt-4 gap-4">
       {/* Number of Records */}
       <div className="text-sm text-gray-600">
-        Showing {startRecord} of {totalPages} pages
+        Showing {startRecord} to {endRecord} of {totalRecords} records
       </div>
 
       {/* Records Per Page Selector */}
@@ -62,41 +94,45 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
         </Select>
       </div>
 
-      {/* ShadCN Pagination */}
+      {/* Pagination */}
       <Pagination>
         <PaginationContent>
           {/* Previous Button */}
           <PaginationItem>
-            {currentPage !== 1 ? (
-              <PaginationPrevious onClick={() => onPageChange(currentPage - 1)}>
-                Previous
-              </PaginationPrevious>
-            ) : (
-              <PaginationPrevious isActive={false}>Previous</PaginationPrevious>
-            )}
+            <PaginationPrevious
+              onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
+              isActive={currentPage !== 1}
+            >
+              Previous
+            </PaginationPrevious>
           </PaginationItem>
 
-          {/* Page Numbers */}
-          {Array.from({ length: totalPages }, (_, index) => (
-            <PaginationItem key={index}>
-              <PaginationLink
-                isActive={currentPage === index + 1}
-                onClick={() => onPageChange(index + 1)}
-              >
-                {index + 1}
-              </PaginationLink>
+          {/* Dynamic Page Links */}
+          {visiblePages().map((page, idx) => (
+            <PaginationItem key={idx}>
+              {page === "..." ? (
+                <span className="px-2 text-gray-400">...</span>
+              ) : (
+                <PaginationLink
+                  isActive={currentPage === page}
+                  onClick={() => onPageChange(Number(page))}
+                >
+                  {page}
+                </PaginationLink>
+              )}
             </PaginationItem>
           ))}
 
           {/* Next Button */}
           <PaginationItem>
-            {currentPage < totalPages ? (
-              <PaginationNext onClick={() => onPageChange(currentPage + 1)}>
-                Next
-              </PaginationNext>
-            ) : (
-              <PaginationNext isActive={false}>Next</PaginationNext>
-            )}
+            <PaginationNext
+              onClick={() =>
+                currentPage < totalPages && onPageChange(currentPage + 1)
+              }
+              isActive={currentPage !== totalPages}
+            >
+              Next
+            </PaginationNext>
           </PaginationItem>
         </PaginationContent>
       </Pagination>

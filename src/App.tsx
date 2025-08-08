@@ -37,9 +37,11 @@ import MemberLogList from "./modules/Member/MemberLogList";
 import MyDirectReferralList from "./modules/MyDirectList/MyDirectReferralList";
 import Repurchase from "./modules/Repurchase/User/Repurchase";
 import RepurchaseHistoryList from "./modules/Repurchase/User/RepurchaseHistoryList";
-import MatchingIncomePayoutList from "./modules/Commission/MatchingIncomePayoutList";
-import AdminPaidCommissionList from "./modules/Commission/AdminPaidCommissionList";
+import MatchingIncomePayoutList from "./modules/Commission/MatchingPayout/MatchingIncomePayoutList";
+import AdminPaidCommissionList from "./modules/Commission/MatchingPayout/AdminPaidCommissionList";
 import GuestRoute from "./components/common/guest-route";
+import RepurchaseIncomePayoutList from "./modules/Commission/RepurchasePayout/RepurchaseIncomePayoutList";
+import AdminPaidRepurchaseList from "./modules/Commission/RepurchasePayout/AdminPaidRepurchaseList";
 
 const App = () => {
   useEffect(() => {
@@ -249,6 +251,22 @@ const App = () => {
               element={
                 <ProtectedRoute>
                   <AdminPaidCommissionList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/commissions/repurchaseIncomePayout"
+              element={
+                <ProtectedRoute>
+                  <RepurchaseIncomePayoutList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/commissions/adminPaidRepurchaseCommissions"
+              element={
+                <ProtectedRoute>
+                  <AdminPaidRepurchaseList />
                 </ProtectedRoute>
               }
             />

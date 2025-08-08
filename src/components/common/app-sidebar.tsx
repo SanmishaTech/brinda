@@ -335,8 +335,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           url: "/commissions/matchingIncomePayout",
         },
         {
-          title: "Admin Paid",
+          title: "Repurchase Payout",
+          url: "/commissions/repurchaseIncomePayout",
+        },
+        {
+          title: "Paid matching Payout",
           url: "/commissions/adminPaidCommissions",
+        },
+        {
+          title: "Paid Repurchase Payout",
+          url: "/commissions/adminPaidRepurchaseCommissions",
         },
       ],
     },
