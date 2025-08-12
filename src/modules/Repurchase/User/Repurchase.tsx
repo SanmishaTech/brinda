@@ -361,7 +361,7 @@ const Repurchase = () => {
   }, [watchedDetails]);
 
   const onSubmit: SubmitHandler<FormInputs> = (data) => {
-    return toast.error("Repurchase Will Get started from tomorrow.");
+    // return toast.error("Repurchase Will Get started from tomorrow.");
     if (!selectedWallet) {
       toast.error("Please select a wallet to complete the purchase.");
       return;

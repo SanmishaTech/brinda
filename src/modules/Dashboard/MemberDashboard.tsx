@@ -68,6 +68,16 @@ const MemberDashboard = () => {
     matchingIncomeWalletBalance,
     upgradeWalletBalance,
     repurchaseIncomeEarned,
+    repurchaseIncomeL1,
+    repurchaseIncomeL2,
+    repurchaseIncomeL3,
+    repurchaseIncomeL4,
+    repurchaseIncomeL5,
+    repurchaseIncomeL6,
+    repurchaseIncomeL7,
+    repurchaseIncomeL8,
+    repurchaseIncomeL9,
+    repurchaseIncomeL10,
   } = data;
 
   const totalIncomeEarned =
@@ -220,7 +230,7 @@ const MemberDashboard = () => {
           Income Collected This Month (Pending)
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card className="bg-gradient-to-r from-orange-500 to-pink-500 text-white">
+          {/* <Card className="bg-gradient-to-r from-orange-500 to-pink-500 text-white">
             <CardHeader>
               <CardTitle className="flex items-center gap-3 text-white">
                 <Wallet />
@@ -230,6 +240,136 @@ const MemberDashboard = () => {
             <CardContent>
               <p className="text-3xl font-bold text-white">
                 {formatCurrency(repurchaseIncome)}
+              </p>
+            </CardContent>
+          </Card> */}
+          <Card className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3 text-white">
+                <Wallet />
+                Repurchase Income L1
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold text-white">
+                {formatCurrency(repurchaseIncomeL1)}
+              </p>
+            </CardContent>
+          </Card>
+          <Card className="bg-gradient-to-r from-green-400 to-blue-500 text-white">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3 text-white">
+                <Wallet />
+                Repurchase Income L2
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold text-white">
+                {formatCurrency(repurchaseIncomeL2)}
+              </p>
+            </CardContent>
+          </Card>
+          <Card className="bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3 text-white">
+                <Wallet />
+                Repurchase Income L3
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold text-white">
+                {formatCurrency(repurchaseIncomeL3)}
+              </p>
+            </CardContent>
+          </Card>
+          <Card className="bg-gradient-to-r from-yellow-400 to-red-500 text-white">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3 text-white">
+                <Wallet />
+                Repurchase Income L4
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold text-white">
+                {formatCurrency(repurchaseIncomeL4)}
+              </p>
+            </CardContent>
+          </Card>
+          <Card className="bg-gradient-to-r from-teal-400 to-cyan-500 text-white">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3 text-white">
+                <Wallet />
+                Repurchase Income L5
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold text-white">
+                {formatCurrency(repurchaseIncomeL5)}
+              </p>
+            </CardContent>
+          </Card>
+          <Card className="bg-gradient-to-r from-red-500 to-orange-500 text-white">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3 text-white">
+                <Wallet />
+                Repurchase Income L6
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold text-white">
+                {formatCurrency(repurchaseIncomeL6)}
+              </p>
+            </CardContent>
+          </Card>
+          <Card className="bg-gradient-to-r from-emerald-400 to-lime-500 text-white">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3 text-white">
+                <Wallet />
+                Repurchase Income L7
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold text-white">
+                {formatCurrency(repurchaseIncomeL7)}
+              </p>
+            </CardContent>
+          </Card>
+          <Card className="bg-gradient-to-r from-rose-400 to-fuchsia-500 text-white">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3 text-white">
+                <Wallet />
+                Repurchase Income L8
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold text-white">
+                {formatCurrency(repurchaseIncomeL8)}
+              </p>
+            </CardContent>
+          </Card>
+          <Card className="bg-gradient-to-r from-sky-400 to-blue-600 text-white">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3 text-white">
+                <Wallet />
+                Repurchase Income L9
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold text-white">
+                {formatCurrency(repurchaseIncomeL9)}
+              </p>
+            </CardContent>
+          </Card>
+          <Card className="bg-gradient-to-r from-indigo-400 to-purple-600 text-white">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3 text-white">
+                <Wallet />
+                Repurchase Income L10
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold text-white">
+                {formatCurrency(repurchaseIncomeL10)}
               </p>
             </CardContent>
           </Card>

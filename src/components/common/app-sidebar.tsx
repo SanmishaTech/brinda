@@ -307,7 +307,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       ? [
           {
             name: "Repurchase",
-            url: "/",
+            url: "/repurchase",
             icon: UsersRound,
           },
         ]
