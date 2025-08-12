@@ -249,7 +249,7 @@ import {
 } from "@/components/ui/sidebar";
 
 import { appName } from "@/config";
-import { DIAMOND } from "@/config/data";
+import { ASSOCIATE, DIAMOND, INACTIVE, SILVER } from "@/config/data";
 
 // Fetch profile status API
 const fetchProfileStatus = async () => {
@@ -303,11 +303,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       url: "/genealogy",
       icon: UsersRound,
     },
-    {
-      name: "Repurchase",
-      url: "/repurchase",
-      icon: UsersRound,
-    },
+    ...(![ASSOCIATE, INACTIVE].includes(userStatus) && !isLoading
+      ? [
+          {
+            name: "Repurchase",
+            url: "/",
+            icon: UsersRound,
+          },
+        ]
+      : []),
+    // {
+    //   name: "Repurchase",
+    //   url: "/repurchase",
+    //   icon: UsersRound,
+    // },
   ];
 
   const adminProjects = [

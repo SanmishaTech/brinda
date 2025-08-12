@@ -53,6 +53,7 @@ const MemberDashboard = () => {
 
   const {
     walletBalance,
+    holdWalletBalance,
     pvBalance,
     status,
     totalPurchase,
@@ -140,6 +141,22 @@ const MemberDashboard = () => {
             <CardContent>
               <p className="text-3xl font-bold text-white">
                 {formatCurrency(upgradeWalletBalance)}
+              </p>
+            </CardContent>
+          </Card>
+          <Card className="bg-gradient-to-r from-orange-500 to-pink-500 text-white">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3">
+                <Wallet className="text-white" />
+                Hold Wallet
+              </CardTitle>
+              <CardDescription className="text-white">
+                Stores the generated Incomes.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold">
+                {formatCurrency(holdWalletBalance)}
               </p>
             </CardContent>
           </Card>
