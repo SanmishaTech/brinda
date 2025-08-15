@@ -1,40 +1,40 @@
 // genderOptions.ts
 export const genderOptions = [
-  { label: "Male", value: "Male" },
-  { label: "Female", value: "Female" },
-  { label: "Other", value: "Other" },
+  { label: 'Male', value: 'Male' },
+  { label: 'Female', value: 'Female' },
+  { label: 'Other', value: 'Other' },
 ];
 
 export const stateOptions = [
   // States
-  { label: "Andhra Pradesh", value: "Andhra Pradesh" },
-  { label: "Arunachal Pradesh", value: "Arunachal Pradesh" },
-  { label: "Assam", value: "Assam" },
-  { label: "Bihar", value: "Bihar" },
-  { label: "Chhattisgarh", value: "Chhattisgarh" },
-  { label: "Goa", value: "Goa" },
-  { label: "Gujarat", value: "Gujarat" },
-  { label: "Haryana", value: "Haryana" },
-  { label: "Himachal Pradesh", value: "Himachal Pradesh" },
-  { label: "Jharkhand", value: "Jharkhand" },
-  { label: "Karnataka", value: "Karnataka" },
-  { label: "Kerala", value: "Kerala" },
-  { label: "Madhya Pradesh", value: "Madhya Pradesh" },
-  { label: "Maharashtra", value: "Maharashtra" },
-  { label: "Manipur", value: "Manipur" },
-  { label: "Meghalaya", value: "Meghalaya" },
-  { label: "Mizoram", value: "Mizoram" },
-  { label: "Nagaland", value: "Nagaland" },
-  { label: "Odisha", value: "Odisha" },
-  { label: "Punjab", value: "Punjab" },
-  { label: "Rajasthan", value: "Rajasthan" },
-  { label: "Sikkim", value: "Sikkim" },
-  { label: "Tamil Nadu", value: "Tamil Nadu" },
-  { label: "Telangana", value: "Telangana" },
-  { label: "Tripura", value: "Tripura" },
-  { label: "Uttar Pradesh", value: "Uttar Pradesh" },
-  { label: "Uttarakhand", value: "Uttarakhand" },
-  { label: "West Bengal", value: "West Bengal" },
+  { label: 'Andhra Pradesh', value: 'Andhra Pradesh' },
+  { label: 'Arunachal Pradesh', value: 'Arunachal Pradesh' },
+  { label: 'Assam', value: 'Assam' },
+  { label: 'Bihar', value: 'Bihar' },
+  { label: 'Chhattisgarh', value: 'Chhattisgarh' },
+  { label: 'Goa', value: 'Goa' },
+  { label: 'Gujarat', value: 'Gujarat' },
+  { label: 'Haryana', value: 'Haryana' },
+  { label: 'Himachal Pradesh', value: 'Himachal Pradesh' },
+  { label: 'Jharkhand', value: 'Jharkhand' },
+  { label: 'Karnataka', value: 'Karnataka' },
+  { label: 'Kerala', value: 'Kerala' },
+  { label: 'Madhya Pradesh', value: 'Madhya Pradesh' },
+  { label: 'Maharashtra', value: 'Maharashtra' },
+  { label: 'Manipur', value: 'Manipur' },
+  { label: 'Meghalaya', value: 'Meghalaya' },
+  { label: 'Mizoram', value: 'Mizoram' },
+  { label: 'Nagaland', value: 'Nagaland' },
+  { label: 'Odisha', value: 'Odisha' },
+  { label: 'Punjab', value: 'Punjab' },
+  { label: 'Rajasthan', value: 'Rajasthan' },
+  { label: 'Sikkim', value: 'Sikkim' },
+  { label: 'Tamil Nadu', value: 'Tamil Nadu' },
+  { label: 'Telangana', value: 'Telangana' },
+  { label: 'Tripura', value: 'Tripura' },
+  { label: 'Uttar Pradesh', value: 'Uttar Pradesh' },
+  { label: 'Uttarakhand', value: 'Uttarakhand' },
+  { label: 'West Bengal', value: 'West Bengal' },
 
   // Union Territories
   // {
@@ -54,42 +54,59 @@ export const stateOptions = [
 ];
 
 export const walletPaymentModeOptions = [
-  { label: "Cash", value: "Cash" },
-  { label: "Bank Transfer", value: "Bank Transfer" },
-  { label: "UPI", value: "UPI" },
+  { label: 'Cash', value: 'Cash' },
+  { label: 'Bank Transfer', value: 'Bank Transfer' },
+  { label: 'UPI', value: 'UPI' },
 ];
 
 export const accountTypeOptions = [
-  { label: "Savings Account", value: "Savings Account" },
-  { label: "Current Account", value: "Current Account" },
+  { label: 'Savings Account', value: 'Savings Account' },
+  { label: 'Current Account', value: 'Current Account' },
 ];
 
-export const CASH = "Cash";
-export const BANK_TRANSFER = "Bank Transfer";
-export const UPI = "UPI";
+export const CASH = 'Cash';
+export const BANK_TRANSFER = 'Bank Transfer';
+export const UPI = 'UPI';
 
-export const GENDER_MALE = "Male";
-export const GENDER_FEMALE = "Female";
-export const GENDER_OTHER = "Other";
+export const GENDER_MALE = 'Male';
+export const GENDER_FEMALE = 'Female';
+export const GENDER_OTHER = 'Other';
 
-export const LEFT = "Left";
-export const TOP = "Top";
-export const RIGHT = "Right";
+export const LEFT = 'Left';
+export const TOP = 'Top';
+export const RIGHT = 'Right';
 
-export const DEBIT = "Debit";
-export const CREDIT = "Credit";
+export const DEBIT = 'Debit';
+export const CREDIT = 'Credit';
 
-export const TRANSFERRED = "Transferred";
-export const APPROVED = "Approved";
-export const REJECTED = "Rejected";
-export const PENDING = "Pending";
+export const TRANSFERRED = 'Transferred';
+export const APPROVED = 'Approved';
+export const REJECTED = 'Rejected';
+export const PENDING = 'Pending';
 
-export const DIAMOND = "Diamond";
-export const GOLD = "Gold";
-export const SILVER = "Silver";
-export const INACTIVE = "Inactive";
-export const ASSOCIATE = "Associate";
+export const DIAMOND = 'Diamond';
+export const GOLD = 'Gold';
+export const SILVER = 'Silver';
+export const INACTIVE = 'Inactive';
+export const ASSOCIATE = 'Associate';
 
-export const FUND_WALLET = "FUND_WALLET";
-export const MATCHING_INCOME_WALLET = "MATCHING_INCOME_WALLET";
-export const UPGRADE_WALLET = "UPGRADE_WALLET";
+export const FUND_WALLET = 'FUND_WALLET';
+export const MATCHING_INCOME_WALLET = 'MATCHING_INCOME_WALLET';
+export const UPGRADE_WALLET = 'UPGRADE_WALLET';
+
+export const powerPositionOptions = [
+  { label: 'LEFT', value: 'Left' },
+  { label: 'RIGHT', value: 'Right' },
+];
+
+export const powerTypeOptions = [
+  { label: 'SELF', value: 'SELF' },
+  { label: 'SELF + UPLINE', value: 'SELF_PLUS_UPLINE' },
+];
+
+export const statusTypeOptions = [
+  { label: 'ASSOCIATE', value: 'Associate' },
+  { label: 'SILVER', value: 'Silver' },
+  { label: 'GOLD', value: 'Gold' },
+  { label: 'DIAMOND', value: 'Diamond' },
+];

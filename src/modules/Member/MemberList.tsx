@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from "react";
-import { Button, Input } from "@/components/ui";
+import React, { useState, useEffect } from 'react';
+import { Button, Input } from '@/components/ui';
 import {
   Select,
   SelectTrigger,
   SelectContent,
   SelectItem,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 import MultipleSelector, {
   Option,
-} from "@/components/common/multiple-selector"; // Import MultipleSelector from common folder
-import { Card, CardContent } from "@/components/ui/card";
-import { formatCurrency, formatDate, formatDateTime } from "@/lib/formatter.js";
+} from '@/components/common/multiple-selector'; // Import MultipleSelector from common folder
+import { Card, CardContent } from '@/components/ui/card';
+import { formatCurrency, formatDate, formatDateTime } from '@/lib/formatter.js';
 
 import {
   Table,
@@ -20,13 +20,13 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { useNavigate } from "react-router-dom";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { get, del, patch } from "@/services/apiService";
-import { toast } from "sonner";
-import { Separator } from "@/components/ui/separator";
-import CustomPagination from "@/components/common/custom-pagination";
+} from '@/components/ui/table';
+import { useNavigate } from 'react-router-dom';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { get, del, patch } from '@/services/apiService';
+import { toast } from 'sonner';
+import { Separator } from '@/components/ui/separator';
+import CustomPagination from '@/components/common/custom-pagination';
 import {
   Loader,
   ChevronUp,
@@ -45,18 +45,19 @@ import {
   XCircle,
   Eye,
   EyeOff,
-} from "lucide-react";
-import ConfirmDialog from "@/components/common/confirm-dialog";
-import { saveAs } from "file-saver";
-import { Badge } from "@/components/ui/badge"; // Ensure Badge is imported
+} from 'lucide-react';
+import ConfirmDialog from '@/components/common/confirm-dialog';
+import { saveAs } from 'file-saver';
+import { Badge } from '@/components/ui/badge'; // Ensure Badge is imported
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuGroup,
-} from "@/components/ui/dropdown-menu";
-import { ASSOCIATE, DIAMOND, GOLD, INACTIVE, SILVER } from "@/config/data";
+} from '@/components/ui/dropdown-menu';
+import { ASSOCIATE, DIAMOND, GOLD, INACTIVE, SILVER } from '@/config/data';
+import AddVirtualPower from '../VirtualPower/AddVirtualPower';
 
 const fetchMembers = async (
   page: number,
@@ -75,11 +76,14 @@ const MemberList = () => {
   const queryClient = useQueryClient();
   const [currentPage, setCurrentPage] = useState(1);
   const [recordsPerPage, setRecordsPerPage] = useState(50); // Add recordsPerPage state
-  const [sortBy, setSortBy] = useState("memberUsername"); // Default sort column
-  const [sortOrder, setSortOrder] = useState("asc"); // Default sort order
-  const [search, setSearch] = useState(""); // Search query
+  const [sortBy, setSortBy] = useState('memberUsername'); // Default sort column
+  const [sortOrder, setSortOrder] = useState('asc'); // Default sort order
+  const [search, setSearch] = useState(''); // Search query
   const [showConfirmation, setShowConfirmation] = useState(false); // State to show/hide confirmation dialog
   const [memberToDelete, setMemberToDelete] = useState<number | null>(null); //
+  const [virtualDialogOpen, setVirtualDialogOpen] = useState(false); // State to show/hide confirmation dialog
+  const [selectedVirtualMember, setSelectedVirtualMember] = useState(null); // State to show/hide confirmation dialog
+
   //  Track the user ID to delete
   const navigate = useNavigate();
   const [visiblePasswords, setVisiblePasswords] = useState<
@@ -90,7 +94,7 @@ const MemberList = () => {
   // Fetch users using react-query
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: [
-      "members",
+      'members',
       currentPage,
       sortBy,
       sortOrder,
@@ -109,14 +113,14 @@ const MemberList = () => {
   const deleteMutation = useMutation({
     mutationFn: (id: number) => del(`/members/${id}`),
     onSuccess: () => {
-      toast.success("Member deleted successfully");
-      queryClient.invalidateQueries(["members"]);
+      toast.success('Member deleted successfully');
+      queryClient.invalidateQueries(['members']);
     },
     onError: (error) => {
       if (error?.message) {
         toast.error(error.message);
       } else {
-        toast.error("Failed to delete Member");
+        toast.error('Failed to delete Member');
       }
     },
   });
@@ -151,11 +155,11 @@ const MemberList = () => {
   const handleSort = (column: string) => {
     if (sortBy === column) {
       // Toggle sort order if the same column is clicked
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
     } else {
       // Set new column and default to ascending order
       setSortBy(column);
-      setSortOrder("asc");
+      setSortOrder('asc');
     }
   };
 
@@ -215,14 +219,14 @@ const MemberList = () => {
                   <TableHeader>
                     <TableRow>
                       <TableHead
-                        onClick={() => handleSort("memberName")}
+                        onClick={() => handleSort('memberName')}
                         className="cursor-pointer max-w-[250px] break-words whitespace-normal"
                       >
                         <div className="flex items-center">
                           <span>Name</span>
-                          {sortBy === "memberName" && (
+                          {sortBy === 'memberName' && (
                             <span className="ml-1">
-                              {sortOrder === "asc" ? (
+                              {sortOrder === 'asc' ? (
                                 <ChevronUp size={16} />
                               ) : (
                                 <ChevronDown size={16} />
@@ -232,14 +236,14 @@ const MemberList = () => {
                         </div>
                       </TableHead>
                       <TableHead
-                        onClick={() => handleSort("memberUsername")}
+                        onClick={() => handleSort('memberUsername')}
                         className="cursor-pointer max-w-[250px] break-words whitespace-normal"
                       >
                         <div className="flex items-center">
                           <span>Username</span>
-                          {sortBy === "memberUsername" && (
+                          {sortBy === 'memberUsername' && (
                             <span className="ml-1">
-                              {sortOrder === "asc" ? (
+                              {sortOrder === 'asc' ? (
                                 <ChevronUp size={16} />
                               ) : (
                                 <ChevronDown size={16} />
@@ -249,14 +253,14 @@ const MemberList = () => {
                         </div>
                       </TableHead>
                       <TableHead
-                        onClick={() => handleSort("sponsor")}
+                        onClick={() => handleSort('sponsor')}
                         className="cursor-pointer max-w-[250px] break-words whitespace-normal"
                       >
                         <div className="flex items-center">
                           <span>Sponsor</span>
-                          {sortBy === "sponsor" && (
+                          {sortBy === 'sponsor' && (
                             <span className="ml-1">
-                              {sortOrder === "asc" ? (
+                              {sortOrder === 'asc' ? (
                                 <ChevronUp size={16} />
                               ) : (
                                 <ChevronDown size={16} />
@@ -266,14 +270,14 @@ const MemberList = () => {
                         </div>
                       </TableHead>
                       <TableHead
-                        onClick={() => handleSort("parent")}
+                        onClick={() => handleSort('parent')}
                         className="cursor-pointer max-w-[250px] break-words whitespace-normal"
                       >
                         <div className="flex items-center">
                           <span>Parent</span>
-                          {sortBy === "parent" && (
+                          {sortBy === 'parent' && (
                             <span className="ml-1">
-                              {sortOrder === "asc" ? (
+                              {sortOrder === 'asc' ? (
                                 <ChevronUp size={16} />
                               ) : (
                                 <ChevronDown size={16} />
@@ -283,14 +287,14 @@ const MemberList = () => {
                         </div>
                       </TableHead>
                       <TableHead
-                        onClick={() => handleSort("positionToParent")}
+                        onClick={() => handleSort('positionToParent')}
                         className="cursor-pointer max-w-[250px] break-words whitespace-normal"
                       >
                         <div className="flex items-center">
                           <span>Position</span>
-                          {sortBy === "positionToParent" && (
+                          {sortBy === 'positionToParent' && (
                             <span className="ml-1">
-                              {sortOrder === "asc" ? (
+                              {sortOrder === 'asc' ? (
                                 <ChevronUp size={16} />
                               ) : (
                                 <ChevronDown size={16} />
@@ -300,14 +304,14 @@ const MemberList = () => {
                         </div>
                       </TableHead>
                       <TableHead
-                        onClick={() => handleSort("leftCount")}
+                        onClick={() => handleSort('leftCount')}
                         className="cursor-pointer max-w-[250px] break-words whitespace-normal"
                       >
                         <div className="flex items-center">
                           <span>LC</span>
-                          {sortBy === "leftCount" && (
+                          {sortBy === 'leftCount' && (
                             <span className="ml-1">
-                              {sortOrder === "asc" ? (
+                              {sortOrder === 'asc' ? (
                                 <ChevronUp size={16} />
                               ) : (
                                 <ChevronDown size={16} />
@@ -334,14 +338,14 @@ const MemberList = () => {
                       </div>
                     </TableHead> */}
                       <TableHead
-                        onClick={() => handleSort("rightCount")}
+                        onClick={() => handleSort('rightCount')}
                         className="cursor-pointer max-w-[250px] break-words whitespace-normal"
                       >
                         <div className="flex items-center">
                           <span>RC</span>
-                          {sortBy === "rightCount" && (
+                          {sortBy === 'rightCount' && (
                             <span className="ml-1">
-                              {sortOrder === "asc" ? (
+                              {sortOrder === 'asc' ? (
                                 <ChevronUp size={16} />
                               ) : (
                                 <ChevronDown size={16} />
@@ -378,15 +382,15 @@ const MemberList = () => {
                       </TableHead>
                       <TableHead
                         onClick={() =>
-                          handleSort("matchingIncomeWalletBalance")
+                          handleSort('matchingIncomeWalletBalance')
                         }
                         className="cursor-pointer max-w-[250px] break-words whitespace-normal"
                       >
                         <div className="flex items-center">
                           <span>matching Income</span>
-                          {sortBy === "matchingIncomeWalletBalance" && (
+                          {sortBy === 'matchingIncomeWalletBalance' && (
                             <span className="ml-1">
-                              {sortOrder === "asc" ? (
+                              {sortOrder === 'asc' ? (
                                 <ChevronUp size={16} />
                               ) : (
                                 <ChevronDown size={16} />
@@ -396,14 +400,14 @@ const MemberList = () => {
                         </div>
                       </TableHead>
                       <TableHead
-                        onClick={() => handleSort("")}
+                        onClick={() => handleSort('')}
                         className="cursor-pointer max-w-[250px] break-words whitespace-normal"
                       >
                         <div className="flex items-center">
                           <span>2:1</span>
-                          {sortBy === "" && (
+                          {sortBy === '' && (
                             <span className="ml-1">
-                              {sortOrder === "asc" ? (
+                              {sortOrder === 'asc' ? (
                                 <ChevronUp size={16} />
                               ) : (
                                 <ChevronDown size={16} />
@@ -475,14 +479,14 @@ const MemberList = () => {
                       </div>
                     </TableHead> */}
                       <TableHead
-                        onClick={() => handleSort("status")}
+                        onClick={() => handleSort('status')}
                         className="cursor-pointer max-w-[250px] break-words whitespace-normal"
                       >
                         <div className="flex items-center">
                           <span>Status</span>
-                          {sortBy === "status" && (
+                          {sortBy === 'status' && (
                             <span className="ml-1">
-                              {sortOrder === "asc" ? (
+                              {sortOrder === 'asc' ? (
                                 <ChevronUp size={16} />
                               ) : (
                                 <ChevronDown size={16} />
@@ -499,19 +503,19 @@ const MemberList = () => {
                     {members.map((member) => (
                       <TableRow key={member.id}>
                         <TableCell className="max-w-[250px] break-words whitespace-normal">
-                          {member.memberName || "N/A"}
+                          {member.memberName || 'N/A'}
                         </TableCell>
                         <TableCell className="max-w-[250px] break-words whitespace-normal">
-                          {member.memberUsername || "N/A"}
+                          {member.memberUsername || 'N/A'}
                         </TableCell>
                         <TableCell className="max-w-[250px] break-words whitespace-normal">
-                          {member?.sponsor?.memberUsername || "N/A"}
+                          {member?.sponsor?.memberUsername || 'N/A'}
                         </TableCell>
                         <TableCell className="max-w-[250px] break-words whitespace-normal">
-                          {member?.parent?.memberUsername || "N/A"}
+                          {member?.parent?.memberUsername || 'N/A'}
                         </TableCell>
                         <TableCell className="max-w-[250px] break-words whitespace-normal">
-                          {member?.positionToParent || "N/A"}
+                          {member?.positionToParent || 'N/A'}
                         </TableCell>
                         <TableCell className="max-w-[250px] break-words whitespace-normal">
                           {member?.leftDirectCount}+ {member?.leftCount}
@@ -552,11 +556,11 @@ const MemberList = () => {
                           <span
                             className={`px-2 py-1 text-xs font-medium rounded-full  ${
                               member.is2_1Pass === false
-                                ? "bg-red-100 text-red-600"
-                                : "bg-green-100 text-green-600"
+                                ? 'bg-red-100 text-red-600'
+                                : 'bg-green-100 text-green-600'
                             }`}
                           >
-                            {member.is2_1Pass ? "TRUE" : "FALSE"}
+                            {member.is2_1Pass ? 'TRUE' : 'FALSE'}
                           </span>
                         </TableCell>
                         {/* <TableCell className="max-w-[250px] break-words whitespace-normal">
@@ -612,19 +616,19 @@ const MemberList = () => {
                           <span
                             className={`px-2 py-1 text-xs font-medium rounded-full  ${
                               member.status === INACTIVE
-                                ? "bg-red-100 text-red-600"
+                                ? 'bg-red-100 text-red-600'
                                 : member.status === ASSOCIATE
-                                ? "bg-blue-100 text-blue-600"
+                                ? 'bg-blue-100 text-blue-600'
                                 : member.status === SILVER
-                                ? "bg-gray-200 text-gray-700"
+                                ? 'bg-gray-200 text-gray-700'
                                 : member.status === GOLD
-                                ? "bg-yellow-200 text-yellow-800"
+                                ? 'bg-yellow-200 text-yellow-800'
                                 : member.status === DIAMOND
-                                ? "bg-green-200 text-green-700"
-                                : "bg-gray-100 text-gray-500"
+                                ? 'bg-green-200 text-green-700'
+                                : 'bg-gray-100 text-gray-500'
                             }`}
                           >
-                            {member.status ? member.status : "N/A"}
+                            {member.status ? member.status : 'N/A'}
                           </span>
                         </TableCell>
 
@@ -646,6 +650,17 @@ const MemberList = () => {
                                   <div className="flex items-center gap-2">
                                     <SquarePen className="h-4 w-4" />
                                     <span>Edit</span>
+                                  </div>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onClick={() => {
+                                    setVirtualDialogOpen(true);
+                                    setSelectedVirtualMember(member);
+                                  }}
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <SquarePen className="h-4 w-4" />
+                                    <span>Virtual Power</span>
                                   </div>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
@@ -685,6 +700,12 @@ const MemberList = () => {
           )}
         </CardContent>
       </Card>
+
+      <AddVirtualPower
+        open={virtualDialogOpen}
+        onClose={() => setVirtualDialogOpen(false)}
+        member={selectedVirtualMember}
+      />
     </div>
   );
 };
