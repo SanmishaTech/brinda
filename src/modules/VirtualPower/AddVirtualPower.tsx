@@ -1,40 +1,40 @@
-import React, { useEffect } from 'react';
+import React, { useEffect } from "react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 import {
   LoaderCircle,
   UserCircle2,
   TrendingUp,
   ShieldCheck,
   Hash,
-} from 'lucide-react';
-import { toast } from 'sonner';
-import { useForm, Controller } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
-import { post } from '@/services/apiService';
-import Validate from '@/lib/Handlevalidation';
+} from "lucide-react";
+import { toast } from "sonner";
+import { useForm, Controller } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { post } from "@/services/apiService";
+import Validate from "@/lib/Handlevalidation";
 import {
   powerPositionOptions,
   statusTypeOptions,
   powerTypeOptions,
-} from '@/config/data';
-import clsx from 'clsx';
+} from "@/config/data";
+import clsx from "clsx";
 
 interface AddVirtualPowerProps {
   open: boolean;
@@ -49,19 +49,19 @@ interface AddVirtualPowerProps {
 // Zod schema
 const virtualPowerSchema = z.object({
   memberId: z.union([
-    z.string().min(1, 'Member ID is required'),
-    z.number().min(1, 'Member ID is required'),
+    z.string().min(1, "Member ID is required"),
+    z.number().min(1, "Member ID is required"),
   ]),
-  statusType: z.string().min(1, 'Status type is required'),
-  powerPosition: z.string().min(1, 'Power position is required'),
-  powerType: z.string().min(1, 'Power type is required'),
+  statusType: z.string().min(1, "Status type is required"),
+  powerPosition: z.string().min(1, "Power position is required"),
+  powerType: z.string().min(1, "Power type is required"),
   powerCount: z.coerce
     .number({
-      invalid_type_error: 'Power count must be a number',
+      invalid_type_error: "Power count must be a number",
     })
-    .int('Power count must be an integer')
-    .min(1, 'Power count must be at least 1')
-    .max(9_000_000, 'Power count cannot exceed 9,000,000'),
+    .int("Power count must be an integer")
+    .min(1, "Power count must be at least 1")
+    .max(9_000_000, "Power count cannot exceed 9,000,000"),
 });
 
 type VirtualPowerFormInputs = z.infer<typeof virtualPowerSchema>;
@@ -77,30 +77,30 @@ const AddVirtualPower = ({ open, onClose, member }: AddVirtualPowerProps) => {
   } = useForm<VirtualPowerFormInputs>({
     resolver: zodResolver(virtualPowerSchema),
     defaultValues: {
-      memberId: '',
-      statusType: '',
-      powerPosition: '',
-      powerType: '',
+      memberId: "",
+      statusType: "",
+      powerPosition: "",
+      powerType: "",
       powerCount: 1,
     },
   });
 
   useEffect(() => {
     if (member) {
-      setValue('memberId', member.id);
+      setValue("memberId", member.id);
     }
   }, [member, setValue]);
 
   const mutation = useMutation({
-    mutationFn: (data: VirtualPowerFormInputs) => post('/virtual-power', data),
+    mutationFn: (data: VirtualPowerFormInputs) => post("/virtual-power", data),
     onSuccess: () => {
-      toast.success('Virtual power added successfully');
+      toast.success("Virtual power added successfully");
       reset();
       onClose();
     },
     onError: (error: any) => {
       Validate(error, setError);
-      toast.error(error?.message || 'Failed to add virtual power');
+      toast.error(error?.message || "Failed to add virtual power");
     },
   });
 
@@ -114,7 +114,12 @@ const AddVirtualPower = ({ open, onClose, member }: AddVirtualPowerProps) => {
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleCancel}>
+    <Dialog
+      open={open}
+      onOpenChange={(isOpen) => {
+        if (!isOpen) handleCancel();
+      }}
+    >
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-primary">
@@ -122,11 +127,11 @@ const AddVirtualPower = ({ open, onClose, member }: AddVirtualPowerProps) => {
           </DialogTitle>
           {member && (
             <div className="text-sm text-muted-foreground">
-              Member:{' '}
+              Member:{" "}
               <span className="font-medium text-blue-600">
                 {member.memberName}
-              </span>{' '}
-              | Username:{' '}
+              </span>{" "}
+              | Username:{" "}
               <span className="text-foreground">{member.memberUsername}</span>
             </div>
           )}
@@ -160,7 +165,7 @@ const AddVirtualPower = ({ open, onClose, member }: AddVirtualPowerProps) => {
                     <SelectTrigger className="w-full pl-10">
                       <SelectValue placeholder="Select status type" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent portal={false}>
                       {statusTypeOptions.map(({ label, value }) => (
                         <SelectItem key={value} value={value}>
                           {label}
@@ -191,7 +196,7 @@ const AddVirtualPower = ({ open, onClose, member }: AddVirtualPowerProps) => {
                     <SelectTrigger className="w-full pl-10">
                       <SelectValue placeholder="Select power position" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent portal={false}>
                       {powerPositionOptions.map(({ label, value }) => (
                         <SelectItem key={value} value={value}>
                           {label}
@@ -222,7 +227,7 @@ const AddVirtualPower = ({ open, onClose, member }: AddVirtualPowerProps) => {
                     <SelectTrigger className="w-full pl-10">
                       <SelectValue placeholder="Select power type" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent portal={false}>
                       {powerTypeOptions.map(({ label, value }) => (
                         <SelectItem key={value} value={value}>
                           {label}
@@ -279,7 +284,7 @@ const AddVirtualPower = ({ open, onClose, member }: AddVirtualPowerProps) => {
                   Submitting...
                 </>
               ) : (
-                'Add Power'
+                "Add Power"
               )}
             </Button>
           </div>
