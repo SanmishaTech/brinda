@@ -26,7 +26,7 @@ import { toast } from "sonner";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { post } from "@/services/apiService";
 import Validate from "@/lib/Handlevalidation";
 import {
@@ -84,6 +84,7 @@ const AddVirtualPower = ({ open, onClose, member }: AddVirtualPowerProps) => {
       powerCount: 1,
     },
   });
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (member) {
@@ -95,6 +96,7 @@ const AddVirtualPower = ({ open, onClose, member }: AddVirtualPowerProps) => {
     mutationFn: (data: VirtualPowerFormInputs) => post("/virtual-power", data),
     onSuccess: () => {
       toast.success("Virtual power added successfully");
+      queryClient.invalidateQueries({ queryKey: ["members"] });
       reset();
       onClose();
     },

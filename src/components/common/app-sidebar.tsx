@@ -312,11 +312,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           },
         ]
       : []),
-    // {
-    //   name: "Repurchase",
-    //   url: "/repurchase",
-    //   icon: UsersRound,
-    // },
   ];
 
   const adminProjects = [
@@ -328,6 +323,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     {
       name: "Members",
       url: "/members",
+      icon: UsersRound,
+    },
+    {
+      name: "Virtual Power History",
+      url: "/virtual-power/history",
       icon: UsersRound,
     },
   ];

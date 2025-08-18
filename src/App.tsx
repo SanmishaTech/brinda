@@ -42,6 +42,7 @@ import AdminPaidCommissionList from "./modules/Commission/MatchingPayout/AdminPa
 import GuestRoute from "./components/common/guest-route";
 import RepurchaseIncomePayoutList from "./modules/Commission/RepurchasePayout/RepurchaseIncomePayoutList";
 import AdminPaidRepurchaseList from "./modules/Commission/RepurchasePayout/AdminPaidRepurchaseList";
+import VirtualPowerList from "./modules/VirtualPower/VirtualPowerList";
 
 const App = () => {
   useEffect(() => {
@@ -271,6 +272,16 @@ const App = () => {
               }
             />
             {/* commission end */}
+            {/* Virtual Power start */}
+            <Route
+              path="/virtual-power/history"
+              element={
+                <ProtectedRoute>
+                  <VirtualPowerList />
+                </ProtectedRoute>
+              }
+            />
+            {/* Virtual Power end */}
           </Route>
         </Routes>
       </Router>
