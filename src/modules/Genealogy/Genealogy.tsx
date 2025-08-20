@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { get } from "@/services/apiService";
-import { Button } from "@/components/ui/button";
-import { ASSOCIATE, DIAMOND, GOLD, INACTIVE, SILVER } from "@/config/data";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import React, { useState, useEffect, useRef } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { get } from '@/services/apiService';
+import { Button } from '@/components/ui/button';
+import { ASSOCIATE, DIAMOND, GOLD, INACTIVE, SILVER } from '@/config/data';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -11,13 +11,13 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Medal, Gem, Star, Users } from "lucide-react"; // You can choose better icons if needed
-import { Badge } from "@/components/ui/badge";
+} from '@/components/ui/table';
+import { Medal, Gem, Star, Users } from 'lucide-react'; // You can choose better icons if needed
+import { Badge } from '@/components/ui/badge';
 // Get memberId from localStorage
 const getLoggedInMemberId = () => {
   try {
-    const user = JSON.parse(localStorage.getItem("user"));
+    const user = JSON.parse(localStorage.getItem('user'));
     return user?.memberId || null;
   } catch {
     return null;
@@ -26,120 +26,12 @@ const getLoggedInMemberId = () => {
 
 // Format name: only first word of memberName
 const formatLabel = (name, username) => {
-  const firstName = name?.split(" ")[0] || name;
+  const firstName = name?.split(' ')[0] || name;
   return `${firstName} (${username})`;
 };
 
-// function SummaryTable({ rootMember }) {
-//   const ranks = [
-//     { label: "Associates", icon: <Users className="h-4 w-4 text-gray-500" /> },
-//     { label: "Silver", icon: <Medal className="h-4 w-4 text-silver-500" /> },
-//     { label: "Gold", icon: <Star className="h-4 w-4 text-yellow-500" /> },
-//     { label: "Diamond", icon: <Gem className="h-4 w-4 text-blue-500" /> },
-//   ];
-
-//   const leftBalances = [
-//     rootMember.leftAssociateBalance,
-//     rootMember.leftSilverBalance,
-//     rootMember.leftGoldBalance,
-//     rootMember.leftDiamondBalance,
-//   ];
-
-//   const rightBalances = [
-//     rootMember.rightAssociateBalance,
-//     rootMember.rightSilverBalance,
-//     rootMember.rightGoldBalance,
-//     rootMember.rightDiamondBalance,
-//   ];
-
-//   return (
-//     <Card className="mb-6 shadow-md">
-//       <CardHeader>
-//         <CardTitle className="text-lg font-semibold">Member Details</CardTitle>
-//         <p className="text-sm text-muted-foreground">
-//           {rootMember.memberName}, {rootMember.memberUsername}
-//         </p>
-//       </CardHeader>
-//       <CardContent>
-//         <div className="flex w-full flex-col justify-between items-center lg:flex-row gap-6">
-//           {/* Left Table */}
-//           <Table className="w-full">
-//             <TableHeader>
-//               <TableRow>
-//                 <TableHead colSpan={4} className="text-center">
-//                   Left Side
-//                 </TableHead>
-//               </TableRow>
-//               <TableRow>
-//                 {ranks.map((rank) => (
-//                   <TableHead key={`left-header-${rank.label}`}>
-//                     {/* Flex container here */}
-//                     <div className="flex items-center gap-1 whitespace-nowrap justify-center">
-//                       {rank.icon}
-//                       <span>{rank.label}</span>
-//                     </div>
-//                   </TableHead>
-//                 ))}
-//               </TableRow>
-//             </TableHeader>
-//             <TableBody>
-//               <TableRow>
-//                 {leftBalances.map((balance, idx) => (
-//                   <TableCell
-//                     key={`left-balance-${idx}`}
-//                     className="text-center"
-//                   >
-//                     <div className="inline-flex items-center justify-center rounded-md px-3 py-1 bg-muted">
-//                       {balance}
-//                     </div>
-//                   </TableCell>
-//                 ))}
-//               </TableRow>
-//             </TableBody>
-//           </Table>
-
-//           {/* Right Table */}
-//           <Table className="w-full ">
-//             <TableHeader>
-//               <TableRow>
-//                 <TableHead colSpan={4} className="text-center">
-//                   Right Side
-//                 </TableHead>
-//               </TableRow>
-//               <TableRow>
-//                 {ranks.map((rank) => (
-//                   <TableHead key={`right-header-${rank.label}`}>
-//                     {/* Flex container here */}
-//                     <div className="flex items-center gap-1 whitespace-nowrap justify-center">
-//                       {rank.icon}
-//                       <span>{rank.label}</span>
-//                     </div>
-//                   </TableHead>
-//                 ))}
-//               </TableRow>
-//             </TableHeader>
-//             <TableBody>
-//               <TableRow>
-//                 {rightBalances.map((balance, idx) => (
-//                   <TableCell
-//                     key={`right-balance-${idx}`}
-//                     className="text-center"
-//                   >
-//                     <div className="inline-flex items-center justify-center rounded-md px-3 py-1 bg-muted">
-//                       {balance}
-//                     </div>
-//                   </TableCell>
-//                 ))}
-//               </TableRow>
-//             </TableBody>
-//           </Table>
-//         </div>
-//       </CardContent>
-//     </Card>
-//   );
-// }
 function SummaryTable({ rootMember }) {
-  const ranks = ["Associates", "Silver", "Gold", "Diamond"];
+  const ranks = ['Associates', 'Silver', 'Gold', 'Diamond'];
 
   const leftBalances = [
     rootMember.leftAssociateBalance,
@@ -155,6 +47,52 @@ function SummaryTable({ rootMember }) {
     rootMember.rightDiamondBalance,
   ];
 
+  const totalLeftBalances = [
+    rootMember.totalLeftAssociateBalance,
+    rootMember.totalLeftSilverBalance,
+    rootMember.totalLeftGoldBalance,
+    rootMember.totalLeftDiamondBalance,
+  ];
+
+  const totalRightBalances = [
+    rootMember.totalRightAssociateBalance,
+    rootMember.totalRightSilverBalance,
+    rootMember.totalRightGoldBalance,
+    rootMember.totalRightDiamondBalance,
+  ];
+
+  const totalMatched = [
+    rootMember.totalAssociateMatched,
+    rootMember.totalSilverMatched,
+    rootMember.totalGoldMatched,
+    rootMember.totalDiamondMatched,
+  ];
+
+  // Check if date is today
+  const isToday = (dateString) => {
+    if (!dateString) return false;
+    const date = new Date(dateString);
+    const today = new Date();
+    return (
+      date.getFullYear() === today.getFullYear() &&
+      date.getMonth() === today.getMonth() &&
+      date.getDate() === today.getDate()
+    );
+  };
+
+  const commissionCounts = [
+    isToday(rootMember.associateCommissionDate)
+      ? rootMember.associateCommissionCount
+      : 0,
+    isToday(rootMember.silverCommissionDate)
+      ? rootMember.silverCommissionCount
+      : 0,
+    isToday(rootMember.goldCommissionDate) ? rootMember.goldCommissionCount : 0,
+    isToday(rootMember.diamondCommissionDate)
+      ? rootMember.diamondCommissionCount
+      : 0,
+  ];
+
   return (
     <Card className="mb-6 shadow-md">
       <CardHeader>
@@ -164,14 +102,74 @@ function SummaryTable({ rootMember }) {
         </p>
       </CardHeader>
       <CardContent>
+        {/* New Total Balances Tables */}
         <div className="flex flex-col lg:flex-row gap-6 w-full">
+          {/* Total Left Table */}
+          <div className="w-full border rounded-lg border-gray-300 dark:border-gray-700">
+            <Table>
+              <TableHeader className="bg-gray-100 dark:bg-gray-800">
+                <TableRow>
+                  <TableHead colSpan={4} className="text-center font-semibold">
+                    Total Left Side
+                  </TableHead>
+                </TableRow>
+                <TableRow>
+                  {ranks.map((rank, idx) => (
+                    <TableHead key={idx} className="text-center">
+                      {rank}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  {totalLeftBalances.map((balance, idx) => (
+                    <TableCell key={idx} className="text-center">
+                      {balance}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
+
+          {/* Total Right Table */}
+          <div className="w-full border rounded-lg border-gray-300 dark:border-gray-700">
+            <Table>
+              <TableHeader className="bg-gray-100 dark:bg-gray-800">
+                <TableRow>
+                  <TableHead colSpan={4} className="text-center font-semibold">
+                    Total Right Side
+                  </TableHead>
+                </TableRow>
+                <TableRow>
+                  {ranks.map((rank, idx) => (
+                    <TableHead key={idx} className="text-center">
+                      {rank}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  {totalRightBalances.map((balance, idx) => (
+                    <TableCell key={idx} className="text-center">
+                      {balance}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+        <div className="flex flex-col lg:flex-row gap-6 w-full mt-6">
           {/* Left Table */}
           <div className="w-full border rounded-lg border-gray-300 dark:border-gray-700">
             <Table>
               <TableHeader className="bg-gray-100 dark:bg-gray-800">
                 <TableRow>
                   <TableHead colSpan={4} className="text-center font-semibold">
-                    Left Side
+                    Left Remaining
                   </TableHead>
                 </TableRow>
                 <TableRow>
@@ -200,7 +198,7 @@ function SummaryTable({ rootMember }) {
               <TableHeader className="bg-gray-100 dark:bg-gray-800">
                 <TableRow>
                   <TableHead colSpan={4} className="text-center font-semibold">
-                    Right Side
+                    Right Remaining
                   </TableHead>
                 </TableRow>
                 <TableRow>
@@ -216,6 +214,65 @@ function SummaryTable({ rootMember }) {
                   {rightBalances.map((balance, idx) => (
                     <TableCell key={idx} className="text-center">
                       {balance}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+        <div className="flex flex-col lg:flex-row gap-6 w-full mt-6">
+          {/* Matched Table */}
+          <div className="w-full border rounded-lg border-gray-300 dark:border-gray-700">
+            <Table>
+              <TableHeader className="bg-gray-100 dark:bg-gray-800">
+                <TableRow>
+                  <TableHead colSpan={4} className="text-center font-semibold">
+                    Total Matched
+                  </TableHead>
+                </TableRow>
+                <TableRow>
+                  {ranks.map((rank, idx) => (
+                    <TableHead key={idx} className="text-center">
+                      {rank}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  {totalMatched.map((count, idx) => (
+                    <TableCell key={idx} className="text-center">
+                      {count}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
+
+          {/* Commission Count Table (with date check) */}
+          <div className="w-full border rounded-lg border-gray-300 dark:border-gray-700">
+            <Table>
+              <TableHeader className="bg-gray-100 dark:bg-gray-800">
+                <TableRow>
+                  <TableHead colSpan={4} className="text-center font-semibold">
+                    Today's Commission Counts
+                  </TableHead>
+                </TableRow>
+                <TableRow>
+                  {ranks.map((rank, idx) => (
+                    <TableHead key={idx} className="text-center">
+                      {rank}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  {commissionCounts.map((count, idx) => (
+                    <TableCell key={idx} className="text-center">
+                      {count}
                     </TableCell>
                   ))}
                 </TableRow>
@@ -308,7 +365,7 @@ export default function OrgChartBinary() {
   const [selectedMemberId, setSelectedMemberId] = useState(initialMemberId);
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["genealogy", selectedMemberId],
+    queryKey: ['genealogy', selectedMemberId],
     queryFn: () => get(`/members/genealogy/${selectedMemberId}`),
     enabled: !!selectedMemberId,
   });
@@ -347,16 +404,16 @@ const NodeCard = ({ label, status, onClick }) => (
         className={`text-[10px] mt-1 font-semibold px-2 py-0.5 rounded-full
         ${
           status === INACTIVE
-            ? "bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-300"
+            ? 'bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-300'
             : status === ASSOCIATE
-            ? "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300"
+            ? 'bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300'
             : status === SILVER
-            ? "bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-200"
+            ? 'bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-200'
             : status === GOLD
-            ? "bg-yellow-200 text-yellow-800 dark:bg-yellow-700 dark:text-yellow-100"
+            ? 'bg-yellow-200 text-yellow-800 dark:bg-yellow-700 dark:text-yellow-100'
             : status === DIAMOND
-            ? "bg-green-200 text-green-700 dark:bg-green-800 dark:text-green-200"
-            : "bg-muted text-muted-foreground"
+            ? 'bg-green-200 text-green-700 dark:bg-green-800 dark:text-green-200'
+            : 'bg-muted text-muted-foreground'
         }`}
       >
         {status}
@@ -481,7 +538,7 @@ const BinaryTreeChart = ({ tree, onNodeClick }) => {
     <div
       ref={containerRef}
       className="relative w-full h-auto overflow-x-auto flex justify-start sm:justify-center"
-      style={{ scrollBehavior: "smooth" }}
+      style={{ scrollBehavior: 'smooth' }}
     >
       <div
         className="origin-top-center sm:scale-[0.85] scale-[0.95] pl-[200px] sm:pl-0"
