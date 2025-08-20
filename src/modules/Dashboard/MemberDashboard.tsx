@@ -1,13 +1,13 @@
-import React from "react";
-import { useQuery } from "@tanstack/react-query";
-import { get } from "@/services/apiService";
+import React from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { get } from '@/services/apiService';
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
   CardDescription,
-} from "@/components/ui/card";
+} from '@/components/ui/card';
 import {
   Wallet,
   TrendingUp,
@@ -16,22 +16,22 @@ import {
   Gift,
   Users,
   Loader,
-} from "lucide-react";
-import { formatCurrency } from "@/lib/formatter";
-import { toast } from "sonner";
-import { DIAMOND } from "@/config/data";
+} from 'lucide-react';
+import { formatCurrency } from '@/lib/formatter';
+import { toast } from 'sonner';
+import { DIAMOND } from '@/config/data';
 
 const fetchDashboardData = async () => {
-  const response = await get("/dashboards");
+  const response = await get('/dashboards');
   return response;
 };
 
 const MemberDashboard = () => {
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["dashboardData"],
+    queryKey: ['dashboardData'],
     queryFn: fetchDashboardData,
     onError: (error: any) => {
-      toast.error(error?.message || "Failed to fetch dashboard data");
+      toast.error(error?.message || 'Failed to fetch dashboard data');
     },
   });
 
@@ -78,6 +78,9 @@ const MemberDashboard = () => {
     repurchaseIncomeL8,
     repurchaseIncomeL9,
     repurchaseIncomeL10,
+    goldRewardIncome,
+    goldRewardBalance,
+    goldRewardLevel,
   } = data;
 
   const totalIncomeEarned =
@@ -120,7 +123,7 @@ const MemberDashboard = () => {
           </Card>
 
           <Card className="bg-gradient-to-tr from-blue-500 to-cyan-400 text-white">
-            {" "}
+            {' '}
             <CardHeader>
               <CardTitle className="flex items-center gap-3 text-white">
                 <TrendingUp />
@@ -138,7 +141,7 @@ const MemberDashboard = () => {
           </Card>
 
           <Card className="bg-gradient-to-br from-yellow-500 to-orange-400 text-white">
-            {" "}
+            {' '}
             <CardHeader>
               <CardTitle className="flex items-center gap-3 text-white">
                 <Gift />
@@ -243,16 +246,29 @@ const MemberDashboard = () => {
               </p>
             </CardContent>
           </Card> */}
-          <Card className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white">
+          <Card className="bg-gradient-to-r from-emerald-400 to-lime-500 text-white">
             <CardHeader>
               <CardTitle className="flex items-center gap-3 text-white">
                 <Wallet />
-                Repurchase Income L1
+                Repurchase Income L7
               </CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-3xl font-bold text-white">
-                {formatCurrency(repurchaseIncomeL1)}
+                {formatCurrency(repurchaseIncomeL7)}
+              </p>
+            </CardContent>
+          </Card>
+          <Card className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3 text-white">
+                <Wallet />
+                Reward Income
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold text-white">
+                {formatCurrency(goldRewardIncome)}
               </p>
             </CardContent>
           </Card>
@@ -466,7 +482,7 @@ const MemberDashboard = () => {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Card className="bg-gradient-to-r from-indigo-600 to-fuchsia-600 text-white">
-            {" "}
+            {' '}
             <CardHeader>
               <CardTitle className="flex items-center gap-3 ">
                 <ShoppingCart />
@@ -483,7 +499,7 @@ const MemberDashboard = () => {
 
           {status !== DIAMOND && (
             <Card className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white">
-              {" "}
+              {' '}
               <CardHeader>
                 <CardTitle className="flex items-center gap-3 ">
                   <TrendingUp />
@@ -502,7 +518,7 @@ const MemberDashboard = () => {
           )}
 
           <Card className="bg-gradient-to-r from-teal-500 to-blue-500 text-white">
-            {" "}
+            {' '}
             <CardHeader>
               <CardTitle className="flex items-center gap-3 ">
                 <UserCheck />
