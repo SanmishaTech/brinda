@@ -292,6 +292,7 @@ const UpdateUserProfile = () => {
                     type="text"
                     placeholder="John Doe"
                     {...field}
+                    readOnly
                   />
                 )}
               />

@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { get } from '@/services/apiService';
-import { Button } from '@/components/ui/button';
-import { ASSOCIATE, DIAMOND, GOLD, INACTIVE, SILVER } from '@/config/data';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import React, { useState, useEffect, useRef } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { get } from "@/services/apiService";
+import { Button } from "@/components/ui/button";
+import { ASSOCIATE, DIAMOND, GOLD, INACTIVE, SILVER } from "@/config/data";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -11,13 +11,13 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Medal, Gem, Star, Users } from 'lucide-react'; // You can choose better icons if needed
-import { Badge } from '@/components/ui/badge';
+} from "@/components/ui/table";
+import { Medal, Gem, Star, Users } from "lucide-react"; // You can choose better icons if needed
+import { Badge } from "@/components/ui/badge";
 // Get memberId from localStorage
 const getLoggedInMemberId = () => {
   try {
-    const user = JSON.parse(localStorage.getItem('user'));
+    const user = JSON.parse(localStorage.getItem("user"));
     return user?.memberId || null;
   } catch {
     return null;
@@ -26,12 +26,12 @@ const getLoggedInMemberId = () => {
 
 // Format name: only first word of memberName
 const formatLabel = (name, username) => {
-  const firstName = name?.split(' ')[0] || name;
+  const firstName = name?.split(" ")[0] || name;
   return `${firstName} (${username})`;
 };
 
-function SummaryTable({ rootMember }) {
-  const ranks = ['Associates', 'Silver', 'Gold', 'Diamond'];
+function SummaryTable({ rootMember, leftMostMember, rightMostMember }) {
+  const ranks = ["Associates", "Silver", "Gold", "Diamond"];
 
   const leftBalances = [
     rootMember.leftAssociateBalance,
@@ -280,6 +280,30 @@ function SummaryTable({ rootMember }) {
             </Table>
           </div>
         </div>
+        {/* Extreme Left and Right Member Cards */}
+        <div className="flex flex-col lg:flex-row justify-between gap-6 mt-6">
+          {/* Leftmost Member Card */}
+          {leftMostMember && (
+            <div className="w-full lg:w-1/2 bg-gradient-to-br from-green-400 to-blue-500 p-4 rounded-lg shadow-md text-white">
+              <h3 className="text-xl font-bold mb-1">Extreme Left Member</h3>
+              <p className="text-xl">{leftMostMember.memberName}</p>
+              <p className="text-lg">{leftMostMember.memberUsername}</p>
+            </div>
+          )}
+
+          {/* Rightmost Member Card */}
+          {rightMostMember && (
+            <div
+              className={`w-full lg:w-1/2 bg-gradient-to-br from-pink-500 to-red-500 p-4 rounded-lg shadow-md text-white text-right ${
+                !leftMostMember ? "lg:ml-auto" : ""
+              }`}
+            >
+              <h3 className="text-xl font-bold mb-1">Extreme Right Member</h3>
+              <p className="text-xl">{rightMostMember.memberName}</p>
+              <p className="text-lg">{rightMostMember.memberUsername}</p>
+            </div>
+          )}
+        </div>
       </CardContent>
     </Card>
   );
@@ -365,7 +389,7 @@ export default function OrgChartBinary() {
   const [selectedMemberId, setSelectedMemberId] = useState(initialMemberId);
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['genealogy', selectedMemberId],
+    queryKey: ["genealogy", selectedMemberId],
     queryFn: () => get(`/members/genealogy/${selectedMemberId}`),
     enabled: !!selectedMemberId,
   });
@@ -379,9 +403,15 @@ export default function OrgChartBinary() {
 
   const tree = mapApiDataToTree(data);
   const rootMember = data?.rootMember;
+  const leftMostMember = data?.leftMostMember;
+  const rightMostMember = data?.rightMostMember;
   return (
     <div className="p-6 mt-2">
-      <SummaryTable rootMember={rootMember} />
+      <SummaryTable
+        rootMember={rootMember}
+        rightMostMember={rightMostMember}
+        leftMostMember={leftMostMember}
+      />
       <h2 className="text-xl font-semibold mb-4">My Genealogy</h2>
 
       <BinaryTreeChart tree={tree} onNodeClick={handleNodeClick} />
@@ -404,16 +434,16 @@ const NodeCard = ({ label, status, onClick }) => (
         className={`text-[10px] mt-1 font-semibold px-2 py-0.5 rounded-full
         ${
           status === INACTIVE
-            ? 'bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-300'
+            ? "bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-300"
             : status === ASSOCIATE
-            ? 'bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300'
+            ? "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300"
             : status === SILVER
-            ? 'bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-200'
+            ? "bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-200"
             : status === GOLD
-            ? 'bg-yellow-200 text-yellow-800 dark:bg-yellow-700 dark:text-yellow-100'
+            ? "bg-yellow-200 text-yellow-800 dark:bg-yellow-700 dark:text-yellow-100"
             : status === DIAMOND
-            ? 'bg-green-200 text-green-700 dark:bg-green-800 dark:text-green-200'
-            : 'bg-muted text-muted-foreground'
+            ? "bg-green-200 text-green-700 dark:bg-green-800 dark:text-green-200"
+            : "bg-muted text-muted-foreground"
         }`}
       >
         {status}
@@ -538,7 +568,7 @@ const BinaryTreeChart = ({ tree, onNodeClick }) => {
     <div
       ref={containerRef}
       className="relative w-full h-auto overflow-x-auto flex justify-start sm:justify-center"
-      style={{ scrollBehavior: 'smooth' }}
+      style={{ scrollBehavior: "smooth" }}
     >
       <div
         className="origin-top-center sm:scale-[0.85] scale-[0.95] pl-[200px] sm:pl-0"
