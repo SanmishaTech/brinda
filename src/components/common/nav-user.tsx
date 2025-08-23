@@ -39,6 +39,7 @@ export function NavUser({
   const handleLogout = () => {
     setShowConfirmation(false);
     localStorage.removeItem("authToken"); // Remove auth token
+    localStorage.removeItem("isImpersonating"); // Remove auth token
     localStorage.removeItem("user"); // Remove user data
     navigate("/"); // Redirect to login page
   };

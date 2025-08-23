@@ -8,6 +8,8 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
+import { useMutation } from "@tanstack/react-query";
+
 import {
   SidebarInset,
   SidebarProvider,
@@ -18,6 +20,9 @@ import { useState, useEffect } from "react";
 import { Sun, Moon, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import * as React from "react";
+import { get, del, patch, post } from "@/services/apiService";
+
+import { toast } from "sonner";
 import WalletButton from "@/modules/Wallet/WalletMenu";
 interface RouteConfig {
   parent?: string;
@@ -150,6 +155,48 @@ export default function MainLayout() {
   };
   const navigate = useNavigate();
 
+  // const handleBackToAdmin = async () => {
+  //   try {
+  //     const response = post("/auth/back-to-admin"); // Make sure this is a POST request
+
+  //     const { token, user } = response;
+
+  //     // Update localStorage with original admin info
+  //     localStorage.setItem("authToken", token);
+  //     localStorage.setItem("user", JSON.stringify(user));
+  //     localStorage.removeItem("isImpersonating");
+
+  //     toast.success("Returned to admin account");
+  //     window.location.href = "/dashboard"; // Force reload to re-initialize auth context if any
+  //   } catch (error: any) {
+  //     toast.error(error?.message || "Failed to return to admin");
+  //     console.error("Back to Admin Error:", error);
+  //   }
+  // };
+  const backToAdminMutation = useMutation({
+    mutationFn: async () => {
+      const response = await post("/auth/back-to-admin");
+      return response;
+    },
+
+    onSuccess: (data) => {
+      console.log("✅ Returned to admin:", data);
+
+      localStorage.setItem("authToken", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.removeItem("isImpersonating");
+
+      toast.success("Returned to admin account");
+
+      window.location.href = "/dashboard"; // Reload to refresh auth context
+    },
+
+    onError: (error: any) => {
+      toast.error(error?.message || "Failed to return to admin");
+      console.error("❌ Back to admin error:", error);
+    },
+  });
+
   return (
     <SidebarProvider>
       <div className="flex h-screen w-full overflow-hidden">
@@ -186,14 +233,17 @@ export default function MainLayout() {
 
               <div>
                 <div className="flex items-center gap-2 w-full justify-between">
-                  {/* <Button
-                  onClick={() => navigate("/wallet")}
-                  className="size-7 cursor-pointer"
-                  size="icon"
-                  aria-label="Go to Wallet"
-                >
-                  <Wallet className="w-4 h-4" />
-                </Button> */}
+                  {localStorage.getItem("isImpersonating") === "true" && (
+                    <Button
+                      onClick={() => {
+                        backToAdminMutation.mutate();
+                      }}
+                      variant="outline"
+                      className="ml-2"
+                    >
+                      Back to Admin
+                    </Button>
+                  )}
                   {!isAdmin && <WalletButton />}
                   {/* Dark Mode Switcher */}
                   <Button

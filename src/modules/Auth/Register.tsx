@@ -192,7 +192,7 @@ const Register = () => {
     onSuccess: (data) => {
       toast.success("Registration successful! Please log in.");
       // navigate("/"); // Redirect to login page
-      console.log("Registration successful:", data);
+      // console.log("Registration successful:", data);
       setCredentials({ username: data.username, password: data.password }); // password from form input or returned from backend
       setShowDialog(true);
     },

@@ -120,9 +120,8 @@ const Login = () => {
       return await post("/auth/login", loginData);
     },
     onSuccess: (data) => {
-      console.log("Login successful:", data);
+      // console.log("Login successful:", data);
       localStorage.setItem("authToken", data.token);
-      localStorage.setItem("refreshToken", data.accesstoken);
       localStorage.setItem("user", JSON.stringify(data.user));
       // queryClient.invalidateQueries(...) // Consider invalidating relevant queries
       navigate("/dashboard");

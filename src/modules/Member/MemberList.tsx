@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/table";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { get, del, patch } from "@/services/apiService";
+import { get, del, patch, post } from "@/services/apiService";
 import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
 import CustomPagination from "@/components/common/custom-pagination";
@@ -169,6 +169,32 @@ const MemberList = () => {
     setSearch(e.target.value);
     setCurrentPage(1); // Reset to the first page
   };
+
+  const impersonateMutation = useMutation({
+    mutationFn: (userId: number) => post(`/auth/impersonate/${userId}`), // Ensure this returns JSON
+
+    onSuccess: (data) => {
+      console.log("✅ Impersonation data:", data);
+
+      // Clear existing tokens first (optional but safer)
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("user");
+
+      // Save impersonated user info
+      localStorage.setItem("authToken", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem("isImpersonating", "true");
+      window.location.href = "/dashboard"; // ← Full reload ensures state refresh
+
+      toast.success("Impersonation started");
+      navigate("/dashboard"); // Or wherever you want
+    },
+
+    onError: (error: any) => {
+      toast.error(error?.message || "Failed to impersonate user");
+      console.error("❌ Impersonation error:", error);
+    },
+  });
 
   return (
     <div className="mt-2 p-4 sm:p-6">
@@ -653,17 +679,19 @@ const MemberList = () => {
                                     <span>Edit</span>
                                   </div>
                                 </DropdownMenuItem>
-                                {/* <DropdownMenuItem
+
+                                <DropdownMenuItem
                                   onClick={() => {
-                                    setVirtualDialogOpen(true);
-                                    setSelectedVirtualMember(member);
+                                    impersonateMutation.mutate(
+                                      member?.user?.id
+                                    ); // or member.user?.id
                                   }}
                                 >
                                   <div className="flex items-center gap-2">
-                                    <SquarePen className="h-4 w-4" />
-                                    <span>Virtual Power</span>
+                                    <ShieldEllipsis className="h-4 w-4" />
+                                    <span>Visit Account</span>
                                   </div>
-                                </DropdownMenuItem> */}
+                                </DropdownMenuItem>
                                 <DropdownMenuItem
                                   onClick={() => {
                                     setTimeout(() => {

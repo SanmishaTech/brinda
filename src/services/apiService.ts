@@ -28,7 +28,7 @@ api.interceptors.response.use(
       // Clear localStorage tokens
       localStorage.removeItem("authToken");
       localStorage.removeItem("user");
-      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("isImpersonating");
 
       // Optional: show toast
       toast.error("Session expired. Please log in again.");
