@@ -12,7 +12,7 @@ import MultipleSelector, {
 } from "@/components/common/multiple-selector"; // Import MultipleSelector from common folder
 import { Card, CardContent } from "@/components/ui/card";
 import { formatCurrency, formatDate, formatDateTime } from "@/lib/formatter.js";
-
+import dayjs from "dayjs";
 import {
   Table,
   TableBody,
@@ -168,6 +168,23 @@ const AdminPaidCommissionList = () => {
                       </div>
                     </TableHead>
                     <TableHead
+                      onClick={() => handleSort("paidAt")}
+                      className="cursor-pointer"
+                    >
+                      <div className="flex items-center">
+                        <span>Paid At</span>
+                        {sortBy === "paidAt" && (
+                          <span className="ml-1">
+                            {sortOrder === "asc" ? (
+                              <ChevronUp size={16} />
+                            ) : (
+                              <ChevronDown size={16} />
+                            )}
+                          </span>
+                        )}
+                      </div>
+                    </TableHead>
+                    <TableHead
                       onClick={() => handleSort("memberName")}
                       className="cursor-pointer max-w-[250px] break-words whitespace-normal"
                     >
@@ -294,6 +311,12 @@ const AdminPaidCommissionList = () => {
                     <TableRow key={list.id}>
                       <TableCell className="max-w-[250px] p-4 break-words whitespace-normal">
                         {list?.member?.memberUsername}
+                      </TableCell>
+
+                      <TableCell className="max-w-[250px] p-4 break-words whitespace-normal">
+                        {list?.paidAt
+                          ? dayjs(list?.paidAt).format("DD/MM/YYYY hh:mm:ss A")
+                          : "N/A"}
                       </TableCell>
                       <TableCell className="max-w-[250px] break-words whitespace-normal">
                         {list?.member?.memberName}

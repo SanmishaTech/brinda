@@ -219,9 +219,9 @@
 //     </Sidebar>
 //   );
 // }
-'use client';
+"use client";
 
-import * as React from 'react';
+import * as React from "react";
 import {
   ArrowUpCircleIcon,
   AudioWaveform,
@@ -230,13 +230,13 @@ import {
   GalleryVerticalEnd,
   SquareTerminal,
   Loader,
-} from 'lucide-react';
-import { get } from '@/services/apiService';
-import { useQuery } from '@tanstack/react-query';
+} from "lucide-react";
+import { get } from "@/services/apiService";
+import { useQuery } from "@tanstack/react-query";
 
-import { NavMain } from '@/components/common/nav-main';
-import { NavProjects } from '@/components/common/nav-projects';
-import { NavUser } from '@/components/common/nav-user';
+import { NavMain } from "@/components/common/nav-main";
+import { NavProjects } from "@/components/common/nav-projects";
+import { NavUser } from "@/components/common/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -246,32 +246,32 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-} from '@/components/ui/sidebar';
+} from "@/components/ui/sidebar";
 
-import { appName } from '@/config';
-import { ASSOCIATE, DIAMOND, INACTIVE, SILVER } from '@/config/data';
+import { appName } from "@/config";
+import { ASSOCIATE, DIAMOND, INACTIVE, SILVER } from "@/config/data";
 
 // Fetch profile status API
 const fetchProfileStatus = async () => {
-  const res = await get('/profile/status');
+  const res = await get("/profile/status");
   return res;
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { data: profileData, isLoading } = useQuery({
-    queryKey: ['profile-status'],
+    queryKey: ["profile-status"],
     queryFn: fetchProfileStatus,
   });
 
   // Role fallback from localStorage
   const role =
-    typeof window !== 'undefined' && localStorage.getItem('user')
-      ? JSON.parse(localStorage.getItem('user')!).role
-      : 'admin';
+    typeof window !== "undefined" && localStorage.getItem("user")
+      ? JSON.parse(localStorage.getItem("user")!).role
+      : "admin";
   const username =
-    typeof window !== 'undefined' && localStorage.getItem('user')
-      ? JSON.parse(localStorage.getItem('user')!).username
-      : 'admin';
+    typeof window !== "undefined" && localStorage.getItem("user")
+      ? JSON.parse(localStorage.getItem("user")!).username
+      : "admin";
 
   const userStatus = profileData?.status;
   // const username = profileData?.memberUsername || "";
@@ -279,7 +279,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   const user = {
     name: username,
-    avatarName: username?.charAt(0).toUpperCase() || '',
+    avatarName: username?.charAt(0).toUpperCase() || "",
   };
 
   // Role-based sidebar items
@@ -287,85 +287,85 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     ...(!isDiamond && !isLoading
       ? [
           {
-            name: 'Purchase',
-            url: '/purchase',
+            name: "Purchase",
+            url: "/purchase",
             icon: UsersRound,
           },
         ]
       : []),
     {
-      name: 'My Direct List',
-      url: '/member/directReferrals',
+      name: "My Direct List",
+      url: "/member/directReferrals",
       icon: UsersRound,
     },
     {
-      name: 'Genealogy',
-      url: '/genealogy',
+      name: "Genealogy",
+      url: "/genealogy",
       icon: UsersRound,
     },
     ...(![ASSOCIATE, INACTIVE].includes(userStatus) && !isLoading
       ? [
           {
-            name: 'Repurchase',
-            url: '/repurchase',
+            name: "Repurchase",
+            url: "/repurchase",
             icon: UsersRound,
           },
         ]
       : []),
     {
-      name: 'Awards & Rewards',
-      url: '/rewards',
+      name: "Awards & Rewards",
+      url: "/rewards",
       icon: UsersRound,
     },
   ];
 
   const adminProjects = [
     {
-      name: 'Products',
-      url: '/products',
+      name: "Products",
+      url: "/products",
       icon: UsersRound,
     },
     {
-      name: 'Members',
-      url: '/members',
+      name: "Members",
+      url: "/members",
       icon: UsersRound,
     },
     {
-      name: 'Virtual Power History',
-      url: '/virtual-power/history',
+      name: "Virtual Power History",
+      url: "/virtual-power/history",
       icon: UsersRound,
     },
   ];
 
   const adminNavMain = [
     {
-      title: 'Commissions',
-      url: '#',
+      title: "Commissions",
+      url: "#",
       icon: SquareTerminal,
       isActive: false,
       items: [
         {
-          title: 'Matching Payout',
-          url: '/commissions/matchingIncomePayout',
+          title: "Matching Payout",
+          url: "/commissions/matchingIncomePayout",
         },
         {
-          title: 'Repurchase Payout',
-          url: '/commissions/repurchaseIncomePayout',
+          title: "Repurchase Payout",
+          url: "/commissions/repurchaseIncomePayout",
         },
         {
-          title: 'Paid matching Payout',
-          url: '/commissions/adminPaidCommissions',
+          title: "Paid matching Payout",
+          url: "/commissions/adminPaidCommissions",
         },
         {
-          title: 'Paid Repurchase Payout',
-          url: '/commissions/adminPaidRepurchaseCommissions',
+          title: "Paid Repurchase Payout",
+          url: "/commissions/adminPaidRepurchaseCommissions",
         },
       ],
     },
   ];
 
-  const projects = role === 'admin' ? adminProjects : memberProjects;
-  const navMain = role === 'admin' ? adminNavMain : [];
+  const projects = role === "admin" ? adminProjects : memberProjects;
+  const navMain = role === "admin" ? adminNavMain : [];
 
   return (
     <Sidebar collapsible="icon" {...props}>

@@ -27,6 +27,8 @@ import { get, del, patch, post } from "@/services/apiService";
 import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
 import CustomPagination from "@/components/common/custom-pagination";
+import dayjs from "dayjs";
+
 import {
   Loader,
   ChevronUp,
@@ -196,6 +198,23 @@ const MatchingIncomePayoutList = () => {
                       </div>
                     </TableHead>
                     <TableHead
+                      onClick={() => handleSort("createdAt")}
+                      className="cursor-pointer"
+                    >
+                      <div className="flex items-center">
+                        <span>Created At</span>
+                        {sortBy === "createdAt" && (
+                          <span className="ml-1">
+                            {sortOrder === "asc" ? (
+                              <ChevronUp size={16} />
+                            ) : (
+                              <ChevronDown size={16} />
+                            )}
+                          </span>
+                        )}
+                      </div>
+                    </TableHead>
+                    <TableHead
                       onClick={() => handleSort("memberName")}
                       className="cursor-pointer max-w-[250px] break-words whitespace-normal"
                     >
@@ -323,6 +342,13 @@ const MatchingIncomePayoutList = () => {
                     <TableRow key={list.id}>
                       <TableCell className="max-w-[250px] break-words whitespace-normal">
                         {list?.member?.memberUsername}
+                      </TableCell>
+                      <TableCell className="max-w-[250px] p-4 break-words whitespace-normal">
+                        {list?.createdAt
+                          ? dayjs(list?.createdAt).format(
+                              "DD/MM/YYYY hh:mm:ss A"
+                            )
+                          : "N/A"}
                       </TableCell>
                       <TableCell className="max-w-[250px] break-words whitespace-normal">
                         {list?.member?.memberName}

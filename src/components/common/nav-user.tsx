@@ -96,6 +96,25 @@ export function NavUser({
                   <UserPen className="mr-2 h-4 w-4" />
                   Update Profile
                 </DropdownMenuItem>
+
+                {user.name !== "admin" && (
+                  <>
+                    <DropdownMenuItem
+                      onClick={() => navigate("/purchase/history")}
+                      className="cursor-pointer"
+                    >
+                      <UserPen className="mr-2 h-4 w-4" />
+                      Purchase History
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => navigate("/repurchase/history")}
+                      className="cursor-pointer"
+                    >
+                      <UserPen className="mr-2 h-4 w-4" />
+                      Repurchase History
+                    </DropdownMenuItem>
+                  </>
+                )}
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuItem
