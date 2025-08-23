@@ -387,7 +387,6 @@ const mapApiDataToTree = (data) => {
 export default function OrgChartBinary() {
   const initialMemberId = getLoggedInMemberId();
   const [selectedMemberId, setSelectedMemberId] = useState(initialMemberId);
-  const [history, setHistory] = useState([]);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["genealogy", selectedMemberId],
@@ -396,25 +395,7 @@ export default function OrgChartBinary() {
   });
 
   const handleNodeClick = (node) => {
-    if (!node?.id || node.id === selectedMemberId) return;
-    setHistory((prev) => [...prev, selectedMemberId]); // Save current to history
-    setSelectedMemberId(node.id);
-  };
-
-  const handleBack = () => {
-    setHistory((prev) => {
-      const newHistory = [...prev];
-      const lastId = newHistory.pop();
-      if (lastId) {
-        setSelectedMemberId(lastId);
-      }
-      return newHistory;
-    });
-  };
-
-  const handleReset = () => {
-    setHistory([]);
-    setSelectedMemberId(initialMemberId);
+    if (node?.id) setSelectedMemberId(node.id);
   };
 
   if (isLoading) return <div>Loading...</div>;
@@ -424,7 +405,6 @@ export default function OrgChartBinary() {
   const rootMember = data?.rootMember;
   const leftMostMember = data?.leftMostMember;
   const rightMostMember = data?.rightMostMember;
-
   return (
     <div className="p-6 mt-2">
       <SummaryTable
@@ -432,28 +412,7 @@ export default function OrgChartBinary() {
         rightMostMember={rightMostMember}
         leftMostMember={leftMostMember}
       />
-      <Card className="mb-6 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white shadow-lg">
-        <CardContent className="flex flex-wrap items-center justify-between gap-4 py-4 px-6">
-          <h2 className="text-xl font-semibold">
-            {rootMember?.memberName?.split(" ")[0] || "Member"}'s Genealogy
-          </h2>
-          <div className="flex gap-2">
-            <Button
-              onClick={handleBack}
-              disabled={history.length === 0}
-              className="bg-gradient-to-r from-blue-600 to-blue-800 text-white hover:from-blue-700 hover:to-blue-900"
-            >
-              Back
-            </Button>
-            <Button
-              onClick={handleReset}
-              className="bg-gradient-to-r from-gray-600 to-gray-800 text-white hover:from-gray-700 hover:to-gray-900"
-            >
-              Reset
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      <h2 className="text-xl font-semibold mb-4">My Genealogy</h2>
 
       <BinaryTreeChart tree={tree} onNodeClick={handleNodeClick} />
     </div>
@@ -461,116 +420,74 @@ export default function OrgChartBinary() {
 }
 
 // Node card
-// const NodeCard = ({ label, status, onClick }) => {
-//   const getGradientBorderClass = (status) => {
-//     switch (status) {
-//       case INACTIVE:
-//         return "from-red-400 to-red-700";
-//       case ASSOCIATE:
-//         return "from-blue-400 to-blue-700";
-//       case SILVER:
-//         return "from-gray-400 to-gray-600";
-//       case GOLD:
-//         return "from-yellow-400 to-yellow-600";
-//       case DIAMOND:
-//         return "from-green-400 to-green-700";
-//       default:
-//         return "from-gray-300 to-gray-500";
-//     }
-//   };
-
-//   const gradientBorder = getGradientBorderClass(status);
-
-//   // Split label into two lines
-//   const [line1, line2] = label.split(" ", 2);
-
-//   return (
-//     <div
-//       onClick={onClick}
-//       className="relative w-full h-full rounded-md p-0.5 cursor-pointer transition-all hover:scale-[1.02]"
-//     >
+// const NodeCard = ({ label, status, onClick }) => (
+//   <Card className="bg-white dark:bg-card shadow-md border border-border rounded-md w-full h-full">
+//     <CardContent className="p-2 h-full flex flex-col justify-center items-center text-center">
+//       <Button
+//         variant="ghost"
+//         className="text-xs font-medium whitespace-normal break-words w-full text-foreground"
+//         onClick={onClick}
+//       >
+//         {label}
+//       </Button>
 //       <div
-//         className={`absolute inset-0 rounded-md bg-gradient-to-br ${gradientBorder} z-0`}
-//       ></div>
-//       <Card className="relative z-10 bg-white dark:bg-card w-full h-full rounded-md overflow-hidden">
-//         <CardContent className="p-2 h-full flex flex-col justify-center items-center text-center">
-//           <div className="text-xs font-medium whitespace-normal break-words w-full text-foreground flex flex-col leading-tight">
-//             <span>{line1}</span>
-//             <span>{line2}</span>
-//           </div>
-//           <div
-//             className={`text-[10px] mt-2 font-semibold px-2 py-0.5 rounded-full ${
-//               {
-//                 [INACTIVE]:
-//                   "bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-300",
-//                 [ASSOCIATE]:
-//                   "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300",
-//                 [SILVER]:
-//                   "bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-200",
-//                 [GOLD]:
-//                   "bg-yellow-200 text-yellow-800 dark:bg-yellow-700 dark:text-yellow-100",
-//                 [DIAMOND]:
-//                   "bg-green-200 text-green-700 dark:bg-green-800 dark:text-green-200",
-//               }[status] || "bg-muted text-muted-foreground"
-//             }`}
-//           >
-//             {status}
-//           </div>
-//         </CardContent>
-//       </Card>
-//     </div>
-//   );
-// };
-
+//         className={`text-[10px] mt-1 font-semibold px-2 py-0.5 rounded-full
+//         ${
+//           status === INACTIVE
+//             ? "bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-300"
+//             : status === ASSOCIATE
+//             ? "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300"
+//             : status === SILVER
+//             ? "bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-200"
+//             : status === GOLD
+//             ? "bg-yellow-200 text-yellow-800 dark:bg-yellow-700 dark:text-yellow-100"
+//             : status === DIAMOND
+//             ? "bg-green-200 text-green-700 dark:bg-green-800 dark:text-green-200"
+//             : "bg-muted text-muted-foreground"
+//         }`}
+//       >
+//         {status}
+//       </div>
+//     </CardContent>
+//   </Card>
+// );
 const NodeCard = ({ label, status, onClick }) => {
-  const getGradientForStatus = (status) => {
+  const getGradientByStatus = (status) => {
     switch (status) {
       case INACTIVE:
-        return "from-red-500 to-red-700";
+        return "bg-gradient-to-br from-red-400 to-red-600 text-white";
       case ASSOCIATE:
-        return "from-blue-500 to-blue-700";
+        return "bg-gradient-to-br from-blue-400 to-blue-600 text-white";
       case SILVER:
-        return "from-gray-400 to-gray-600";
+        return "bg-gradient-to-br from-gray-400 to-gray-600 text-white";
       case GOLD:
-        return "from-yellow-400 to-yellow-600";
+        return "bg-gradient-to-br from-yellow-300 to-yellow-500 text-yellow-900";
       case DIAMOND:
-        return "from-green-500 to-green-700";
+        return "bg-gradient-to-br from-green-400 to-green-600 text-white";
       default:
-        return "from-gray-300 to-gray-500";
+        return "bg-muted text-muted-foreground";
     }
   };
 
-  const [line1, line2] = label.split(" ", 2);
-  const gradient = getGradientForStatus(status);
-
   return (
-    <div
-      onClick={onClick}
-      className="flex flex-col items-center cursor-pointer transition-transform hover:scale-[1.02]"
+    <Card
+      className={`rounded-md w-[120px] h-[160px] border border-border shadow-md flex flex-col items-center justify-center text-center p-2 ${getGradientByStatus(
+        status
+      )}`}
     >
-      {/* Card with label */}
-      <div className="relative w-[140px] h-[150px] rounded-md p-0.5">
-        <div
-          className={`absolute inset-0 rounded-md bg-gradient-to-br ${gradient} z-0`}
-        />
-        <Card className="relative z-10 bg-white dark:bg-card w-full h-full rounded-md overflow-hidden">
-          <CardContent className="flex flex-col justify-between items-center text-center h-full p-2">
-            {/* Name (split into 2 lines) */}
-            <div className="text-xs font-medium whitespace-normal break-words w-full text-foreground flex flex-col leading-tight">
-              <span>{line1}</span>
-              <span>{line2}</span>
-            </div>
-
-            {/* Status bar at bottom */}
-            <div
-              className={`w-full text-sm text-white text-center font-semibold rounded-md bg-gradient-to-r ${gradient} px-2 py-1`}
-            >
-              {status}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+      <CardContent className="flex flex-col items-center justify-center text-center p-0 w-full h-full">
+        <Button
+          variant="ghost"
+          className="text-xs font-medium whitespace-normal break-words w-full h-auto text-center text-inherit px-1 py-0.5"
+          onClick={onClick}
+        >
+          {label}
+        </Button>
+        <div className="text-[10px] mt-2 font-semibold px-2 py-0.5 rounded-full bg-white/20 backdrop-blur-sm">
+          {status}
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
@@ -591,8 +508,8 @@ const BinaryTreeNode = ({ node, onNodeClick, positions, parentPos }) => {
   const nodeKey = node.label;
   const currentPos = positions[nodeKey];
 
-  const boxWidth = 140; // Keep width reasonable
-  const boxHeight = 180; // Make height taller (to display full card)
+  const boxWidth = 200;
+  const boxHeight = 100;
 
   const nodeX = currentPos.x - boxWidth / 2;
   const nodeY = currentPos.y;
@@ -659,7 +576,7 @@ const generatePositions = (node, depth = 0, offset = 0, gap = 140) => {
   const pos = {
     [node.label]: {
       x: currentIndex * gap + 120,
-      y: depth * 220 + 90, // Increase spacing + initial Y
+      y: depth * 140 + 30,
     },
   };
 

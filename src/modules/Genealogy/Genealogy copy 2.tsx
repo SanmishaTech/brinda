@@ -387,7 +387,6 @@ const mapApiDataToTree = (data) => {
 export default function OrgChartBinary() {
   const initialMemberId = getLoggedInMemberId();
   const [selectedMemberId, setSelectedMemberId] = useState(initialMemberId);
-  const [history, setHistory] = useState([]);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["genealogy", selectedMemberId],
@@ -396,25 +395,7 @@ export default function OrgChartBinary() {
   });
 
   const handleNodeClick = (node) => {
-    if (!node?.id || node.id === selectedMemberId) return;
-    setHistory((prev) => [...prev, selectedMemberId]); // Save current to history
-    setSelectedMemberId(node.id);
-  };
-
-  const handleBack = () => {
-    setHistory((prev) => {
-      const newHistory = [...prev];
-      const lastId = newHistory.pop();
-      if (lastId) {
-        setSelectedMemberId(lastId);
-      }
-      return newHistory;
-    });
-  };
-
-  const handleReset = () => {
-    setHistory([]);
-    setSelectedMemberId(initialMemberId);
+    if (node?.id) setSelectedMemberId(node.id);
   };
 
   if (isLoading) return <div>Loading...</div>;
@@ -424,7 +405,6 @@ export default function OrgChartBinary() {
   const rootMember = data?.rootMember;
   const leftMostMember = data?.leftMostMember;
   const rightMostMember = data?.rightMostMember;
-
   return (
     <div className="p-6 mt-2">
       <SummaryTable
@@ -432,28 +412,7 @@ export default function OrgChartBinary() {
         rightMostMember={rightMostMember}
         leftMostMember={leftMostMember}
       />
-      <Card className="mb-6 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white shadow-lg">
-        <CardContent className="flex flex-wrap items-center justify-between gap-4 py-4 px-6">
-          <h2 className="text-xl font-semibold">
-            {rootMember?.memberName?.split(" ")[0] || "Member"}'s Genealogy
-          </h2>
-          <div className="flex gap-2">
-            <Button
-              onClick={handleBack}
-              disabled={history.length === 0}
-              className="bg-gradient-to-r from-blue-600 to-blue-800 text-white hover:from-blue-700 hover:to-blue-900"
-            >
-              Back
-            </Button>
-            <Button
-              onClick={handleReset}
-              className="bg-gradient-to-r from-gray-600 to-gray-800 text-white hover:from-gray-700 hover:to-gray-900"
-            >
-              Reset
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      <h2 className="text-xl font-semibold mb-4">My Genealogy</h2>
 
       <BinaryTreeChart tree={tree} onNodeClick={handleNodeClick} />
     </div>

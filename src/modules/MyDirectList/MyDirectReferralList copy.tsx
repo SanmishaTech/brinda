@@ -16,9 +16,9 @@ import {
   ChevronLeft,
   Loader,
   Search,
-  RotateCcw,
 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { get } from "@/services/apiService";
 import CustomPagination from "@/components/common/custom-pagination";
 import {
@@ -47,14 +47,13 @@ const fetchReferrals = async (
 };
 
 const MyDirectReferralList = () => {
+  const queryClient = useQueryClient();
   const [currentPage, setCurrentPage] = useState(1);
+  const [currentMemberId, setCurrentMemberId] = useState<number | null>(null);
   const [recordsPerPage, setRecordsPerPage] = useState(10);
   const [sortBy, setSortBy] = useState("memberUsername");
   const [sortOrder, setSortOrder] = useState("asc");
   const [search, setSearch] = useState("");
-
-  const [currentMemberId, setCurrentMemberId] = useState<number | null>(null);
-  const [navigationStack, setNavigationStack] = useState<number[]>([]); // 👈 Track history
 
   const { data, isLoading, isError } = useQuery({
     queryKey: [
@@ -96,30 +95,6 @@ const MyDirectReferralList = () => {
     setCurrentPage(1);
   };
 
-  const handleRowClick = (memberId: number) => {
-    if (currentMemberId !== null) {
-      setNavigationStack((prev) => [...prev, currentMemberId]);
-    }
-    setCurrentMemberId(memberId);
-    setCurrentPage(1);
-  };
-
-  const handleBack = () => {
-    setNavigationStack((prevStack) => {
-      const newStack = [...prevStack];
-      const prevId = newStack.pop();
-      setCurrentMemberId(prevId ?? null);
-      return newStack;
-    });
-    setCurrentPage(1);
-  };
-
-  const handleReset = () => {
-    setCurrentMemberId(null);
-    setNavigationStack([]);
-    setCurrentPage(1);
-  };
-
   return (
     <div className="mt-2 p-4 sm:p-6">
       <h1 className="text-xl sm:text-2xl font-bold mb-2">
@@ -140,16 +115,12 @@ const MyDirectReferralList = () => {
               />
             </div>
 
-            {navigationStack.length > 0 && (
-              <Button onClick={handleBack}>
-                <ChevronLeft className="mr-1 h-4 w-4" /> Back
-              </Button>
-            )}
-
-            {(currentMemberId || navigationStack.length > 0) && (
-              <Button variant="outline" onClick={handleReset}>
-                <RotateCcw className="mr-1 h-4 w-4" /> Reset
-              </Button>
+            {currentMemberId && (
+              <div>
+                <Button onClick={() => setCurrentMemberId(null)}>
+                  <ChevronLeft className="mr-1 h-4 w-4" /> Back
+                </Button>
+              </div>
             )}
           </div>
 
@@ -244,15 +215,19 @@ const MyDirectReferralList = () => {
                 <TableBody>
                   {referrals.map((referral) => (
                     <TableRow
-                      key={referral.id}
                       className="cursor-pointer hover:bg-muted/50 transition"
-                      onClick={() => handleRowClick(referral.id)}
+                      onClick={() => setCurrentMemberId(referral.id)}
+                      key={referral.id}
                     >
                       <TableCell className="max-w-[250px] p-4 break-words whitespace-normal">
-                        {referral?.memberUsername || "N/A"}
+                        {referral?.memberUsername
+                          ? referral.memberUsername
+                          : "N/A"}
                       </TableCell>
-                      <TableCell>{referral?.memberName || "N/A"}</TableCell>
-                      <TableCell>
+                      <TableCell className="max-w-[250px] break-words whitespace-normal">
+                        {referral?.memberName ? referral.memberName : "N/A"}
+                      </TableCell>
+                      <TableCell className="max-w-[250px] break-words whitespace-normal">
                         {referral?.status ? (
                           <span
                             className={`px-2 py-1 text-xs font-medium rounded-full  ${
@@ -269,16 +244,18 @@ const MyDirectReferralList = () => {
                                 : "bg-gray-100 text-gray-500"
                             }`}
                           >
-                            {referral.status}
+                            {referral.status ? referral.status : "N/A"}
                           </span>
                         ) : (
                           "N/A"
                         )}
                       </TableCell>
-                      <TableCell>
-                        {referral?.positionToParent || "N/A"}
+                      <TableCell className="max-w-[250px] break-words whitespace-normal">
+                        {referral?.positionToParent
+                          ? referral.positionToParent
+                          : "N/A"}
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="max-w-[250px] break-words whitespace-normal">
                         {referral?.pvBalance != null
                           ? parseFloat(referral.pvBalance).toFixed(2)
                           : "N/A"}
