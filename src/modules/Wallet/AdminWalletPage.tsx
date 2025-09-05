@@ -303,7 +303,8 @@ const AdminWalletPage = () => {
                           <TableCell>
                             <Button
                               size="sm"
-                              disabled={transaction.status !== "Pending"}
+                              // disabled={transaction.status !== "Pending"}
+                              disabled={true}
                               onClick={() =>
                                 handleOpenViewDetailsDialog(transaction)
                               }
