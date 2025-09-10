@@ -81,11 +81,13 @@ const MemberDashboard = () => {
     goldRewardIncome,
     goldRewardBalance,
     goldRewardLevel,
+    rewardIncomeEarned,
   } = data;
 
   const totalIncomeEarned =
     parseFloat(matchingIncomeEarned || 0) +
-    parseFloat(repurchaseIncomeEarned || 0);
+    parseFloat(repurchaseIncomeEarned || 0) +
+    parseFloat(rewardIncomeEarned || 0);
 
   return (
     <div className="p-4 sm:p-6 space-y-8">
@@ -193,6 +195,20 @@ const MemberDashboard = () => {
             <CardContent>
               <p className="text-3xl font-bold text-white">
                 {formatCurrency(matchingIncomeEarned)}
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-r from-red-600 to-red-900 text-white">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3 text-white">
+                <Wallet />
+                Reward Income Earned
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold text-white">
+                {formatCurrency(rewardIncomeEarned)}
               </p>
             </CardContent>
           </Card>
