@@ -1,49 +1,51 @@
-import { useEffect } from 'react';
-import { appName } from './config'; // Import appName from config
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { useEffect } from "react";
+import { appName } from "./config"; // Import appName from config
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-import AuthLayout from './layouts/AuthLayout';
-import MainLayout from './layouts/MainLayout';
+import AuthLayout from "./layouts/AuthLayout";
+import MainLayout from "./layouts/MainLayout";
 
-import Login from './modules/Auth/Login';
-import Register from './modules/Auth/Register';
-import ForgotPassword from './modules/Auth/ForgotPassword';
-import ResetPassword from './modules/Auth/ResetPassword';
+import Login from "./modules/Auth/Login";
+import Register from "./modules/Auth/Register";
+import ForgotPassword from "./modules/Auth/ForgotPassword";
+import ResetPassword from "./modules/Auth/ResetPassword";
 
-import ProtectedRoute from './components/common/protected-route'; // Correct path
+import ProtectedRoute from "./components/common/protected-route"; // Correct path
 
-import Dashboard from './modules/Dashboard/DashboardPage';
+import Dashboard from "./modules/Dashboard/DashboardPage";
 
-import ProfilePage from './modules/Profile/ProfilePage';
+import ProfilePage from "./modules/Profile/ProfilePage";
 
-import UserList from '@/modules/User/UserList';
+import UserList from "@/modules/User/UserList";
 
-import { Toaster } from 'sonner';
-import './App.css';
+import { Toaster } from "sonner";
+import "./App.css";
 
-import ProductList from './modules/Product/ProductList';
-import CreateProduct from './modules/Product/CreateProduct';
-import EditProduct from './modules/Product/EditProduct';
-import MemberList from './modules/Member/MemberList';
-import CreateMember from './modules/Member/CreateMember';
-import EditMember from './modules/Member/EditMember';
-import UserWalletPage from './modules/Wallet/UserWalletPage'; // Adjust the import path as needed
-import AdminWalletPage from './modules/Wallet/AdminWalletPage';
-import Purchase from './modules/Purchase/User/Purchase';
-import Genealogy from './modules/Genealogy/Genealogy';
+import ProductList from "./modules/Product/ProductList";
+import CreateProduct from "./modules/Product/CreateProduct";
+import EditProduct from "./modules/Product/EditProduct";
+import MemberList from "./modules/Member/MemberList";
+import CreateMember from "./modules/Member/CreateMember";
+import EditMember from "./modules/Member/EditMember";
+import UserWalletPage from "./modules/Wallet/UserWalletPage"; // Adjust the import path as needed
+import AdminWalletPage from "./modules/Wallet/AdminWalletPage";
+import Purchase from "./modules/Purchase/User/Purchase";
+import Genealogy from "./modules/Genealogy/Genealogy";
 
-import PurchaseHistoryList from './modules/Purchase/User/PurchaseHistoryList';
-import MemberLogList from './modules/Member/MemberLogList';
-import MyDirectReferralList from './modules/MyDirectList/MyDirectReferralList';
-import Repurchase from './modules/Repurchase/User/Repurchase';
-import RepurchaseHistoryList from './modules/Repurchase/User/RepurchaseHistoryList';
-import MatchingIncomePayoutList from './modules/Commission/MatchingPayout/MatchingIncomePayoutList';
-import AdminPaidCommissionList from './modules/Commission/MatchingPayout/AdminPaidCommissionList';
-import GuestRoute from './components/common/guest-route';
-import RepurchaseIncomePayoutList from './modules/Commission/RepurchasePayout/RepurchaseIncomePayoutList';
-import AdminPaidRepurchaseList from './modules/Commission/RepurchasePayout/AdminPaidRepurchaseList';
-import VirtualPowerList from './modules/VirtualPower/VirtualPowerList';
-import RewardList from './modules/Reward/RewardList';
+import PurchaseHistoryList from "./modules/Purchase/User/PurchaseHistoryList";
+import MemberLogList from "./modules/Member/MemberLogList";
+import MyDirectReferralList from "./modules/MyDirectList/MyDirectReferralList";
+import Repurchase from "./modules/Repurchase/User/Repurchase";
+import RepurchaseHistoryList from "./modules/Repurchase/User/RepurchaseHistoryList";
+import MatchingIncomePayoutList from "./modules/Commission/MatchingPayout/MatchingIncomePayoutList";
+import AdminPaidCommissionList from "./modules/Commission/MatchingPayout/AdminPaidCommissionList";
+import GuestRoute from "./components/common/guest-route";
+import RepurchaseIncomePayoutList from "./modules/Commission/RepurchasePayout/RepurchaseIncomePayoutList";
+import AdminPaidRepurchaseList from "./modules/Commission/RepurchasePayout/AdminPaidRepurchaseList";
+import VirtualPowerList from "./modules/VirtualPower/VirtualPowerList";
+import RewardList from "./modules/Reward/RewardList";
+import RewardIncomePayoutList from "./modules/Commission/RewardPayout/RewardIncomePayoutList";
+import AdminPaidRewardList from "./modules/Commission/RewardPayout/AdminPaidRewardList";
 
 const App = () => {
   useEffect(() => {
@@ -269,6 +271,22 @@ const App = () => {
               element={
                 <ProtectedRoute>
                   <AdminPaidRepurchaseList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/commissions/rewardIncomePayout"
+              element={
+                <ProtectedRoute>
+                  <RewardIncomePayoutList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/commissions/adminPaidRewardCommissions"
+              element={
+                <ProtectedRoute>
+                  <AdminPaidRewardList />
                 </ProtectedRoute>
               }
             />

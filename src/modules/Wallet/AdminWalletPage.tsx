@@ -53,7 +53,14 @@ import Deposit from "./Admin/Deposit";
 import Withdraw from "./Admin/Withdraw";
 import ViewDetails from "./Admin/ViewDetails";
 import dayjs from "dayjs";
-import { APPROVED, CREDIT, DEBIT, PENDING, REJECTED } from "@/config/data";
+import {
+  APPROVED,
+  CREDIT,
+  DEBIT,
+  FUND_WALLET,
+  PENDING,
+  REJECTED,
+} from "@/config/data";
 
 const AdminWalletPage = () => {
   const { id: memberId } = useParams();
@@ -303,8 +310,14 @@ const AdminWalletPage = () => {
                           <TableCell>
                             <Button
                               size="sm"
+                              disabled={
+                                !(
+                                  transaction.status === PENDING &&
+                                  transaction.type === DEBIT &&
+                                  transaction.walletType === FUND_WALLET
+                                )
+                              }
                               // disabled={transaction.status !== "Pending"}
-                              disabled={true}
                               onClick={() =>
                                 handleOpenViewDetailsDialog(transaction)
                               }
