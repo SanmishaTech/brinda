@@ -51,6 +51,7 @@ import CreateAdminPurchase from "./modules/adminPurchase/CreateAdminPurchase";
 import EditAdminPurchase from "./modules/adminPurchase/EditAdminPurchase";
 import FranchiseStockList from "./modules/FranchiseStock/FranchiseStockList";
 import FranchiseStockForm from "./modules/FranchiseStock/FranchiseStockForm";
+import CreateFranchiseStock from "./modules/FranchiseStock/CreateFranchiseStock";
 
 const App = () => {
   useEffect(() => {
@@ -254,10 +255,10 @@ const App = () => {
               }
             />
             <Route
-              path="/addFranchiseStock"
+              path="/franchiseStock/create"
               element={
                 <ProtectedRoute>
-                  <FranchiseStockForm />
+                  <CreateFranchiseStock />
                 </ProtectedRoute>
               }
             />
