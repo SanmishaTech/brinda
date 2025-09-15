@@ -325,6 +325,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       url: "/products",
       icon: UsersRound,
     },
+
     {
       name: "Members",
       url: "/members",
@@ -333,6 +334,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     {
       name: "Virtual Power History",
       url: "/virtual-power/history",
+      icon: UsersRound,
+    },
+    {
+      name: "Admin Purchase",
+      url: "/adminPurchase",
+      icon: UsersRound,
+    },
+    {
+      name: "Franchise Stock",
+      url: "/franchiseStock",
       icon: UsersRound,
     },
   ];

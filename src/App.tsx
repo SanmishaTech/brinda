@@ -46,6 +46,11 @@ import VirtualPowerList from "./modules/VirtualPower/VirtualPowerList";
 import RewardList from "./modules/Reward/RewardList";
 import RewardIncomePayoutList from "./modules/Commission/RewardPayout/RewardIncomePayoutList";
 import AdminPaidRewardList from "./modules/Commission/RewardPayout/AdminPaidRewardList";
+import AdminPurchaseList from "./modules/adminPurchase/AdminPurchaseList";
+import CreateAdminPurchase from "./modules/adminPurchase/CreateAdminPurchase";
+import EditAdminPurchase from "./modules/adminPurchase/EditAdminPurchase";
+import FranchiseStockList from "./modules/FranchiseStock/FranchiseStockList";
+import FranchiseStockForm from "./modules/FranchiseStock/FranchiseStockForm";
 
 const App = () => {
   useEffect(() => {
@@ -237,6 +242,46 @@ const App = () => {
               element={
                 <ProtectedRoute>
                   <RepurchaseHistoryList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/franchiseStock"
+              element={
+                <ProtectedRoute>
+                  <FranchiseStockList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/addFranchiseStock"
+              element={
+                <ProtectedRoute>
+                  <FranchiseStockForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/adminPurchase"
+              element={
+                <ProtectedRoute>
+                  <AdminPurchaseList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/adminPurchase/create"
+              element={
+                <ProtectedRoute>
+                  <CreateAdminPurchase />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/adminPurchase/:id/edit"
+              element={
+                <ProtectedRoute>
+                  <EditAdminPurchase />
                 </ProtectedRoute>
               }
             />
