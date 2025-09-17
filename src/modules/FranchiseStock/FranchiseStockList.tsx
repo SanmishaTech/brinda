@@ -69,7 +69,7 @@ const fetchList = async (
 const FranchiseStockList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [recordsPerPage, setRecordsPerPage] = useState(10); // Add recordsPerPage state
-  const [sortBy, setSortBy] = useState("invoiceNumber"); // Default sort column
+  const [sortBy, setSortBy] = useState("batchNumber"); // Default sort column
   const [sortOrder, setSortOrder] = useState("asc"); // Default sort order
   const [search, setSearch] = useState(""); // Search query
   //  Track the user ID to delete
@@ -160,24 +160,6 @@ const FranchiseStockList = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead
-                      onClick={() => handleSort("invoiceNumber")}
-                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
-                    >
-                      <div className="flex items-center">
-                        <span>Invoice Number</span>
-                        {sortBy === "invoiceNumber" && (
-                          <span className="ml-1">
-                            {sortOrder === "asc" ? (
-                              <ChevronUp size={16} />
-                            ) : (
-                              <ChevronDown size={16} />
-                            )}
-                          </span>
-                        )}
-                      </div>
-                    </TableHead>
-
-                    <TableHead
                       onClick={() => handleSort("batchNumber")}
                       className="cursor-pointer max-w-[250px] break-words whitespace-normal"
                     >
@@ -216,9 +198,6 @@ const FranchiseStockList = () => {
                 <TableBody>
                   {adminStocks.map((stock) => (
                     <TableRow key={stock.id}>
-                      <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {stock.invoiceNumber}
-                      </TableCell>
                       <TableCell className="max-w-[250px] break-words whitespace-normal">
                         {stock.batchNumber || "N/A"}
                       </TableCell>

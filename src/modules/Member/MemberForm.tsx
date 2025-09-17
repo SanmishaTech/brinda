@@ -78,6 +78,7 @@ export const FormSchema = z.object({
     .min(6, "Password must be at least 6 characters long.")
     .max(50, "Password must not exceed 50 characters."),
   percentage: decimalString("Percentage", 5, 2),
+  securityDepositPercentage: decimalString("securityDepositPercentage", 5, 2),
 });
 
 type FormInputs = z.infer<typeof FormSchema>;
@@ -93,6 +94,7 @@ const MemberForm = ({ mode }: { mode: "create" | "edit" }) => {
     email: "",
     password: "",
     percentage: "",
+    securityDepositPercentage: "",
   };
 
   const {
@@ -132,6 +134,9 @@ const MemberForm = ({ mode }: { mode: "create" | "edit" }) => {
           : "",
         percentage: editMemberData?.percentage
           ? editMemberData?.percentage
+          : "",
+        securityDepositPercentage: editMemberData?.securityDepositPercentage
+          ? editMemberData?.securityDepositPercentage
           : "",
       });
     }
@@ -403,6 +408,35 @@ const MemberForm = ({ mode }: { mode: "create" | "edit" }) => {
                 {errors.percentage && (
                   <p className="text-red-500 text-xs mt-1">
                     {errors.percentage.message}
+                  </p>
+                )}
+              </div>
+              <div>
+                <Label
+                  htmlFor="securityDepositPercentage"
+                  className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
+                  Security Deposit Percentage{" "}
+                  <span className="text-red-500">*</span>
+                </Label>
+                <Controller
+                  name="securityDepositPercentage"
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      id="securityDepositPercentage"
+                      type="number"
+                      step="0.01"
+                      max={100}
+                      placeholder="Enter %"
+                      {...field}
+                    />
+                  )}
+                />
+
+                {errors.securityDepositPercentage && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.securityDepositPercentage.message}
                   </p>
                 )}
               </div>

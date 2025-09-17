@@ -45,6 +45,7 @@ import {
   XCircle,
   Eye,
   EyeOff,
+  ShieldCheck,
 } from "lucide-react";
 import ConfirmDialog from "@/components/common/confirm-dialog";
 import { saveAs } from "file-saver";
@@ -58,6 +59,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ASSOCIATE, DIAMOND, GOLD, INACTIVE, SILVER } from "@/config/data";
 import AddVirtualPower from "../VirtualPower/AddVirtualPower";
+import MakeFranchise from "./MakeFranchise";
+import AddSecurityDepositDialog from "./AddSecurityDepositDialog";
 
 const fetchMembers = async (
   page: number,
@@ -84,6 +87,14 @@ const MemberList = () => {
   const [virtualDialogOpen, setVirtualDialogOpen] = useState(false); // State to show/hide confirmation dialog
   const [selectedVirtualMember, setSelectedVirtualMember] = useState(null); // State to show/hide confirmation dialog
   const [dropdownOpen, setDropdownOpen] = useState(false); // State to show/hide confirmation dialog
+  const [franchiseDialogOpen, setFranchiseDialogOpen] = useState(false);
+  const [selectedFranchiseMember, setSelectedFranchiseMember] = useState<{
+    id: number;
+    memberUsername: string;
+    memberName: string;
+  } | null>(null);
+  const [depositDialogOpen, setDepositDialogOpen] = useState(false);
+  const [selectedDepositMember, setSelectedDepositMember] = useState(null);
 
   //  Track the user ID to delete
   const navigate = useNavigate();
@@ -705,6 +716,37 @@ const MemberList = () => {
                                     <span>Virtual Power</span>
                                   </div>
                                 </DropdownMenuItem>
+                                {!member.isFranchise && (
+                                  <DropdownMenuItem
+                                    onClick={() => {
+                                      setTimeout(() => {
+                                        setSelectedFranchiseMember(member);
+                                        setFranchiseDialogOpen(true);
+                                      }, 0); // 50ms is usually enough
+                                    }}
+                                  >
+                                    <div className="flex items-center gap-2">
+                                      <ShieldCheck className="h-4 w-4" />
+                                      <span>Make Franchise</span>
+                                    </div>
+                                  </DropdownMenuItem>
+                                )}
+                                {member.isFranchise && (
+                                  <DropdownMenuItem
+                                    onClick={() => {
+                                      setTimeout(() => {
+                                        setSelectedDepositMember(member);
+                                        setDepositDialogOpen(true);
+                                      }, 0); // 50ms is usually enough
+                                    }}
+                                  >
+                                    <div className="flex items-center gap-2">
+                                      <Wallet className="h-4 w-4" />
+                                      <span>Security Deposit</span>
+                                    </div>
+                                  </DropdownMenuItem>
+                                )}
+
                                 <DropdownMenuItem
                                   onClick={() =>
                                     navigate(`/members/${member.id}/wallet`)
@@ -748,6 +790,22 @@ const MemberList = () => {
           open={virtualDialogOpen}
           onClose={() => setVirtualDialogOpen(false)}
           member={selectedVirtualMember}
+        />
+      )}
+
+      {franchiseDialogOpen && selectedFranchiseMember && (
+        <MakeFranchise
+          open={franchiseDialogOpen}
+          onClose={() => setFranchiseDialogOpen(false)}
+          member={selectedFranchiseMember}
+        />
+      )}
+
+      {depositDialogOpen && selectedDepositMember && (
+        <AddSecurityDepositDialog
+          open={depositDialogOpen}
+          onClose={() => setDepositDialogOpen(false)}
+          member={selectedDepositMember}
         />
       )}
     </div>

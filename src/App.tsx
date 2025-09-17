@@ -52,6 +52,7 @@ import EditAdminPurchase from "./modules/adminPurchase/EditAdminPurchase";
 import FranchiseStockList from "./modules/FranchiseStock/FranchiseStockList";
 import FranchiseStockForm from "./modules/FranchiseStock/FranchiseStockForm";
 import CreateFranchiseStock from "./modules/FranchiseStock/CreateFranchiseStock";
+import FranchiseDashboard from "./modules/Franchise/FranchiseDashboard";
 
 const App = () => {
   useEffect(() => {
@@ -219,6 +220,14 @@ const App = () => {
               element={
                 <ProtectedRoute>
                   <Purchase />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/franchiseDashboard"
+              element={
+                <ProtectedRoute>
+                  <FranchiseDashboard />
                 </ProtectedRoute>
               }
             />

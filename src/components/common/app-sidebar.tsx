@@ -274,6 +274,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       : "admin";
 
   const userStatus = profileData?.status;
+  const isFranchise = profileData?.isFranchise;
   // const username = profileData?.memberUsername || "";
   const isDiamond = userStatus === DIAMOND;
 
@@ -317,6 +318,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       url: "/rewards",
       icon: UsersRound,
     },
+    ...(isFranchise
+      ? [
+          {
+            name: "Franchise Dashboard",
+            url: "/franchiseDashboard",
+            icon: UsersRound,
+          },
+        ]
+      : []),
   ];
 
   const adminProjects = [

@@ -57,13 +57,14 @@ const StockTransferDetailSchema = z
   .object({
     productId: z.string().min(1, "Product is required."),
     batchNumber: z.string().min(1, "Batch is required."),
+    batchId: z.string().min(1, "Batch is required."), // 👈 NEW
     quantity: z.coerce
       .number()
       .int("Quantity must be an integer.")
       .min(1, "Min 1"),
     closingQuantity: z.coerce.number().min(0).optional(),
     expiryDate: z.string().optional(),
-    invoiceNumber: z.string().optional(),
+    // invoiceNumber: z.string().optional(),
   })
   .refine(
     (data) =>
@@ -97,7 +98,9 @@ const FranchiseStockForm = () => {
   } = useForm<FormInputs>({
     defaultValues: {
       memberId: "",
-      StockTransferDetails: [{ productId: "", batchNumber: "", quantity: 0 }],
+      StockTransferDetails: [
+        { productId: "", batchNumber: "", quantity: 0, batchId: "" },
+      ],
     },
     resolver: zodResolver(FormSchema),
   });
@@ -116,13 +119,14 @@ const FranchiseStockForm = () => {
     name: "StockTransferDetails",
   });
   // Build productId -> Set of selected batchNumbers
+
   const selectedBatchesMap: Record<string, Set<string>> = {};
-  watchedDetails?.forEach((row, idx) => {
-    if (row?.productId && row?.batchNumber) {
+  watchedDetails?.forEach((row) => {
+    if (row?.productId && row?.batchId) {
       if (!selectedBatchesMap[row.productId]) {
         selectedBatchesMap[row.productId] = new Set();
       }
-      selectedBatchesMap[row.productId].add(row.batchNumber);
+      selectedBatchesMap[row.productId].add(row.batchId);
     }
   });
 

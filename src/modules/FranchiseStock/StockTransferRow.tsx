@@ -45,8 +45,9 @@ export const StockTransferRow = ({
     enabled: !!productId,
   });
 
+  // Find selected batch by ID, not batchNumber
   const selectedBatch = productBatches?.find(
-    (b: any) => b.batchNumber === row?.batchNumber
+    (b: any) => String(b.id) === String(row?.batchId)
   );
   const closingQty = selectedBatch?.closingQuantity ?? 0;
 
@@ -66,18 +67,17 @@ export const StockTransferRow = ({
         `StockTransferDetails.${index}.expiryDate`,
         selectedBatch.expiryDate
       );
-      setValue(
-        `StockTransferDetails.${index}.invoiceNumber`,
-        selectedBatch.invoiceNumber
-      );
+      // setValue(
+      //   `StockTransferDetails.${index}.invoiceNumber`,
+      //   selectedBatch.invoiceNumber
+      // );
     }
   }, [selectedBatch, index, setValue]);
 
   // Exclude batches already used in other rows for the same product
   const usedBatches = selectedBatchesMap[productId] || new Set();
   const availableBatches = productBatches.filter(
-    (b: any) =>
-      !usedBatches.has(b.batchNumber) || b.batchNumber === row?.batchNumber
+    (b: any) => !usedBatches.has(String(b.id)) || String(b.id) === row?.batchId
   );
 
   return (
@@ -109,7 +109,7 @@ export const StockTransferRow = ({
       </TableCell>
 
       <TableCell>
-        <Controller
+        {/* <Controller
           control={control}
           name={`StockTransferDetails.${index}.batchNumber`}
           render={({ field }) => (
@@ -126,7 +126,52 @@ export const StockTransferRow = ({
               </SelectContent>
             </Select>
           )}
+        /> */}
+        <Controller
+          control={control}
+          name={`StockTransferDetails.${index}.batchId`}
+          render={({ field }) => (
+            <Select
+              onValueChange={(val) => {
+                field.onChange(val);
+                const selected = productBatches.find(
+                  (b: any) => String(b.id) === val
+                );
+                if (selected) {
+                  setValue(
+                    `StockTransferDetails.${index}.batchNumber`,
+                    selected.batchNumber
+                  );
+                  setValue(
+                    `StockTransferDetails.${index}.closingQuantity`,
+                    selected.closing_quantity
+                  );
+                  setValue(
+                    `StockTransferDetails.${index}.expiryDate`,
+                    selected.expiryDate
+                  );
+                  // setValue(
+                  //   `StockTransferDetails.${index}.invoiceNumber`,
+                  //   selected.invoiceNumber
+                  // );
+                }
+              }}
+              value={field.value}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select batch" />
+              </SelectTrigger>
+              <SelectContent>
+                {availableBatches.map((branch: any) => (
+                  <SelectItem key={branch.id} value={String(branch.id)}>
+                    {branch.batchNumber}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
         />
+
         {errors.StockTransferDetails?.[index]?.batchNumber && (
           <p className="text-red-500 text-xs">
             {errors.StockTransferDetails[index]?.batchNumber?.message}
