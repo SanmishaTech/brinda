@@ -1,6 +1,6 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { get } from "@/services/apiService";
+import { get, post } from "@/services/apiService";
 import {
   Card,
   CardContent,
@@ -8,6 +8,7 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
+
 import {
   Wallet,
   TrendingUp,
@@ -21,12 +22,55 @@ import { formatCurrency } from "@/lib/formatter";
 import { toast } from "sonner";
 import { DIAMOND } from "@/config/data";
 
+import { useForm, Controller } from "react-hook-form";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
 const fetchDashboardData = async () => {
   const response = await get("/franchise/dashboard");
   return response;
 };
 
 const FranchiseDashboard = () => {
+  const queryClient = useQueryClient();
+
+  const invoiceSchema = z.object({
+    invoiceNumber: z
+      .string()
+      .min(1, "Invoice number is required")
+      .max(12, "Invoice number is too long"),
+  });
+
+  type InvoiceForm = z.infer<typeof invoiceSchema>;
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<InvoiceForm>({
+    resolver: zodResolver(invoiceSchema),
+    defaultValues: {
+      invoiceNumber: "",
+    },
+  });
+
+  const deliverMutation = useMutation({
+    mutationFn: (data: InvoiceForm) =>
+      post("/franchise/deliver-products", data), // Replace `get` with `post` if it's a POST call
+    onSuccess: () => {
+      toast.success("Products delivered successfully.");
+      queryClient.invalidateQueries(["franchiseDashboard"]);
+      reset();
+    },
+    onError: (error: any) => {
+      toast.error(error?.message || "Delivery failed.");
+    },
+  });
+
   const { data, isLoading, isError } = useQuery({
     queryKey: ["franchiseDashboard"],
     queryFn: fetchDashboardData,
@@ -74,7 +118,7 @@ const FranchiseDashboard = () => {
       {/* Section 1: Wallets */}
       <section>
         <h2 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-200">
-          Information
+          Franchise Information
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Card className="shadow-md rounded-md bg-gradient-to-r from-pink-500 to-purple-600 text-white">
@@ -146,6 +190,45 @@ const FranchiseDashboard = () => {
             </CardContent>
           </Card>
         </div>
+      </section>
+
+      {/* Section 2: Deliver Product Form */}
+      <section>
+        <h2 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-200">
+          Deliver Products
+        </h2>
+        <Card className="">
+          <CardHeader>
+            <CardTitle>Enter Invoice Number</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form
+              onSubmit={handleSubmit((data) => deliverMutation.mutate(data))}
+              className="space-y-4"
+            >
+              <div>
+                <Controller
+                  name="invoiceNumber"
+                  control={control}
+                  render={({ field }) => (
+                    <Input placeholder="invoice number" {...field} />
+                  )}
+                />
+
+                {errors.invoiceNumber && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.invoiceNumber.message}
+                  </p>
+                )}
+              </div>
+              <Button type="submit" disabled={deliverMutation.isPending}>
+                {deliverMutation.isPending
+                  ? "Delivering..."
+                  : "Deliver Products"}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
       </section>
     </div>
   );
