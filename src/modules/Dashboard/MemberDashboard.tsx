@@ -82,12 +82,15 @@ const MemberDashboard = () => {
     goldRewardBalance,
     goldRewardLevel,
     rewardIncomeEarned,
+    franchiseIncomeEarned,
+    franchiseWalletBalance,
   } = data;
 
   const totalIncomeEarned =
     parseFloat(matchingIncomeEarned || 0) +
     parseFloat(repurchaseIncomeEarned || 0) +
-    parseFloat(rewardIncomeEarned || 0);
+    parseFloat(rewardIncomeEarned || 0) +
+    parseFloat(franchiseIncomeEarned || 0);
 
   return (
     <div className="p-4 sm:p-6 space-y-8">
@@ -175,6 +178,22 @@ const MemberDashboard = () => {
               </p>
             </CardContent>
           </Card>
+          <Card className="bg-gradient-to-r from-green-500 to-green-800 text-white">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3">
+                <Wallet className="text-white" />
+                Franchise Wallet
+              </CardTitle>
+              <CardDescription className="text-white">
+                Stores the generated Franchise Income.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold">
+                {formatCurrency(franchiseWalletBalance)}
+              </p>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
@@ -223,6 +242,20 @@ const MemberDashboard = () => {
             <CardContent>
               <p className="text-3xl font-bold text-white">
                 {formatCurrency(repurchaseIncomeEarned)}
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-r from-orange-600 to-orange-800 text-white">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3 text-white">
+                <Wallet />
+                Franchise Income Earned
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold text-white">
+                {formatCurrency(franchiseIncomeEarned)}
               </p>
             </CardContent>
           </Card>

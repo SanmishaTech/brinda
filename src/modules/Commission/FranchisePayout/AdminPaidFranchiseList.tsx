@@ -12,7 +12,6 @@ import MultipleSelector, {
 } from "@/components/common/multiple-selector"; // Import MultipleSelector from common folder
 import { Card, CardContent } from "@/components/ui/card";
 import { formatCurrency, formatDate, formatDateTime } from "@/lib/formatter.js";
-import dayjs from "dayjs";
 
 import {
   Table,
@@ -24,7 +23,7 @@ import {
 } from "@/components/ui/table";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { get, del, patch } from "@/services/apiService";
+import { get, del, patch, post } from "@/services/apiService";
 import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
 import CustomPagination from "@/components/common/custom-pagination";
@@ -62,29 +61,25 @@ const fetchList = async (
   recordsPerPage: number
 ) => {
   const response = await get(
-    `/admin-purchases?page=${page}&sortBy=${sortBy}&sortOrder=${sortOrder}&search=${search}&limit=${recordsPerPage}`
+    `/franchise-payouts/admin-paid-franchise-payouts?page=${page}&sortBy=${sortBy}&sortOrder=${sortOrder}&search=${search}&limit=${recordsPerPage}`
   );
   return response;
 };
 
-const AdminPurchaseList = () => {
+const AdminPaidFranchiseList = () => {
   const queryClient = useQueryClient();
   const [currentPage, setCurrentPage] = useState(1);
   const [recordsPerPage, setRecordsPerPage] = useState(10); // Add recordsPerPage state
-  const [sortBy, setSortBy] = useState("invoiceNumber"); // Default sort column
-  const [sortOrder, setSortOrder] = useState("asc"); // Default sort order
+  const [sortBy, setSortBy] = useState("id"); // Default sort column
+  const [sortOrder, setSortOrder] = useState("desc"); // Default sort order
   const [search, setSearch] = useState(""); // Search query
-  const [showConfirmation, setShowConfirmation] = useState(false); // State to show/hide confirmation dialog
-  const [adminPurchaseToDelete, setAdminPurchaseToDelete] = useState<
-    number | null
-  >(null); //
   //  Track the user ID to delete
   const navigate = useNavigate();
 
   // Fetch users using react-query
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: [
-      "admin-purchases",
+      "admin-paid-franchise-payouts",
       currentPage,
       sortBy,
       sortOrder,
@@ -95,38 +90,9 @@ const AdminPurchaseList = () => {
       fetchList(currentPage, sortBy, sortOrder, search, recordsPerPage),
   });
 
-  const adminPurchases = data?.adminPurchases || [];
+  const adminPaidList = data?.adminPaidList || [];
   const totalPages = data?.totalPages || 1;
-  const totalAdminPurchases = data?.totalAdminPurchases || 0;
-
-  // Mutation for deleting a user
-  const deleteMutation = useMutation({
-    mutationFn: (id: number) => del(`/admin-purchases/${id}`),
-    onSuccess: () => {
-      toast.success("Admin Purchase deleted successfully");
-      queryClient.invalidateQueries(["admin-purchases"]);
-    },
-    onError: (error) => {
-      if (error?.message) {
-        toast.error(error.message);
-      } else {
-        toast.error("Failed to delete admin Purchase");
-      }
-    },
-  });
-
-  const confirmDelete = (id: number) => {
-    setAdminPurchaseToDelete(id);
-    setShowConfirmation(true);
-  };
-
-  const handleDelete = () => {
-    if (adminPurchaseToDelete) {
-      deleteMutation.mutate(adminPurchaseToDelete);
-      setShowConfirmation(false);
-      setAdminPurchaseToDelete(null);
-    }
-  };
+  const totalRecords = data?.totalRecords || 0;
 
   // Handle sorting
   const handleSort = (column: string) => {
@@ -149,7 +115,7 @@ const AdminPurchaseList = () => {
   return (
     <div className="mt-2 p-4 sm:p-6">
       <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">
-        Admin Purchase Management
+        Franchise Commission Paid Details
       </h1>
       <Card className="mx-auto mt-6 sm:mt-10">
         <CardContent>
@@ -167,19 +133,9 @@ const AdminPurchaseList = () => {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-wrap items-center gap-2">
-              <Button
-                onClick={() => navigate("/adminPurchase/create")}
-                className="bg-primary hover:bg-primary/90 text-white shadow-sm transition-all duration-200 hover:shadow-md"
-              >
-                <PlusCircle className="mr-2 h-5 w-5" />
-                Add Purchase
-              </Button>
-            </div>
           </div>
 
           <Separator className="mb-4" />
-
           {/* Table Section */}
           {isLoading ? (
             <div className="flex justify-center items-center h-32">
@@ -187,20 +143,37 @@ const AdminPurchaseList = () => {
             </div>
           ) : isError ? (
             <div className="text-center text-red-500">
-              Failed to load purchase details.
+              Failed to load paid details list.
             </div>
-          ) : adminPurchases.length > 0 ? (
+          ) : adminPaidList.length > 0 ? (
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead
-                      onClick={() => handleSort("invoiceNumber")}
+                      onClick={() => handleSort("memberUsername")}
                       className="cursor-pointer max-w-[250px] break-words whitespace-normal"
                     >
                       <div className="flex items-center">
-                        <span>Invoice Number</span>
-                        {sortBy === "invoiceNumber" && (
+                        <span>ID</span>
+                        {sortBy === "memberUsername" && (
+                          <span className="ml-1">
+                            {sortOrder === "asc" ? (
+                              <ChevronUp size={16} />
+                            ) : (
+                              <ChevronDown size={16} />
+                            )}
+                          </span>
+                        )}
+                      </div>
+                    </TableHead>
+                    <TableHead
+                      onClick={() => handleSort("memberName")}
+                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
+                    >
+                      <div className="flex items-center">
+                        <span>Name</span>
+                        {sortBy === "memberName" && (
                           <span className="ml-1">
                             {sortOrder === "asc" ? (
                               <ChevronUp size={16} />
@@ -213,12 +186,12 @@ const AdminPurchaseList = () => {
                     </TableHead>
 
                     <TableHead
-                      onClick={() => handleSort("invoiceDate")}
+                      onClick={() => handleSort("panNumber")}
                       className="cursor-pointer max-w-[250px] break-words whitespace-normal"
                     >
                       <div className="flex items-center">
-                        <span>Invoice Date</span>
-                        {sortBy === "invoiceDate" && (
+                        <span>Pan Number</span>
+                        {sortBy === "panNumber" && (
                           <span className="ml-1">
                             {sortOrder === "asc" ? (
                               <ChevronUp size={16} />
@@ -230,12 +203,12 @@ const AdminPurchaseList = () => {
                       </div>
                     </TableHead>
                     <TableHead
-                      onClick={() => handleSort("receivedDate")}
+                      onClick={() => handleSort("bankName")}
                       className="cursor-pointer"
                     >
                       <div className="flex items-center">
-                        <span>Received Date</span>
-                        {sortBy === "receivedDate" && (
+                        <span>Bank Name</span>
+                        {sortBy === "bankName" && (
                           <span className="ml-1">
                             {sortOrder === "asc" ? (
                               <ChevronUp size={16} />
@@ -247,12 +220,12 @@ const AdminPurchaseList = () => {
                       </div>
                     </TableHead>
                     <TableHead
-                      onClick={() => handleSort("totalAmountWithoutGst")}
-                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
+                      onClick={() => handleSort("bankAccountNumber")}
+                      className="cursor-pointer"
                     >
                       <div className="flex items-center">
-                        <span>Total Amount Without Gst</span>
-                        {sortBy === "totalAmountWithoutGst" && (
+                        <span>Account Number</span>
+                        {sortBy === "bankAccountNumber" && (
                           <span className="ml-1">
                             {sortOrder === "asc" ? (
                               <ChevronUp size={16} />
@@ -264,12 +237,12 @@ const AdminPurchaseList = () => {
                       </div>
                     </TableHead>
                     <TableHead
-                      onClick={() => handleSort("totalGstAmount")}
-                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
+                      onClick={() => handleSort("bankIfscCode")}
+                      className="cursor-pointer"
                     >
                       <div className="flex items-center">
-                        <span>Total Gst Amount</span>
-                        {sortBy === "totalGstAmount" && (
+                        <span>IFSC Number</span>
+                        {sortBy === "bankIfscCode" && (
                           <span className="ml-1">
                             {sortOrder === "asc" ? (
                               <ChevronUp size={16} />
@@ -280,14 +253,13 @@ const AdminPurchaseList = () => {
                         )}
                       </div>
                     </TableHead>
-
                     <TableHead
-                      onClick={() => handleSort("totalAmountWithGst")}
-                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
+                      onClick={() => handleSort("memberMobile")}
+                      className="cursor-pointer"
                     >
                       <div className="flex items-center">
-                        <span>Total Amount With Gst</span>
-                        {sortBy === "totalAmountWithGst" && (
+                        <span>Mobile</span>
+                        {sortBy === "memberMobile" && (
                           <span className="ml-1">
                             {sortOrder === "asc" ? (
                               <ChevronUp size={16} />
@@ -298,58 +270,51 @@ const AdminPurchaseList = () => {
                         )}
                       </div>
                     </TableHead>
-                    <TableHead>Actions</TableHead>
+                    <TableHead
+                      onClick={() => handleSort("totalAmountToGive")}
+                      className="cursor-pointer"
+                    >
+                      <div className="flex items-center">
+                        <span>Amount</span>
+                        {sortBy === "totalAmountToGive" && (
+                          <span className="ml-1">
+                            {sortOrder === "asc" ? (
+                              <ChevronUp size={16} />
+                            ) : (
+                              <ChevronDown size={16} />
+                            )}
+                          </span>
+                        )}
+                      </div>
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {adminPurchases.map((purchase) => (
-                    <TableRow key={purchase.id}>
-                      <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {purchase.invoiceNumber}
-                      </TableCell>
+                  {adminPaidList.map((list) => (
+                    <TableRow key={list.id}>
                       <TableCell className="max-w-[250px] p-4 break-words whitespace-normal">
-                        {purchase?.invoiceDate
-                          ? dayjs(purchase?.invoiceDate).format(
-                              "DD/MM/YYYY hh:mm:ss A"
-                            )
-                          : "N/A"}
-                      </TableCell>
-                      <TableCell className="max-w-[250px] p-4 break-words whitespace-normal">
-                        {purchase?.receivedDate
-                          ? dayjs(purchase?.receivedDate).format(
-                              "DD/MM/YYYY hh:mm:ss A"
-                            )
-                          : "N/A"}
+                        {list?.member?.memberUsername}
                       </TableCell>
                       <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {purchase.totalAmountWithoutGst}
-                      </TableCell>{" "}
-                      <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {purchase.totalGstAmount}
-                      </TableCell>{" "}
-                      <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {purchase.totalAmountWithGst}
+                        {list?.member?.memberName}
                       </TableCell>
-                      <TableCell>
-                        <div className="flex gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() =>
-                              navigate(`/adminPurchase/${purchase.id}/edit`)
-                            }
-                          >
-                            <Edit size={16} />
-                          </Button>
-
-                          {/* <Button
-                            variant="destructive"
-                            size="sm"
-                            onClick={() => confirmDelete(purchase.id)}
-                          >
-                            <Trash2 size={16} />
-                          </Button> */}
-                        </div>
+                      <TableCell className="max-w-[250px] break-words whitespace-normal">
+                        {list?.member?.panNumber || "-"}
+                      </TableCell>
+                      <TableCell className="max-w-[250px] break-words whitespace-normal">
+                        {list?.member?.bankName || "-"}
+                      </TableCell>
+                      <TableCell className="max-w-[250px] break-words whitespace-normal">
+                        {list?.member?.bankAccountNumber || "-"}
+                      </TableCell>
+                      <TableCell className="max-w-[250px] break-words whitespace-normal">
+                        {list?.member?.bankIfscCode || "-"}
+                      </TableCell>
+                      <TableCell className="max-w-[250px] break-words whitespace-normal">
+                        {list?.member?.memberMobile || "-"}
+                      </TableCell>
+                      <TableCell className="max-w-[250px] break-words whitespace-normal">
+                        {list.totalAmountToGive || "-"}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -358,7 +323,7 @@ const AdminPurchaseList = () => {
               <CustomPagination
                 currentPage={currentPage}
                 totalPages={totalPages}
-                totalRecords={totalAdminPurchases}
+                totalRecords={totalRecords}
                 recordsPerPage={recordsPerPage}
                 onPageChange={setCurrentPage} // Pass setCurrentPage directly
                 onRecordsPerPageChange={(newRecordsPerPage) => {
@@ -368,23 +333,12 @@ const AdminPurchaseList = () => {
               />
             </div>
           ) : (
-            <div className="text-center">No Admin Purchase Details Found.</div>
+            <div className="text-center">No records Found.</div>
           )}
         </CardContent>
       </Card>
-
-      <ConfirmDialog
-        isOpen={showConfirmation}
-        title="Confirm Deletion"
-        description="Are you sure you want to delete this record? This action cannot be undone."
-        onCancel={() => {
-          setShowConfirmation(false);
-          setAdminPurchaseToDelete(null);
-        }}
-        onConfirm={handleDelete}
-      />
     </div>
   );
 };
 
-export default AdminPurchaseList;
+export default AdminPaidFranchiseList;

@@ -856,15 +856,37 @@ const AdminPurchaseForm = ({ mode }: { mode: "create" | "edit" }) => {
                         <Controller
                           name={`adminPurchaseDetails.${index}.expiryDate`}
                           control={control}
-                          render={({ field }) => (
+                          render={({ field: { onChange, value, ...rest } }) => (
                             <Input
-                              {...field}
-                              placeholder="MM/YY"
+                              {...rest}
+                              type="month"
+                              value={
+                                value
+                                  ? new Date(value)
+                                      .toISOString()
+                                      .substring(0, 7)
+                                  : ""
+                              }
+                              onChange={(e) => {
+                                const [year, month] = e.target.value.split("-");
+
+                                // ✅ Get last day of the month
+                                const lastDay = new Date(
+                                  Date.UTC(Number(year), Number(month), 0)
+                                ); // Note: month is 1-based
+
+                                // ✅ Set time to 00:00:00.000 explicitly in UTC
+                                lastDay.setUTCHours(0, 0, 0, 0);
+
+                                // ✅ Pass final ISO string (UTC-safe) to onChange
+                                onChange(lastDay.toISOString());
+                              }}
                               className="w-full"
-                              type="date"
+                              placeholder="MM/YYYY"
                             />
                           )}
                         />
+
                         {errors.adminPurchaseDetails?.[index]?.expiryDate && (
                           <p className="text-red-500 text-xs">
                             {

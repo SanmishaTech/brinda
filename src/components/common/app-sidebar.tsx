@@ -325,6 +325,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             url: "/franchiseDashboard",
             icon: UsersRound,
           },
+          {
+            name: "Franchise Stock",
+            url: "/memberFranchiseStockList",
+            icon: UsersRound,
+          },
         ]
       : []),
   ];
@@ -378,6 +383,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           url: "/commissions/rewardIncomePayout",
         },
         {
+          title: "Franchise Payout",
+          url: "/commissions/franchiseIncomePayout",
+        },
+        {
           title: "Paid matching Payout",
           url: "/commissions/adminPaidCommissions",
         },
@@ -388,6 +397,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {
           title: "Paid Reward Payout",
           url: "/commissions/adminPaidRewardCommissions",
+        },
+        {
+          title: "Paid Franchise Payout",
+          url: "/commissions/adminPaidFranchiseCommissions",
         },
       ],
     },

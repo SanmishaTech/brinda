@@ -53,6 +53,10 @@ import FranchiseStockList from "./modules/FranchiseStock/FranchiseStockList";
 import FranchiseStockForm from "./modules/FranchiseStock/FranchiseStockForm";
 import CreateFranchiseStock from "./modules/FranchiseStock/CreateFranchiseStock";
 import FranchiseDashboard from "./modules/Franchise/FranchiseDashboard";
+import MemberFranchiseStockList from "./modules/Franchise/MemberFranchiseStockList";
+
+import FranchiseIncomePayoutList from "./modules/Commission/FranchisePayout/FranchiseIncomePayoutList";
+import AdminPaidFranchiseList from "./modules/Commission/FranchisePayout/AdminPaidFranchiseList";
 
 const App = () => {
   useEffect(() => {
@@ -232,6 +236,14 @@ const App = () => {
               }
             />
             <Route
+              path="/memberFranchiseStockList"
+              element={
+                <ProtectedRoute>
+                  <MemberFranchiseStockList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/purchase/history"
               element={
                 <ProtectedRoute>
@@ -321,11 +333,28 @@ const App = () => {
                 </ProtectedRoute>
               }
             />
+
             <Route
               path="/commissions/adminPaidRepurchaseCommissions"
               element={
                 <ProtectedRoute>
                   <AdminPaidRepurchaseList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/commissions/franchiseIncomePayout"
+              element={
+                <ProtectedRoute>
+                  <FranchiseIncomePayoutList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/commissions/adminPaidFranchiseCommissions"
+              element={
+                <ProtectedRoute>
+                  <AdminPaidFranchiseList />
                 </ProtectedRoute>
               }
             />

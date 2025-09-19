@@ -160,6 +160,40 @@ const FranchiseStockList = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead
+                      onClick={() => handleSort("memberUsername")}
+                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
+                    >
+                      <div className="flex items-center">
+                        <span>Member</span>
+                        {sortBy === "memberUsername" && (
+                          <span className="ml-1">
+                            {sortOrder === "asc" ? (
+                              <ChevronUp size={16} />
+                            ) : (
+                              <ChevronDown size={16} />
+                            )}
+                          </span>
+                        )}
+                      </div>
+                    </TableHead>
+                    <TableHead
+                      onClick={() => handleSort("productName")}
+                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
+                    >
+                      <div className="flex items-center">
+                        <span>Product Name</span>
+                        {sortBy === "productName" && (
+                          <span className="ml-1">
+                            {sortOrder === "asc" ? (
+                              <ChevronUp size={16} />
+                            ) : (
+                              <ChevronDown size={16} />
+                            )}
+                          </span>
+                        )}
+                      </div>
+                    </TableHead>
+                    <TableHead
                       onClick={() => handleSort("batchNumber")}
                       className="cursor-pointer max-w-[250px] break-words whitespace-normal"
                     >
@@ -177,12 +211,29 @@ const FranchiseStockList = () => {
                       </div>
                     </TableHead>
                     <TableHead
-                      onClick={() => handleSort("quantity")}
+                      onClick={() => handleSort("expiryDate")}
+                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
+                    >
+                      <div className="flex items-center">
+                        <span>Expiry Date</span>
+                        {sortBy === "expiryDate" && (
+                          <span className="ml-1">
+                            {sortOrder === "asc" ? (
+                              <ChevronUp size={16} />
+                            ) : (
+                              <ChevronDown size={16} />
+                            )}
+                          </span>
+                        )}
+                      </div>
+                    </TableHead>
+                    <TableHead
+                      onClick={() => handleSort("closing_quantity")}
                       className="cursor-pointer max-w-[250px] break-words whitespace-normal"
                     >
                       <div className="flex items-center">
                         <span>Quantity</span>
-                        {sortBy === "quantity" && (
+                        {sortBy === "closing_quantity" && (
                           <span className="ml-1">
                             {sortOrder === "asc" ? (
                               <ChevronUp size={16} />
@@ -198,11 +249,31 @@ const FranchiseStockList = () => {
                 <TableBody>
                   {adminStocks.map((stock) => (
                     <TableRow key={stock.id}>
+                      <TableCell className="max-w-[250px] pb-4 break-words whitespace-normal">
+                        <div>{stock?.member?.memberUsername || "Admin"}</div>
+                        <div>{stock?.member?.memberName}</div>
+                      </TableCell>
+
+                      <TableCell className="max-w-[250px] pb-4 break-words whitespace-normal">
+                        {stock?.product?.productName || "N/A"}
+                      </TableCell>
                       <TableCell className="max-w-[250px] break-words whitespace-normal">
                         {stock.batchNumber || "N/A"}
                       </TableCell>
                       <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {stock.quantity || "N/A"}
+                        {stock.expiryDate
+                          ? new Date(stock.expiryDate).toLocaleDateString(
+                              "en-IN",
+                              {
+                                month: "short",
+                                year: "numeric",
+                              }
+                            )
+                          : "N/A"}
+                      </TableCell>
+
+                      <TableCell className="max-w-[250px] break-words whitespace-normal">
+                        {stock.closing_quantity || "N/A"}
                       </TableCell>
                     </TableRow>
                   ))}
