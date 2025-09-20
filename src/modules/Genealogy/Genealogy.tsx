@@ -320,6 +320,7 @@ const mapApiDataToTree = (data) => {
     ),
     status: data.rootMember.status,
     id: data.rootMember.id,
+    createdAt: data.rootMember.latestStatusLog?.createdAt || null,
     left: data.leftMember
       ? {
           label: formatLabel(
@@ -328,6 +329,7 @@ const mapApiDataToTree = (data) => {
           ),
           status: data.leftMember.status,
           id: data.leftMember.id,
+          createdAt: data.leftMember.latestStatusLog?.createdAt || null,
           left: data.leftsLeftMember
             ? {
                 label: formatLabel(
@@ -336,6 +338,8 @@ const mapApiDataToTree = (data) => {
                 ),
                 status: data.leftsLeftMember.status,
                 id: data.leftsLeftMember.id,
+                createdAt:
+                  data.leftsLeftMember.latestStatusLog?.createdAt || null,
               }
             : null,
           right: data.leftsRightMember
@@ -346,6 +350,8 @@ const mapApiDataToTree = (data) => {
                 ),
                 status: data.leftsRightMember.status,
                 id: data.leftsRightMember.id,
+                createdAt:
+                  data.leftsRightMember.latestStatusLog?.createdAt || null,
               }
             : null,
         }
@@ -358,6 +364,7 @@ const mapApiDataToTree = (data) => {
           ),
           status: data.rightMember.status,
           id: data.rightMember.id,
+          createdAt: data.rightMember.latestStatusLog?.createdAt || null,
           left: data.rightsLeftMember
             ? {
                 label: formatLabel(
@@ -366,6 +373,8 @@ const mapApiDataToTree = (data) => {
                 ),
                 status: data.rightsLeftMember.status,
                 id: data.rightsLeftMember.id,
+                createdAt:
+                  data.rightsLeftMember.latestStatusLog?.createdAt || null,
               }
             : null,
           right: data.rightsRightMember
@@ -376,6 +385,8 @@ const mapApiDataToTree = (data) => {
                 ),
                 status: data.rightsRightMember.status,
                 id: data.rightsRightMember.id,
+                createdAt:
+                  data.rightsRightMember.latestStatusLog?.createdAt || null,
               }
             : null,
         }
@@ -522,7 +533,7 @@ export default function OrgChartBinary() {
 //   );
 // };
 
-const NodeCard = ({ label, status, onClick }) => {
+const NodeCard = ({ label, status, onClick, createdAt }) => {
   const getGradientForStatus = (status) => {
     switch (status) {
       case INACTIVE:
@@ -539,6 +550,21 @@ const NodeCard = ({ label, status, onClick }) => {
         return "from-gray-300 to-gray-500";
     }
   };
+
+  const formatDate = (isoDate) => {
+    if (!isoDate) return "";
+    const date = new Date(isoDate);
+    return date.toLocaleString("en-GB", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+  };
+
+  const formattedDate = formatDate(createdAt);
 
   const [line1, line2] = label.split(" ", 2);
   const gradient = getGradientForStatus(status);
@@ -563,10 +589,16 @@ const NodeCard = ({ label, status, onClick }) => {
 
             {/* Status bar at bottom */}
             <div
-              className={`w-full text-sm text-white text-center font-semibold rounded-md bg-gradient-to-r ${gradient} px-2 py-1`}
+              className={`w-full mt-1 text-sm text-white text-center font-semibold rounded-md bg-gradient-to-r ${gradient} px-2 py-1`}
             >
               {status}
             </div>
+            {/* Date */}
+            {createdAt && (
+              <div className="text-[12px] text-muted-foreground mt-1">
+                {formattedDate}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -615,6 +647,7 @@ const BinaryTreeNode = ({ node, onNodeClick, positions, parentPos }) => {
         <NodeCard
           label={node.label}
           status={node.status}
+          createdAt={node.createdAt} // 👈 Pass this
           onClick={() => onNodeClick(node)}
         />
       </foreignObject>
