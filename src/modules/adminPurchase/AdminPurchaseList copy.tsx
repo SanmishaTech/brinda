@@ -148,23 +148,13 @@ const AdminPurchaseList = () => {
       ];
       const queryString = queryParts.join("&");
       const url = `/admin-purchases?${queryString}`;
-
       const response = await get(url, null, {
         responseType: "blob",
       });
-
-      // Parse filename from headers
-      let fileName = `Admin_Purchase_${dayjs().format("DD_MM_YYYY")}.xlsx`;
-      const disposition = response.headers["content-disposition"];
-      if (disposition && disposition.includes("filename=")) {
-        const match = disposition.match(/filename="?(.+?)"?$/);
-        if (match && match[1]) fileName = match[1];
-      }
-
       const blob = new Blob([response.data], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
-      saveAs(blob, fileName);
+      saveAs(blob, `AdminPurchases_${dayjs().format("YYYYMMDD_HHmmss")}.xlsx`);
       toast.success("Export successful");
     } catch (error: any) {
       console.error("Export error:", error);

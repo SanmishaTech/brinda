@@ -361,6 +361,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       url: "/franchiseStock",
       icon: UsersRound,
     },
+    {
+      name: "purchase Orders",
+      url: "/purchaseList",
+      icon: UsersRound,
+    },
+    {
+      name: "repurchase Orders",
+      url: "/repurchaseList",
+      icon: UsersRound,
+    },
   ];
 
   const adminNavMain = [

@@ -57,6 +57,8 @@ import MemberFranchiseStockList from "./modules/Franchise/MemberFranchiseStockLi
 
 import FranchiseIncomePayoutList from "./modules/Commission/FranchisePayout/FranchiseIncomePayoutList";
 import AdminPaidFranchiseList from "./modules/Commission/FranchisePayout/AdminPaidFranchiseList";
+import PurchaseList from "./modules/Purchase/User/PurchaseList";
+import RepurchaseList from "./modules/Repurchase/User/RepurchaseList";
 
 const App = () => {
   useEffect(() => {
@@ -256,6 +258,22 @@ const App = () => {
               element={
                 <ProtectedRoute>
                   <Repurchase />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/purchaseList"
+              element={
+                <ProtectedRoute>
+                  <PurchaseList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/repurchaseList"
+              element={
+                <ProtectedRoute>
+                  <RepurchaseList />
                 </ProtectedRoute>
               }
             />
