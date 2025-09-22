@@ -64,7 +64,7 @@ const fetchProducts = async (
   recordsPerPage: number
 ) => {
   const response = await get(
-    `/purchases?page=${page}&sortBy=${sortBy}&sortOrder=${sortOrder}&search=${search}&limit=${recordsPerPage}`
+    `/purchases/history?page=${page}&sortBy=${sortBy}&sortOrder=${sortOrder}&search=${search}&limit=${recordsPerPage}`
   );
   return response;
 };
