@@ -32,6 +32,7 @@ import {
   ChevronUp,
   ChevronDown,
   Edit,
+  HandCoins,
   Trash2,
   Wallet,
   Filter,
@@ -61,6 +62,7 @@ import { ASSOCIATE, DIAMOND, GOLD, INACTIVE, SILVER } from "@/config/data";
 import AddVirtualPower from "../VirtualPower/AddVirtualPower";
 import MakeFranchise from "./MakeFranchise";
 import AddSecurityDepositDialog from "./AddSecurityDepositDialog";
+import AddLoanDialog from "./AddLoanDialog";
 
 const fetchMembers = async (
   page: number,
@@ -95,6 +97,9 @@ const MemberList = () => {
   } | null>(null);
   const [depositDialogOpen, setDepositDialogOpen] = useState(false);
   const [selectedDepositMember, setSelectedDepositMember] = useState(null);
+
+  const [loanDialogOpen, setLoanDialogOpen] = useState(false);
+  const [selectedLoanMember, setSelectedLoanMember] = useState(null);
 
   //  Track the user ID to delete
   const navigate = useNavigate();
@@ -748,6 +753,19 @@ const MemberList = () => {
                                 )}
 
                                 <DropdownMenuItem
+                                  onClick={() => {
+                                    setTimeout(() => {
+                                      setSelectedLoanMember(member);
+                                      setLoanDialogOpen(true);
+                                    }, 0); // 50ms is usually enough
+                                  }}
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <HandCoins className="h-4 w-4" />
+                                    <span>Add Loan</span>
+                                  </div>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
                                   onClick={() =>
                                     navigate(`/members/${member.id}/wallet`)
                                   }
@@ -806,6 +824,14 @@ const MemberList = () => {
           open={depositDialogOpen}
           onClose={() => setDepositDialogOpen(false)}
           member={selectedDepositMember}
+        />
+      )}
+
+      {loanDialogOpen && selectedLoanMember && (
+        <AddLoanDialog
+          open={loanDialogOpen}
+          onClose={() => setLoanDialogOpen(false)}
+          member={selectedLoanMember}
         />
       )}
     </div>

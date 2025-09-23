@@ -84,6 +84,10 @@ const MemberDashboard = () => {
     rewardIncomeEarned,
     franchiseIncomeEarned,
     franchiseWalletBalance,
+    totalLoanGiven,
+    totalLoanPending,
+    totalLoanCollected,
+    loanPercentage,
   } = data;
 
   const totalIncomeEarned =
@@ -525,6 +529,82 @@ const MemberDashboard = () => {
           </Card>
         </div>
       </section>
+
+      {/* Section 1: Loan Information */}
+      <section>
+        <h2 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-200">
+          Loan Details
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Card className="shadow-md rounded-md bg-gradient-to-r from-pink-500 to-purple-600 text-white">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3">
+                <Wallet className="text-white" />
+                Total Loan Given
+              </CardTitle>
+              <CardDescription className="text-white">
+                Total Loan Given Till Now.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold">
+                {formatCurrency(totalLoanGiven)}
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-tr from-blue-500 to-cyan-400 text-white">
+            {" "}
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3 text-white">
+                <TrendingUp />
+                Total Loan Pending
+              </CardTitle>
+              <CardDescription className="text-white">
+                Total Loan Pending.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold text-white">
+                {formatCurrency(totalLoanPending)}
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-br from-yellow-500 to-orange-400 text-white">
+            {" "}
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3 text-white">
+                <Gift />
+                Total Loan Collected.
+              </CardTitle>
+              <CardDescription className="text-white">
+                Total Loan Collected Till Now.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold text-white">
+                {formatCurrency(totalLoanCollected)}
+              </p>
+            </CardContent>
+          </Card>
+          <Card className="bg-gradient-to-r from-orange-500 to-pink-500 text-white">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3">
+                <Wallet className="text-white" />
+                Loan Percentage
+              </CardTitle>
+              <CardDescription className="text-white">
+                Loan Percentage.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold">{loanPercentage}%</p>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
       {/* Section 4: Purchase + Status */}
       <section>
         <h2 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-200">
