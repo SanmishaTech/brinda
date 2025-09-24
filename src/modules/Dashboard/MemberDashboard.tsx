@@ -88,6 +88,9 @@ const MemberDashboard = () => {
     totalLoanPending,
     totalLoanCollected,
     loanPercentage,
+    totalPurchaseAmount,
+    pendingPurchaseAmount,
+    collectedPurchaseAmount,
   } = data;
 
   const totalIncomeEarned =
@@ -623,7 +626,46 @@ const MemberDashboard = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold">₹{totalPurchase.toFixed(2)}</p>
+              <p className="text-3xl font-bold">
+                {formatCurrency(totalPurchase)}
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-r from-red-600 to-red-900 text-white">
+            {" "}
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3 ">
+                <ShoppingCart />
+                Pending Purchase Amount
+              </CardTitle>
+              <CardDescription className="text-white">
+                Pending Purchase Amount
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold">
+                {formatCurrency(pendingPurchaseAmount)}
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-r from-green-600 to-green-900 text-white">
+            {" "}
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3 ">
+                <ShoppingCart />
+                Collected Purchase Amount
+              </CardTitle>
+              <CardDescription className="text-white">
+                Collected Purchase Amount
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold">
+                {" "}
+                {formatCurrency(collectedPurchaseAmount)}
+              </p>
             </CardContent>
           </Card>
 
