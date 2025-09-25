@@ -59,6 +59,12 @@ import FranchiseIncomePayoutList from "./modules/Commission/FranchisePayout/Fran
 import AdminPaidFranchiseList from "./modules/Commission/FranchisePayout/AdminPaidFranchiseList";
 import PurchaseList from "./modules/Purchase/User/PurchaseList";
 import RepurchaseList from "./modules/Repurchase/User/RepurchaseList";
+import FreeProductList from "./modules/FreeProduct/FreeProductList";
+import CreateFreeProduct from "./modules/FreeProduct/CreateFreeProduct";
+import EditFreeProduct from "./modules/FreeProduct/EditFreeProduct";
+import FreePurchase from "./modules/FreePurchase/FreePurchase";
+import FreePurchaseHistoryList from "./modules/FreePurchase/FreePurchaseHistoryList";
+import FreePurchaseList from "./modules/FreePurchase/FreePurchaseList";
 
 const App = () => {
   useEffect(() => {
@@ -153,6 +159,54 @@ const App = () => {
               element={
                 <ProtectedRoute>
                   <EditProduct />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/freeProducts"
+              element={
+                <ProtectedRoute>
+                  <FreeProductList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/freePurchase"
+              element={
+                <ProtectedRoute>
+                  <FreePurchase />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/FreePurchase/history"
+              element={
+                <ProtectedRoute>
+                  <FreePurchaseHistoryList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/FreePurchaseList"
+              element={
+                <ProtectedRoute>
+                  <FreePurchaseList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/freeProducts/create"
+              element={
+                <ProtectedRoute>
+                  <CreateFreeProduct />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/freeProducts/:id/edit"
+              element={
+                <ProtectedRoute>
+                  <EditFreeProduct />
                 </ProtectedRoute>
               }
             />

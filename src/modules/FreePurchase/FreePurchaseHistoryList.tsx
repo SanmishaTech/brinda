@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button, Input } from "@/components/ui";
+import path from "path-browserify";
+
 import {
   Select,
   SelectTrigger,
@@ -23,7 +25,7 @@ import {
 } from "@/components/ui/table";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { get, del, patch, post } from "@/services/apiService";
+import { get, del, patch } from "@/services/apiService";
 import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
 import CustomPagination from "@/components/common/custom-pagination";
@@ -52,6 +54,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuGroup,
 } from "@/components/ui/dropdown-menu";
+import dayjs from "dayjs";
 
 const fetchList = async (
   page: number,
@@ -61,25 +64,26 @@ const fetchList = async (
   recordsPerPage: number
 ) => {
   const response = await get(
-    `/stock/franchise?page=${page}&sortBy=${sortBy}&sortOrder=${sortOrder}&search=${search}&limit=${recordsPerPage}`
+    `/free-purchases/history?page=${page}&sortBy=${sortBy}&sortOrder=${sortOrder}&search=${search}&limit=${recordsPerPage}`
   );
   return response;
 };
 
-const AdminPaidFranchiseList = () => {
+const FreePurchaseHistoryList = () => {
   const queryClient = useQueryClient();
   const [currentPage, setCurrentPage] = useState(1);
   const [recordsPerPage, setRecordsPerPage] = useState(10); // Add recordsPerPage state
   const [sortBy, setSortBy] = useState("id"); // Default sort column
   const [sortOrder, setSortOrder] = useState("desc"); // Default sort order
   const [search, setSearch] = useState(""); // Search query
+  const [showConfirmation, setShowConfirmation] = useState(false); // State to show/hide confirmation dialog
   //  Track the user ID to delete
   const navigate = useNavigate();
 
   // Fetch users using react-query
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: [
-      "/stock/franchise",
+      "free-purchases",
       currentPage,
       sortBy,
       sortOrder,
@@ -90,9 +94,9 @@ const AdminPaidFranchiseList = () => {
       fetchList(currentPage, sortBy, sortOrder, search, recordsPerPage),
   });
 
-  const franchiseStocks = data?.franchiseStocks || [];
+  const freePurchases = data?.freePurchases || [];
   const totalPages = data?.totalPages || 1;
-  const totalFranchiseStock = data?.totalFranchiseStock || 0;
+  const totalFreePurchases = data?.totalFreePurchases || 0;
 
   // Handle sorting
   const handleSort = (column: string) => {
@@ -112,10 +116,44 @@ const AdminPaidFranchiseList = () => {
     setCurrentPage(1); // Reset to the first page
   };
 
+  const handleFreePurchaseInvoice = async (freePurchaseId, invoicePath) => {
+    const uuid = path.basename(path.dirname(invoicePath));
+    const filename = path.basename(invoicePath);
+
+    try {
+      const response = await get(
+        `/free-purchases/${uuid}/${filename}/${freePurchaseId}/generate-invoice`,
+        {},
+        { responseType: "blob" } // must be in config
+      );
+
+      if (response.status === 200) {
+        const blob = new Blob([response.data], { type: "application/pdf" });
+
+        const url = window.URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `invoice-${freePurchaseId}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        window.URL.revokeObjectURL(url);
+      } else {
+        console.error("Failed to generate invoice");
+        alert("Failed to generate invoice");
+      }
+    } catch (error) {
+      console.error("Error downloading invoice:", error);
+      alert("Failed to download invoice");
+    }
+  };
+
   return (
     <div className="mt-2 p-4 sm:p-6">
       <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">
-        Franchise Stock List
+        Free Purchase History
       </h1>
       <Card className="mx-auto mt-6 sm:mt-10">
         <CardContent>
@@ -123,19 +161,18 @@ const AdminPaidFranchiseList = () => {
           <div className="flex flex-wrap gap-4 mb-6">
             {/* Search Input */}
             <div className="flex-grow">
-              <Input
-                placeholder="Search..."
+              {/* <Input
+                placeholder="Search Invoice Number..."
                 value={search}
                 onChange={handleSearchChange}
                 className="w-full"
                 icon={<Search className="h-4 w-4" />}
-              />
+              /> */}
             </div>
-
-            {/* Action Buttons */}
           </div>
 
           <Separator className="mb-4" />
+
           {/* Table Section */}
           {isLoading ? (
             <div className="flex justify-center items-center h-32">
@@ -143,20 +180,20 @@ const AdminPaidFranchiseList = () => {
             </div>
           ) : isError ? (
             <div className="text-center text-red-500">
-              Failed to load stock details list.
+              Failed to load Free Purchase History.
             </div>
-          ) : franchiseStocks.length > 0 ? (
+          ) : freePurchases.length > 0 ? (
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead
-                      onClick={() => handleSort("productName")}
+                      onClick={() => handleSort("freePurchaseDate")}
                       className="cursor-pointer max-w-[250px] break-words whitespace-normal"
                     >
                       <div className="flex items-center">
-                        <span>Product</span>
-                        {sortBy === "productName" && (
+                        <span>Purchase Date</span>
+                        {sortBy === "freePurchaseDate" && (
                           <span className="ml-1">
                             {sortOrder === "asc" ? (
                               <ChevronUp size={16} />
@@ -169,12 +206,12 @@ const AdminPaidFranchiseList = () => {
                     </TableHead>
 
                     <TableHead
-                      onClick={() => handleSort("closing_quantity")}
+                      onClick={() => handleSort("invoiceNumber")}
                       className="cursor-pointer max-w-[250px] break-words whitespace-normal"
                     >
                       <div className="flex items-center">
-                        <span>Closing Quantity</span>
-                        {sortBy === "closing_quantity" && (
+                        <span>Invoice Number</span>
+                        {sortBy === "invoiceNumber" && (
                           <span className="ml-1">
                             {sortOrder === "asc" ? (
                               <ChevronUp size={16} />
@@ -185,64 +222,47 @@ const AdminPaidFranchiseList = () => {
                         )}
                       </div>
                     </TableHead>
-                    <TableHead
-                      onClick={() => handleSort("batchNumber")}
-                      className="cursor-pointer"
-                    >
+
+                    <TableHead className="cursor-pointer max-w-[250px] break-words whitespace-normal">
                       <div className="flex items-center">
-                        <span>Batch Number</span>
-                        {sortBy === "batchNumber" && (
-                          <span className="ml-1">
-                            {sortOrder === "asc" ? (
-                              <ChevronUp size={16} />
-                            ) : (
-                              <ChevronDown size={16} />
-                            )}
-                          </span>
-                        )}
+                        <span>Amount</span>
                       </div>
                     </TableHead>
-                    <TableHead
-                      onClick={() => handleSort("expiryDate")}
-                      className="cursor-pointer"
-                    >
-                      <div className="flex items-center">
-                        <span>Expiry Date</span>
-                        {sortBy === "expiryDate" && (
-                          <span className="ml-1">
-                            {sortOrder === "asc" ? (
-                              <ChevronUp size={16} />
-                            ) : (
-                              <ChevronDown size={16} />
-                            )}
-                          </span>
-                        )}
-                      </div>
-                    </TableHead>
+
+                    <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {franchiseStocks.map((stock) => (
-                    <TableRow key={stock.id}>
-                      <TableCell className="max-w-[250px] p-4 break-words whitespace-normal">
-                        {stock?.product?.productName}
-                      </TableCell>
+                  {freePurchases.map((free) => (
+                    <TableRow key={free.id}>
                       <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {stock?.closing_quantity || "-"}
-                      </TableCell>
-                      <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {stock?.batchNumber || "-"}
-                      </TableCell>
-                      <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {stock?.expiryDate
-                          ? new Date(stock.expiryDate).toLocaleDateString(
-                              "en-US",
-                              {
-                                month: "short",
-                                year: "numeric",
-                              }
+                        {free.freePurchaseDate
+                          ? dayjs(free.freePurchaseDate).format(
+                              "DD/MM/YYYY hh:mm:ss A"
                             )
-                          : "-"}
+                          : "N/A"}
+                      </TableCell>
+                      <TableCell className="max-w-[250px] break-words whitespace-normal">
+                        {free.invoiceNumber || "N/A"}
+                      </TableCell>
+                      <TableCell className="max-w-[250px] break-words whitespace-normal">
+                        Free
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex gap-2">
+                          <Button
+                            // variant="ghost"
+                            size="sm"
+                            onClick={() =>
+                              handleFreePurchaseInvoice(
+                                free.id,
+                                free.invoicePath
+                              )
+                            }
+                          >
+                            invoice
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -251,7 +271,7 @@ const AdminPaidFranchiseList = () => {
               <CustomPagination
                 currentPage={currentPage}
                 totalPages={totalPages}
-                totalRecords={totalFranchiseStock}
+                totalRecords={totalFreePurchases}
                 recordsPerPage={recordsPerPage}
                 onPageChange={setCurrentPage} // Pass setCurrentPage directly
                 onRecordsPerPageChange={(newRecordsPerPage) => {
@@ -261,7 +281,7 @@ const AdminPaidFranchiseList = () => {
               />
             </div>
           ) : (
-            <div className="text-center">No records Found.</div>
+            <div className="text-center">No Free Purchases Details Found.</div>
           )}
         </CardContent>
       </Card>
@@ -269,4 +289,4 @@ const AdminPaidFranchiseList = () => {
   );
 };
 
-export default AdminPaidFranchiseList;
+export default FreePurchaseHistoryList;

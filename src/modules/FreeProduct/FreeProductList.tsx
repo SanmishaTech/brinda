@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/table";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { get, del, patch, post } from "@/services/apiService";
+import { get, del, patch } from "@/services/apiService";
 import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
 import CustomPagination from "@/components/common/custom-pagination";
@@ -53,7 +53,7 @@ import {
   DropdownMenuGroup,
 } from "@/components/ui/dropdown-menu";
 
-const fetchList = async (
+const fetchProducts = async (
   page: number,
   sortBy: string,
   sortOrder: string,
@@ -61,17 +61,17 @@ const fetchList = async (
   recordsPerPage: number
 ) => {
   const response = await get(
-    `/stock/franchise?page=${page}&sortBy=${sortBy}&sortOrder=${sortOrder}&search=${search}&limit=${recordsPerPage}`
+    `/free-products?page=${page}&sortBy=${sortBy}&sortOrder=${sortOrder}&search=${search}&limit=${recordsPerPage}`
   );
   return response;
 };
 
-const AdminPaidFranchiseList = () => {
+const FreeProductList = () => {
   const queryClient = useQueryClient();
   const [currentPage, setCurrentPage] = useState(1);
   const [recordsPerPage, setRecordsPerPage] = useState(10); // Add recordsPerPage state
-  const [sortBy, setSortBy] = useState("id"); // Default sort column
-  const [sortOrder, setSortOrder] = useState("desc"); // Default sort order
+  const [sortBy, setSortBy] = useState("productName"); // Default sort column
+  const [sortOrder, setSortOrder] = useState("asc"); // Default sort order
   const [search, setSearch] = useState(""); // Search query
   //  Track the user ID to delete
   const navigate = useNavigate();
@@ -79,7 +79,7 @@ const AdminPaidFranchiseList = () => {
   // Fetch users using react-query
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: [
-      "/stock/franchise",
+      "freeProducts",
       currentPage,
       sortBy,
       sortOrder,
@@ -87,12 +87,12 @@ const AdminPaidFranchiseList = () => {
       recordsPerPage,
     ],
     queryFn: () =>
-      fetchList(currentPage, sortBy, sortOrder, search, recordsPerPage),
+      fetchProducts(currentPage, sortBy, sortOrder, search, recordsPerPage),
   });
 
-  const franchiseStocks = data?.franchiseStocks || [];
+  const products = data?.freeProducts || [];
   const totalPages = data?.totalPages || 1;
-  const totalFranchiseStock = data?.totalFranchiseStock || 0;
+  const totalProducts = data?.totalFreeProducts || 0;
 
   // Handle sorting
   const handleSort = (column: string) => {
@@ -115,7 +115,7 @@ const AdminPaidFranchiseList = () => {
   return (
     <div className="mt-2 p-4 sm:p-6">
       <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">
-        Franchise Stock List
+        Free Product Management
       </h1>
       <Card className="mx-auto mt-6 sm:mt-10">
         <CardContent>
@@ -124,7 +124,7 @@ const AdminPaidFranchiseList = () => {
             {/* Search Input */}
             <div className="flex-grow">
               <Input
-                placeholder="Search..."
+                placeholder="Search free products..."
                 value={search}
                 onChange={handleSearchChange}
                 className="w-full"
@@ -133,9 +133,19 @@ const AdminPaidFranchiseList = () => {
             </div>
 
             {/* Action Buttons */}
+            <div className="flex flex-wrap items-center gap-2">
+              <Button
+                onClick={() => navigate("/FreeProducts/create")}
+                className="bg-primary hover:bg-primary/90 text-white shadow-sm transition-all duration-200 hover:shadow-md"
+              >
+                <PlusCircle className="mr-2 h-5 w-5" />
+                Add Free Product
+              </Button>
+            </div>
           </div>
 
           <Separator className="mb-4" />
+
           {/* Table Section */}
           {isLoading ? (
             <div className="flex justify-center items-center h-32">
@@ -143,9 +153,9 @@ const AdminPaidFranchiseList = () => {
             </div>
           ) : isError ? (
             <div className="text-center text-red-500">
-              Failed to load stock details list.
+              Failed to load free products.
             </div>
-          ) : franchiseStocks.length > 0 ? (
+          ) : products.length > 0 ? (
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
@@ -155,7 +165,7 @@ const AdminPaidFranchiseList = () => {
                       className="cursor-pointer max-w-[250px] break-words whitespace-normal"
                     >
                       <div className="flex items-center">
-                        <span>Product</span>
+                        <span>Product Name</span>
                         {sortBy === "productName" && (
                           <span className="ml-1">
                             {sortOrder === "asc" ? (
@@ -169,12 +179,12 @@ const AdminPaidFranchiseList = () => {
                     </TableHead>
 
                     <TableHead
-                      onClick={() => handleSort("closing_quantity")}
+                      onClick={() => handleSort("quantity")}
                       className="cursor-pointer max-w-[250px] break-words whitespace-normal"
                     >
                       <div className="flex items-center">
-                        <span>Closing Quantity</span>
-                        {sortBy === "closing_quantity" && (
+                        <span>Quantity</span>
+                        {sortBy === "mrp" && (
                           <span className="ml-1">
                             {sortOrder === "asc" ? (
                               <ChevronUp size={16} />
@@ -185,64 +195,32 @@ const AdminPaidFranchiseList = () => {
                         )}
                       </div>
                     </TableHead>
-                    <TableHead
-                      onClick={() => handleSort("batchNumber")}
-                      className="cursor-pointer"
-                    >
-                      <div className="flex items-center">
-                        <span>Batch Number</span>
-                        {sortBy === "batchNumber" && (
-                          <span className="ml-1">
-                            {sortOrder === "asc" ? (
-                              <ChevronUp size={16} />
-                            ) : (
-                              <ChevronDown size={16} />
-                            )}
-                          </span>
-                        )}
-                      </div>
-                    </TableHead>
-                    <TableHead
-                      onClick={() => handleSort("expiryDate")}
-                      className="cursor-pointer"
-                    >
-                      <div className="flex items-center">
-                        <span>Expiry Date</span>
-                        {sortBy === "expiryDate" && (
-                          <span className="ml-1">
-                            {sortOrder === "asc" ? (
-                              <ChevronUp size={16} />
-                            ) : (
-                              <ChevronDown size={16} />
-                            )}
-                          </span>
-                        )}
-                      </div>
-                    </TableHead>
+
+                    <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {franchiseStocks.map((stock) => (
-                    <TableRow key={stock.id}>
-                      <TableCell className="max-w-[250px] p-4 break-words whitespace-normal">
-                        {stock?.product?.productName}
+                  {products.map((product) => (
+                    <TableRow key={product.id}>
+                      <TableCell className="max-w-[250px] break-words whitespace-normal">
+                        {product?.product.productName}
                       </TableCell>
                       <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {stock?.closing_quantity || "-"}
+                        {product.quantity || "N/A"}
                       </TableCell>
-                      <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {stock?.batchNumber || "-"}
-                      </TableCell>
-                      <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {stock?.expiryDate
-                          ? new Date(stock.expiryDate).toLocaleDateString(
-                              "en-US",
-                              {
-                                month: "short",
-                                year: "numeric",
-                              }
-                            )
-                          : "-"}
+
+                      <TableCell>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() =>
+                              navigate(`/freeProducts/${product.id}/edit`)
+                            }
+                          >
+                            <Edit size={16} />
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -251,7 +229,7 @@ const AdminPaidFranchiseList = () => {
               <CustomPagination
                 currentPage={currentPage}
                 totalPages={totalPages}
-                totalRecords={totalFranchiseStock}
+                totalRecords={totalProducts}
                 recordsPerPage={recordsPerPage}
                 onPageChange={setCurrentPage} // Pass setCurrentPage directly
                 onRecordsPerPageChange={(newRecordsPerPage) => {
@@ -261,7 +239,7 @@ const AdminPaidFranchiseList = () => {
               />
             </div>
           ) : (
-            <div className="text-center">No records Found.</div>
+            <div className="text-center">No Free Products Found.</div>
           )}
         </CardContent>
       </Card>
@@ -269,4 +247,4 @@ const AdminPaidFranchiseList = () => {
   );
 };
 
-export default AdminPaidFranchiseList;
+export default FreeProductList;

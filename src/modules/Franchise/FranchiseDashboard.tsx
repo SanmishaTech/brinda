@@ -178,6 +178,40 @@ const FranchiseDashboard = () => {
     }
   };
 
+  const handleFreePurchaseInvoice = async (freePurchaseId, invoicePath) => {
+    const uuid = path.basename(path.dirname(invoicePath));
+    const filename = path.basename(invoicePath);
+
+    try {
+      const response = await get(
+        `/free-purchases/${uuid}/${filename}/${freePurchaseId}/generate-invoice`,
+        {},
+        { responseType: "blob" } // must be in config
+      );
+
+      if (response.status === 200) {
+        const blob = new Blob([response.data], { type: "application/pdf" });
+
+        const url = window.URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `invoice-${freePurchaseId}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        window.URL.revokeObjectURL(url);
+      } else {
+        console.error("Failed to generate invoice");
+        alert("Failed to generate invoice");
+      }
+    } catch (error) {
+      console.error("Error downloading invoice:", error);
+      alert("Failed to download invoice");
+    }
+  };
+
   const {
     securityDepositAmount,
     securityDepositPending,
@@ -522,6 +556,72 @@ const FranchiseDashboard = () => {
             ) : (
               <p className="text-center py-4 text-gray-500">
                 No repurchase records found.
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      </section>
+      {/* Section 5: Free Purchase Table */}
+      <section>
+        <h2 className="text-xl font-semibold mt-8 mb-4 text-gray-700 dark:text-gray-200">
+          Free Purchases
+        </h2>
+        <Card>
+          <CardContent className="overflow-x-auto">
+            {/* Replace this with real repurchase data when available */}
+            {data.freePurchases?.length > 0 ? (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Invoice No</TableHead>
+                    <TableHead>Total (With GST)</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Delivered At</TableHead>
+                    <TableHead>Download</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {data.freePurchases.map((purchase) => (
+                    <TableRow key={purchase.id}>
+                      <TableCell>{purchase.invoiceNumber}</TableCell>
+
+                      <TableCell>Free</TableCell>
+                      <TableCell>{purchase.status}</TableCell>
+                      <TableCell>
+                        {new Date(purchase.deliveredAt).toLocaleString(
+                          "en-IN",
+                          {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            second: "2-digit",
+                            hour12: true, // You can set to false for 24-hour format
+                          }
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          // variant="ghost"
+                          size="sm"
+                          onClick={() =>
+                            handleFreePurchaseInvoice(
+                              purchase.id,
+                              purchase.invoicePath
+                            )
+                          }
+                        >
+                          invoice
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <p className="text-center py-4 text-gray-500">
+                No free purchase records found.
               </p>
             )}
           </CardContent>

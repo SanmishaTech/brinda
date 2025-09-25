@@ -113,6 +113,13 @@ export function NavUser({
                       <UserPen className="mr-2 h-4 w-4" />
                       Repurchase History
                     </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => navigate("/freePurchase/history")}
+                      className="cursor-pointer"
+                    >
+                      <UserPen className="mr-2 h-4 w-4" />
+                      Free Purchase History
+                    </DropdownMenuItem>
                   </>
                 )}
               </DropdownMenuGroup>

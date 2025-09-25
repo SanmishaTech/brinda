@@ -318,6 +318,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       url: "/rewards",
       icon: UsersRound,
     },
+    {
+      name: "Free Purchases",
+      url: "/FreePurchase",
+      icon: UsersRound,
+    },
     ...(isFranchise
       ? [
           {
@@ -338,6 +343,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     {
       name: "Products",
       url: "/products",
+      icon: UsersRound,
+    },
+    {
+      name: "Free Products",
+      url: "/freeProducts",
       icon: UsersRound,
     },
 
@@ -369,6 +379,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     {
       name: "repurchase Orders",
       url: "/repurchaseList",
+      icon: UsersRound,
+    },
+    {
+      name: "Free Purchase Orders",
+      url: "/freePurchaseList",
       icon: UsersRound,
     },
   ];
