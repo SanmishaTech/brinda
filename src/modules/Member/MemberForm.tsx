@@ -7,7 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import dayjs from "dayjs";
-
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Select,
   SelectTrigger,
@@ -17,8 +21,17 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import Validate from "@/lib/Handlevalidation";
+import { cn } from "@/lib/utils";
 
-import { LoaderCircle } from "lucide-react"; // Import the LoaderCircle icon
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { LoaderCircle, ChevronsUpDown, Check } from "lucide-react"; // Import the LoaderCircle icon
 import { toast } from "sonner";
 import { useNavigate, useParams } from "react-router-dom";
 import { get } from "@/services/apiService";
@@ -28,6 +41,7 @@ import { set } from "date-fns";
 import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css"; // Import styles for the phone input
 import { PasswordInput } from "@/components/ui/password-input";
+import { accountTypeOptions, genderOptions } from "@/config/data";
 
 const decimalString = (
   fieldName: string,
@@ -79,6 +93,55 @@ export const FormSchema = z.object({
     .max(50, "Password must not exceed 50 characters."),
   percentage: decimalString("Percentage", 5, 2),
   securityDepositPercentage: decimalString("securityDepositPercentage", 5, 2),
+
+  tPin: z
+    .string()
+    .length(4, "T Pin must be exactly 4 digits.")
+    .refine((val) => /^\d{4}$/.test(val), {
+      message: "T Pin must contain only digits (0-9).",
+    }),
+  memberAddress: z
+    .string()
+    .max(200, "Address cannot exceed 200 characters")
+    .optional(),
+
+  memberPincode: z.string().refine((val) => val === "" || /^\d{6}$/.test(val), {
+    message: "Pincode must be of 6 digits.",
+  }),
+  memberState: z
+    .string()
+    .min(1, "State is required")
+    .max(50, "State cannot exceed 50 characters"),
+  memberGender: z.string().optional(),
+  panNumber: z
+    .string()
+    .refine((val) => val === "" || /^[A-Z]{5}[0-9]{4}[A-Z]$/.test(val), {
+      message: "Invalid PAN number format. Example: ABCDE1234F",
+    })
+    .optional(),
+  aadharNumber: z
+    .string()
+    .max(12, "Aadhar number must be 12 digits.")
+    .refine((val) => val === "" || /^[2-9]{1}[0-9]{11}$/.test(val), {
+      message:
+        "Aadhar number must be exactly 12 digits and cannot start with 0 or 1.",
+    })
+    .optional(),
+  bankName: z.string().optional(),
+  memberDob: z.string().optional(),
+  bankAccountNumber: z
+    .string()
+    .refine((val) => val === "" || /^[0-9]{9,18}$/.test(val), {
+      message:
+        "Invalid bank account number format. Must be between 9 and 18 digits.",
+    })
+    .optional(),
+  bankIfscCode: z
+    .string()
+    .refine((val) => val === "" || /^[A-Z]{4}0[A-Z0-9]{6}$/.test(val), {
+      message: "Invalid IFSC code format. Example: SBIN0001234",
+    }),
+  bankAccountType: z.string().optional(),
 });
 
 type FormInputs = z.infer<typeof FormSchema>;
@@ -87,6 +150,7 @@ const MemberForm = ({ mode }: { mode: "create" | "edit" }) => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [openState, setOpenState] = useState<boolean>(false);
 
   const defaultValues: z.infer<typeof FormSchema> = {
     name: "",
@@ -95,6 +159,19 @@ const MemberForm = ({ mode }: { mode: "create" | "edit" }) => {
     password: "",
     percentage: "",
     securityDepositPercentage: "",
+
+    tPin: "",
+    memberAddress: "",
+    memberPincode: "",
+    memberState: "",
+    memberGender: "",
+    panNumber: "",
+    aadharNumber: "",
+    bankName: "",
+    memberDob: "", // format: YYYY-MM-DD
+    bankAccountNumber: "",
+    bankIfscCode: "",
+    bankAccountType: "",
   };
 
   const {
@@ -110,6 +187,15 @@ const MemberForm = ({ mode }: { mode: "create" | "edit" }) => {
     defaultValues: mode === "create" ? defaultValues : undefined, // Use default values in create mode
     mode: "onChange", // 👈 triggers validation on each change
     reValidateMode: "onChange", // 👈 re-validate on every change
+  });
+
+  // states
+  const { data: states, isLoading: isStatesLoading } = useQuery({
+    queryKey: ["states"],
+    queryFn: async () => {
+      const response = await get(`/states/all`);
+      return response;
+    },
   });
 
   const { data: editMemberData, isLoading: editMemberLoading } = useQuery({
@@ -137,6 +223,37 @@ const MemberForm = ({ mode }: { mode: "create" | "edit" }) => {
           : "",
         securityDepositPercentage: editMemberData?.securityDepositPercentage
           ? editMemberData?.securityDepositPercentage
+          : "",
+
+        tPin: editMemberData?.tPin ? editMemberData.tPin : "",
+        memberAddress: editMemberData?.memberAddress
+          ? editMemberData.memberAddress
+          : "",
+        memberPincode: editMemberData?.memberPincode
+          ? editMemberData.memberPincode.toString()
+          : "",
+        memberState: editMemberData?.memberState
+          ? editMemberData.memberState
+          : "",
+        memberGender: editMemberData?.memberGender
+          ? editMemberData.memberGender
+          : "",
+        panNumber: editMemberData?.panNumber ? editMemberData.panNumber : "",
+        aadharNumber: editMemberData?.aadharNumber
+          ? editMemberData.aadharNumber
+          : "",
+        bankName: editMemberData?.bankName ? editMemberData.bankName : "",
+        memberDob: editMemberData?.memberDob
+          ? new Date(editMemberData.memberDob).toISOString().split("T")[0]
+          : "",
+        bankAccountNumber: editMemberData?.bankAccountNumber
+          ? editMemberData.bankAccountNumber
+          : "",
+        bankIfscCode: editMemberData?.bankIfscCode
+          ? editMemberData.bankIfscCode
+          : "",
+        bankAccountType: editMemberData?.bankAccountType
+          ? editMemberData.bankAccountType
           : "",
       });
     }
@@ -277,13 +394,8 @@ const MemberForm = ({ mode }: { mode: "create" | "edit" }) => {
                   </p>
                 )}
               </div>
-              <div>
-                <Label
-                  htmlFor="tPin"
-                  className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  T Pin
-                </Label>
+              <div className="grid gap-2">
+                <Label htmlFor="tPin">T Pin</Label>
                 <Controller
                   name="tPin"
                   control={control}
@@ -291,14 +403,18 @@ const MemberForm = ({ mode }: { mode: "create" | "edit" }) => {
                     <PasswordInput
                       id="tPin"
                       required
+                      maxLength={4}
                       disabled={isLoading}
-                      value={editMemberData?.tPin || ""}
-                      className="bg-gray-200 dark:bg-gray-700 cursor-not-allowed"
                       aria-invalid={errors.tPin ? "true" : "false"}
-                      // {...field}
+                      {...field}
                     />
                   )}
                 />
+                {errors.tPin && (
+                  <span className="text-red-500 text-sm">
+                    {errors.tPin.message}
+                  </span>
+                )}
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="Parent">Parent</Label>
@@ -350,38 +466,46 @@ const MemberForm = ({ mode }: { mode: "create" | "edit" }) => {
                   readOnly
                 />
               </div>
-              <div>
-                <Label
-                  htmlFor="gender"
-                  className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  Gender
-                </Label>
-                <Input
-                  id="gender"
-                  className="bg-gray-200 dark:bg-gray-700"
-                  value={editMemberData?.memberGender || ""}
-                  readOnly
+              <div className="grid gap-2">
+                {" "}
+                <Label htmlFor="memberGender">Gender</Label>
+                <Controller
+                  name="memberGender"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      key={field.value}
+                      onValueChange={(value) => setValue("memberGender", value)}
+                      value={watch("memberGender")}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select gender" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {genderOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
                 />
               </div>
-              <div>
-                <Label
-                  htmlFor="dob"
-                  className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  Date of Birth
-                </Label>
-                <Input
-                  id="dob"
-                  type="date"
-                  className="bg-gray-200 dark:bg-gray-700"
-                  value={
-                    editMemberData?.memberDob
-                      ? dayjs(editMemberData.memberDob).format("YYYY-MM-DD")
-                      : ""
-                  }
-                  readOnly
+              <div className="grid gap-2">
+                <Label htmlFor="memberDob">Date of Birth</Label>
+                <Controller
+                  name="memberDob"
+                  control={control}
+                  render={({ field }) => (
+                    <Input id="memberDob" type="date" {...field} />
+                  )}
                 />
+                {errors.memberDob && (
+                  <span className="text-red-500 text-sm">
+                    {errors.memberDob.message}
+                  </span>
+                )}
               </div>
               <div>
                 <Label
@@ -472,47 +596,114 @@ const MemberForm = ({ mode }: { mode: "create" | "edit" }) => {
 
             {/* display read Only values */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-              <div>
-                <Label
-                  htmlFor="address"
-                  className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  Address
-                </Label>
-                <Input
-                  id="address"
-                  className="bg-gray-200 dark:bg-gray-700"
-                  value={editMemberData?.memberAddress || ""}
-                  readOnly
+              <div className="grid gap-2">
+                <Label htmlFor="memberAddress">Address</Label>
+                <Controller
+                  name="memberAddress"
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      id="memberAddress"
+                      type="text"
+                      placeholder="123 Street, City"
+                      {...field}
+                    />
+                  )}
                 />
+                {errors.memberAddress && (
+                  <span className="text-red-500 text-sm">
+                    {errors.memberAddress.message}
+                  </span>
+                )}
               </div>
-              <div>
-                <Label
-                  htmlFor="pincode"
-                  className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  Pincode
-                </Label>
-                <Input
-                  id="pincode"
-                  className="bg-gray-200 dark:bg-gray-700"
-                  value={editMemberData?.memberPincode || ""}
-                  readOnly
+              <div className="grid gap-2">
+                <Label htmlFor="memberPincode">Pincode</Label>
+                <Controller
+                  name="memberPincode"
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      id="memberPincode"
+                      type="text"
+                      maxLength={6}
+                      placeholder="Enter Pincode"
+                      {...field}
+                    />
+                  )}
                 />
+                {errors.memberPincode && (
+                  <span className="text-red-500 text-sm">
+                    {errors.memberPincode.message}
+                  </span>
+                )}
               </div>
-              <div>
-                <Label
-                  htmlFor="state"
-                  className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  State
-                </Label>
-                <Input
-                  id="state"
-                  className="bg-gray-200 dark:bg-gray-700"
-                  value={editMemberData?.memberState || ""}
-                  readOnly
+              <div className="grid gap-2">
+                <Label htmlFor="memberState">State</Label>
+
+                {/* <div className="w-full pt-1"> */}
+                <Controller
+                  name="memberState"
+                  control={control}
+                  render={({ field }) => (
+                    <Popover open={openState} onOpenChange={setOpenState}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          aria-expanded={openState}
+                          className="w-[325px] justify-between mt-1"
+                          onClick={() => setOpenState((prev) => !prev)}
+                        >
+                          {field.value
+                            ? states.find((s) => s.value === field.value)?.label
+                            : "Select State..."}
+                          <ChevronsUpDown className="opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+
+                      <PopoverContent className="w-[325px] p-0">
+                        <Command>
+                          <CommandInput
+                            placeholder="Search state..."
+                            className="h-9"
+                          />
+                          <CommandList>
+                            <CommandEmpty>No state found.</CommandEmpty>
+                            <CommandGroup>
+                              {states?.map((state) => (
+                                <CommandItem
+                                  key={state.value}
+                                  value={state.value}
+                                  onSelect={(currentValue) => {
+                                    setValue("memberState", currentValue);
+                                    setOpenState(false);
+                                  }}
+                                >
+                                  {state.label}
+                                  <Check
+                                    className={cn(
+                                      "ml-auto",
+                                      state.value === field.value
+                                        ? "opacity-100"
+                                        : "opacity-0"
+                                    )}
+                                  />
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                  )}
                 />
+
+                {/* </div> */}
+                {errors.memberState && (
+                  <p className="text-destructive text-xs absolute -bottom-5">
+                    {errors.memberState.message}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -520,89 +711,138 @@ const MemberForm = ({ mode }: { mode: "create" | "edit" }) => {
 
             {/* display read Only values */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-              <div>
-                <Label
-                  htmlFor="panNumber"
-                  className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  Pan Number
-                </Label>
-                <Input
-                  id="panNumber"
-                  className="bg-gray-200 dark:bg-gray-700"
-                  value={editMemberData?.panNumber || ""}
-                  readOnly
+              <div className="grid gap-2">
+                <Label htmlFor="panNumber">PAN Number</Label>
+                <Controller
+                  name="panNumber"
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      id="panNumber"
+                      type="text"
+                      placeholder="Pan Number"
+                      {...field}
+                    />
+                  )}
                 />
+                {errors.panNumber && (
+                  <span className="text-red-500 text-sm">
+                    {errors.panNumber.message}
+                  </span>
+                )}
               </div>
-              <div>
-                <Label
-                  htmlFor="aadharNumber"
-                  className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  Aadhar Number
-                </Label>
-                <Input
-                  id="aadharNumber"
-                  className="bg-gray-200 dark:bg-gray-700"
-                  value={editMemberData?.aadharNumber || ""}
-                  readOnly
+              <div className="grid gap-2">
+                <Label htmlFor="aadharNumber">Aadhar Number</Label>
+                <Controller
+                  name="aadharNumber"
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      id="aadharNumber"
+                      type="text"
+                      maxLength={12}
+                      placeholder="Aadhar Number"
+                      {...field}
+                    />
+                  )}
                 />
+                {errors.aadharNumber && (
+                  <span className="text-red-500 text-sm">
+                    {errors.aadharNumber.message}
+                  </span>
+                )}
               </div>
-              <div>
-                <Label
-                  htmlFor="bankName"
-                  className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  Bank Name
-                </Label>
-                <Input
-                  id="bankName"
-                  className="bg-gray-200 dark:bg-gray-700"
-                  value={editMemberData?.bankName || ""}
-                  readOnly
+              <div className="grid gap-2">
+                <Label htmlFor="bankName">Bank Name</Label>
+                <Controller
+                  name="bankName"
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      id="bankName"
+                      type="text"
+                      placeholder="Bank Name"
+                      {...field}
+                    />
+                  )}
                 />
+                {errors.bankName && (
+                  <span className="text-red-500 text-sm">
+                    {errors.bankName.message}
+                  </span>
+                )}
               </div>
-              <div>
-                <Label
-                  htmlFor="bankAccountNumber"
-                  className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  Account Number
-                </Label>
-                <Input
-                  id="bankAccountNumber"
-                  className="bg-gray-200 dark:bg-gray-700"
-                  value={editMemberData?.bankAccountNumber || ""}
-                  readOnly
+              <div className="grid gap-2">
+                <Label htmlFor="bankAccountNumber">Account Number</Label>
+                <Controller
+                  name="bankAccountNumber"
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      id="bankAccountNumber"
+                      type="text"
+                      placeholder="Account Number"
+                      {...field}
+                    />
+                  )}
                 />
+                {errors.bankAccountNumber && (
+                  <span className="text-red-500 text-sm">
+                    {errors.bankAccountNumber.message}
+                  </span>
+                )}
               </div>
-              <div>
-                <Label
-                  htmlFor="bankIfscCode"
-                  className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  IFSC Code
-                </Label>
-                <Input
-                  id="bankIfscCode"
-                  className="bg-gray-200 dark:bg-gray-700"
-                  value={editMemberData?.bankIfscCode || ""}
-                  readOnly
+
+              <div className="grid gap-2">
+                <Label htmlFor="bankIfscCode">IFSC Code</Label>
+                <Controller
+                  name="bankIfscCode"
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      id="bankIfscCode"
+                      type="text"
+                      placeholder="IFSC Code"
+                      {...field}
+                    />
+                  )}
                 />
+                {errors.bankIfscCode && (
+                  <span className="text-red-500 text-sm">
+                    {errors.bankIfscCode.message}
+                  </span>
+                )}
               </div>
-              <div>
-                <Label
-                  htmlFor="bankAccountType"
-                  className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  Account Type
-                </Label>
-                <Input
-                  id="bankAccountType"
-                  className="bg-gray-200 dark:bg-gray-700"
-                  value={editMemberData?.bankAccountType || ""}
-                  readOnly
+              <div className="grid gap-2">
+                <Label htmlFor="bankAccountType">Account Type</Label>
+                <Controller
+                  name="bankAccountType"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      onValueChange={(value) =>
+                        setValue("bankAccountType", value)
+                      }
+                      value={field.value}
+                    >
+                      <SelectTrigger id="bankAccountType" className="w-full">
+                        <SelectValue placeholder="Select Account Type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {accountTypeOptions.map((type) => (
+                          <SelectItem key={type.value} value={type.value}>
+                            {type.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
                 />
+                {errors.bankAccountType && (
+                  <span className="text-red-500 text-sm">
+                    {errors.bankAccountType.message}
+                  </span>
+                )}
               </div>
             </div>
 
