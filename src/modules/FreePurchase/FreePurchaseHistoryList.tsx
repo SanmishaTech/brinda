@@ -188,12 +188,12 @@ const FreePurchaseHistoryList = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead
-                      onClick={() => handleSort("freePurchaseDate")}
+                      onClick={() => handleSort("purchaseDate")}
                       className="cursor-pointer max-w-[250px] break-words whitespace-normal"
                     >
                       <div className="flex items-center">
                         <span>Purchase Date</span>
-                        {sortBy === "freePurchaseDate" && (
+                        {sortBy === "purchaseDate" && (
                           <span className="ml-1">
                             {sortOrder === "asc" ? (
                               <ChevronUp size={16} />
@@ -236,8 +236,8 @@ const FreePurchaseHistoryList = () => {
                   {freePurchases.map((free) => (
                     <TableRow key={free.id}>
                       <TableCell className="max-w-[250px] break-words whitespace-normal">
-                        {free.freePurchaseDate
-                          ? dayjs(free.freePurchaseDate).format(
+                        {free.purchaseDate
+                          ? dayjs(free.purchaseDate).format(
                               "DD/MM/YYYY hh:mm:ss A"
                             )
                           : "N/A"}
