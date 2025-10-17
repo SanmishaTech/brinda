@@ -430,8 +430,76 @@ const MemberList = () => {
                         className="cursor-pointer max-w-[250px] break-words whitespace-normal"
                       >
                         <div className="flex items-center">
-                          <span>matching Income</span>
+                          <span>Matching Income Wallet</span>
                           {sortBy === "matchingIncomeWalletBalance" && (
+                            <span className="ml-1">
+                              {sortOrder === "asc" ? (
+                                <ChevronUp size={16} />
+                              ) : (
+                                <ChevronDown size={16} />
+                              )}
+                            </span>
+                          )}
+                        </div>
+                      </TableHead>
+                      <TableHead
+                        onClick={() => handleSort("walletBalance")}
+                        className="cursor-pointer max-w-[250px] break-words whitespace-normal"
+                      >
+                        <div className="flex items-center">
+                          <span>Fund Wallet</span>
+                          {sortBy === "walletBalance" && (
+                            <span className="ml-1">
+                              {sortOrder === "asc" ? (
+                                <ChevronUp size={16} />
+                              ) : (
+                                <ChevronDown size={16} />
+                              )}
+                            </span>
+                          )}
+                        </div>
+                      </TableHead>
+                      <TableHead
+                        onClick={() => handleSort("upgradeWalletBalance")}
+                        className="cursor-pointer max-w-[250px] break-words whitespace-normal"
+                      >
+                        <div className="flex items-center">
+                          <span>Upgrade Wallet</span>
+                          {sortBy === "upgradeWalletBalance" && (
+                            <span className="ml-1">
+                              {sortOrder === "asc" ? (
+                                <ChevronUp size={16} />
+                              ) : (
+                                <ChevronDown size={16} />
+                              )}
+                            </span>
+                          )}
+                        </div>
+                      </TableHead>
+                      <TableHead
+                        onClick={() => handleSort("holdWalletBalance")}
+                        className="cursor-pointer max-w-[250px] break-words whitespace-normal"
+                      >
+                        <div className="flex items-center">
+                          <span>Hold Wallet</span>
+                          {sortBy === "holdWalletBalance" && (
+                            <span className="ml-1">
+                              {sortOrder === "asc" ? (
+                                <ChevronUp size={16} />
+                              ) : (
+                                <ChevronDown size={16} />
+                              )}
+                            </span>
+                          )}
+                        </div>
+                      </TableHead>
+                      <TableHead
+                        onClick={() => handleSort("franchiseWalletBalance")}
+                        className="cursor-pointer max-w-[250px] break-words whitespace-normal"
+                      >
+                        <div className="flex items-center">
+                          <span>Franchise Wallet</span>
+                          {sortBy === "franchiseWalletBalance" && (
                             <span className="ml-1">
                               {sortOrder === "asc" ? (
                                 <ChevronUp size={16} />
@@ -593,6 +661,21 @@ const MemberList = () => {
 
                         <TableCell className="max-w-[250px] break-words whitespace-normal">
                           {formatCurrency(member?.matchingIncomeWalletBalance)}
+                        </TableCell>
+
+                        <TableCell className="max-w-[250px] break-words whitespace-normal">
+                          {formatCurrency(member?.walletBalance)}
+                        </TableCell>
+
+                        <TableCell className="max-w-[250px] break-words whitespace-normal">
+                          {formatCurrency(member?.upgradeWalletBalance)}
+                        </TableCell>
+                        <TableCell className="max-w-[250px] break-words whitespace-normal">
+                          {formatCurrency(member?.holdWalletBalance)}
+                        </TableCell>
+
+                        <TableCell className="max-w-[250px] break-words whitespace-normal">
+                          {formatCurrency(member?.franchiseWalletBalance)}
                         </TableCell>
 
                         <TableCell>
