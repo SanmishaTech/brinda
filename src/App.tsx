@@ -65,6 +65,7 @@ import EditFreeProduct from "./modules/FreeProduct/EditFreeProduct";
 import FreePurchase from "./modules/FreePurchase/FreePurchase";
 import FreePurchaseHistoryList from "./modules/FreePurchase/FreePurchaseHistoryList";
 import FreePurchaseList from "./modules/FreePurchase/FreePurchaseList";
+import WalletListExport from "./modules/Member/WalletListExport";
 
 const App = () => {
   useEffect(() => {
@@ -328,6 +329,14 @@ const App = () => {
               element={
                 <ProtectedRoute>
                   <RepurchaseList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/walletDetails/export"
+              element={
+                <ProtectedRoute>
+                  <WalletListExport />
                 </ProtectedRoute>
               }
             />

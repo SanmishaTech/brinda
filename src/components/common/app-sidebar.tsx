@@ -357,6 +357,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       icon: UsersRound,
     },
     {
+      name: "Member Wallet List",
+      url: "/walletDetails/export",
+      icon: UsersRound,
+    },
+    {
       name: "Virtual Power History",
       url: "/virtual-power/history",
       icon: UsersRound,
