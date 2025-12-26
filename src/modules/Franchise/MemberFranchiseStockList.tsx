@@ -41,6 +41,7 @@ import {
   MoreHorizontal,
   CheckCircle,
   XCircle,
+  ShoppingCart,
 } from "lucide-react";
 import ConfirmDialog from "@/components/common/confirm-dialog";
 import { saveAs } from "file-saver";
@@ -93,7 +94,7 @@ const AdminPaidFranchiseList = () => {
   const franchiseStocks = data?.franchiseStocks || [];
   const totalPages = data?.totalPages || 1;
   const totalFranchiseStock = data?.totalFranchiseStock || 0;
-
+  const totalStockValue = data?.totalStockValue || 0;
   // Handle sorting
   const handleSort = (column: string) => {
     if (sortBy === column) {
@@ -117,6 +118,28 @@ const AdminPaidFranchiseList = () => {
       <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">
         Franchise Stock List
       </h1>
+      <div className="mt-6 mb-4">
+        <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 shadow-md">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-100 rounded-full">
+                  <ShoppingCart className="h-6 w-6 text-blue-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-blue-600">
+                    Total Stock Value
+                  </p>
+                  <p className="text-2xl font-bold text-blue-700">
+                    {formatCurrency(totalStockValue)}
+                  </p>
+                </div>
+              </div>
+              
+            </div>
+          </CardContent>
+        </Card>
+      </div>
       <Card className="mx-auto mt-6 sm:mt-10">
         <CardContent>
           {/* Toolbar */}
@@ -157,6 +180,24 @@ const AdminPaidFranchiseList = () => {
                       <div className="flex items-center">
                         <span>Product</span>
                         {sortBy === "productName" && (
+                          <span className="ml-1">
+                            {sortOrder === "asc" ? (
+                              <ChevronUp size={16} />
+                            ) : (
+                              <ChevronDown size={16} />
+                            )}
+                          </span>
+                        )}
+                      </div>
+                    </TableHead>
+
+                    <TableHead
+                      onClick={() => handleSort("mrp")}
+                      className="cursor-pointer max-w-[250px] break-words whitespace-normal"
+                    >
+                      <div className="flex items-center">
+                        <span>MRP</span>
+                        {sortBy === "mrp" && (
                           <span className="ml-1">
                             {sortOrder === "asc" ? (
                               <ChevronUp size={16} />
@@ -226,6 +267,9 @@ const AdminPaidFranchiseList = () => {
                     <TableRow key={stock.id}>
                       <TableCell className="max-w-[250px] p-4 break-words whitespace-normal">
                         {stock?.product?.productName}
+                      </TableCell>
+                      <TableCell className="max-w-[250px] p-4 break-words whitespace-normal">
+                        {formatCurrency(stock?.product?.mrp)}
                       </TableCell>
                       <TableCell className="max-w-[250px] break-words whitespace-normal">
                         {stock?.closing_quantity || "-"}

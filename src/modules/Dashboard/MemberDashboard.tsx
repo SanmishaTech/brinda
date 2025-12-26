@@ -447,7 +447,7 @@ const MemberDashboard = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-r from-pink-400 to-red-500 text-white">
+          {/* <Card className="bg-gradient-to-r from-pink-400 to-red-500 text-white">
             <CardHeader>
               <CardTitle className="flex items-center gap-3 text-white">
                 <Wallet />
@@ -459,7 +459,7 @@ const MemberDashboard = () => {
                 {formatCurrency(repurchaseCashbackIncome)}
               </p>
             </CardContent>
-          </Card>
+          </Card> */}
 
           <Card className="bg-gradient-to-r from-lime-400 to-green-500 text-white">
             <CardHeader>
@@ -536,17 +536,17 @@ const MemberDashboard = () => {
       {/* Section 1: Loan Information */}
       <section>
         <h2 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-200">
-          Loan Details
+          Advance Details
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Card className="shadow-md rounded-md bg-gradient-to-r from-pink-500 to-purple-600 text-white">
             <CardHeader>
               <CardTitle className="flex items-center gap-3">
                 <Wallet className="text-white" />
-                Total Loan Given
+                Total Advance Given
               </CardTitle>
               <CardDescription className="text-white">
-                Total Loan Given Till Now.
+                Total Advance Given Till Now.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -561,10 +561,10 @@ const MemberDashboard = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-3 text-white">
                 <TrendingUp />
-                Total Loan Pending
+                Total Advance Pending
               </CardTitle>
               <CardDescription className="text-white">
-                Total Loan Pending.
+                Total Advance Pending.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -579,10 +579,10 @@ const MemberDashboard = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-3 text-white">
                 <Gift />
-                Total Loan Collected.
+                Total Advance Collected.
               </CardTitle>
               <CardDescription className="text-white">
-                Total Loan Collected Till Now.
+                Total Advance Collected Till Now.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -595,10 +595,10 @@ const MemberDashboard = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-3">
                 <Wallet className="text-white" />
-                Loan Percentage
+                Advance Percentage
               </CardTitle>
               <CardDescription className="text-white">
-                Loan Percentage.
+                Advance Percentage.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -614,7 +614,7 @@ const MemberDashboard = () => {
           Profile Summary
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card className="bg-gradient-to-r from-indigo-600 to-fuchsia-600 text-white">
+          {/* <Card className="bg-gradient-to-r from-indigo-600 to-fuchsia-600 text-white">
             {" "}
             <CardHeader>
               <CardTitle className="flex items-center gap-3 ">
@@ -667,7 +667,7 @@ const MemberDashboard = () => {
                 {formatCurrency(collectedPurchaseAmount)}
               </p>
             </CardContent>
-          </Card>
+          </Card> */}
 
           {status !== DIAMOND && (
             <Card className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white">
