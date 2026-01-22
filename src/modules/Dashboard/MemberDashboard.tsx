@@ -534,7 +534,7 @@ const MemberDashboard = () => {
       </section>
 
       {/* Section 1: Loan Information */}
-      <section>
+      {/* <section>
         <h2 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-200">
           Advance Details
         </h2>
@@ -606,7 +606,7 @@ const MemberDashboard = () => {
             </CardContent>
           </Card>
         </div>
-      </section>
+      </section> */}
 
       {/* Section 4: Purchase + Status */}
       <section>

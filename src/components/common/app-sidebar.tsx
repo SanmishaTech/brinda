@@ -250,6 +250,7 @@ import {
 
 import { appName } from "@/config";
 import { ASSOCIATE, DIAMOND, INACTIVE, SILVER } from "@/config/data";
+import { Badge } from "@/components/ui/badge";
 
 // Fetch profile status API
 const fetchProfileStatus = async () => {
@@ -450,9 +451,33 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             >
               <a href="/dashboard" className="flex mt-2 items-center space-x-2">
                 <ArrowUpCircleIcon className="h-5 w-5" />
-                <div className="flex flex-col">
+                <div className="flex mb-1 flex-col">
                   <span className="text-base font-semibold">{appName}</span>
-                  <span className="text-xs font-semibold">ID: {username}</span>
+                  <div className="flex items-center  space-x-2">
+                    <span className="text-xs font-semibold">ID: {username}</span>
+                    {isLoading ? (
+                      <Loader className="h-4 w-4 text-muted-foreground animate-spin" />
+                    ) : (
+                      <Badge
+                        className={
+                          // map status to background styles
+                          userStatus === DIAMOND
+                            ? "bg-green-500 text-white"
+                            : userStatus === "Gold" || userStatus === "gold" || userStatus === "GOLD"
+                            ? "bg-yellow-500 text-white"
+                            : userStatus === SILVER
+                            ? "bg-slate-400 text-white"
+                            : userStatus === ASSOCIATE
+                            ? "bg-blue-500 text-white"
+                            : userStatus === INACTIVE
+                            ? "bg-red-500 text-white"
+                            : "bg-gray-400 text-white"
+                        }
+                      >
+                        {userStatus || "N/A"}
+                      </Badge>
+                    )}
+                  </div>
                 </div>
               </a>
             </SidebarMenuButton>
