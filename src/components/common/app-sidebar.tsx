@@ -305,7 +305,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       url: "/genealogy",
       icon: UsersRound,
     },
-    ...(![ASSOCIATE, INACTIVE].includes(userStatus) && !isLoading
+    ...(![INACTIVE].includes(userStatus) && !isLoading
       ? [
           {
             name: "Repurchase",
