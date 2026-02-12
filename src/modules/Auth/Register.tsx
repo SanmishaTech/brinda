@@ -5,10 +5,7 @@ import { z } from "zod";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   CheckCircle,
-  KeySquare,
   Copy,
-  ClipboardCopy,
-  CheckCircle2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -52,7 +49,7 @@ import { Search } from "lucide-react";
 
 // Define expected API response structure
 interface RegisterResponse {
-  message: string;
+  username: string;
 }
 
 type RegisterFormInputs = z.infer<typeof registerSchema>;
@@ -85,6 +82,22 @@ const registerSchema = z.object({
       message: "Mobile number must be exactly 10 digits.",
     }),
   position: z.string().min(1, "Position is required"),
+  password: z
+    .string()
+    .min(6, "Password must be at least 6 characters long.")
+    .min(1, "Password is required"),
+  confirmPassword: z
+    .string()
+    .min(6, "Confirm password must be at least 6 characters long.")
+    .min(1, "Confirm password is required"),
+}).superRefine((data, ctx) => {
+  if (data.password !== data.confirmPassword) {
+    ctx.addIssue({
+      path: ["confirmPassword"],
+      code: z.ZodIssueCode.custom,
+      message: "Passwords do not match.",
+    });
+  }
 });
 
 const Register = () => {
@@ -96,7 +109,6 @@ const Register = () => {
   const [showDialog, setShowDialog] = useState(false);
   const [credentials, setCredentials] = useState({
     username: "",
-    password: "",
   });
   const [sponsorName, setSponsorName] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
@@ -108,6 +120,8 @@ const Register = () => {
     state: "",
     mobile: "",
     position: "",
+    password: "",
+    confirmPassword: "",
   };
 
   const {
@@ -183,17 +197,15 @@ const Register = () => {
   const isSponsorValid =
     sponsorId.length === 10 && sponsorName && !sponsorLookupMutation.isPending;
 
-  const registerMutation = useMutation<
-    RegisterResponse,
-    unknown,
-    RegisterFormInputs
-  >({
+  type RegisterRequest = Omit<RegisterFormInputs, "confirmPassword">;
+
+  const registerMutation = useMutation<RegisterResponse, unknown, RegisterRequest>({
     mutationFn: (data) => post("/auth/register", data),
     onSuccess: (data) => {
       toast.success("Registration successful! Please log in.");
       // navigate("/"); // Redirect to login page
       // console.log("Registration successful:", data);
-      setCredentials({ username: data.username, password: data.password }); // password from form input or returned from backend
+      setCredentials({ username: data.username });
       setShowDialog(true);
     },
     onError: (error: any) => {
@@ -207,7 +219,7 @@ const Register = () => {
   });
 
   const handleCopyDetails = () => {
-    const copyText = `Username: ${credentials.username}\nPassword: ${credentials.password}`;
+    const copyText = `Username: ${credentials.username}`;
     navigator.clipboard.writeText(copyText).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000); // Reset after 2s
@@ -215,7 +227,8 @@ const Register = () => {
   };
 
   const onSubmit: SubmitHandler<RegisterFormInputs> = (data) => {
-    registerMutation.mutate(data);
+    const { confirmPassword, ...payload } = data;
+    registerMutation.mutate(payload);
   };
 
   return (
@@ -362,7 +375,7 @@ const Register = () => {
           </div>
 
           <div className="flex flex-col lg:flex-row gap-4">
-            <div className="relative">
+            <div className="relative flex-1">
               <Label htmlFor="state">State</Label>
 
               {/* <div className="w-full pt-1"> */}
@@ -376,7 +389,7 @@ const Register = () => {
                         variant="outline"
                         role="combobox"
                         aria-expanded={openState}
-                        className="w-[325px] justify-between mt-1"
+                        className="w-full justify-between mt-1"
                         onClick={() => setOpenState((prev) => !prev)}
                       >
                         {field.value
@@ -386,7 +399,7 @@ const Register = () => {
                       </Button>
                     </PopoverTrigger>
 
-                    <PopoverContent className="w-[325px] p-0">
+                    <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
                       <Command>
                         <CommandInput
                           placeholder="Search state..."
@@ -430,14 +443,14 @@ const Register = () => {
                 </p>
               )}
             </div>
-            <div className="grid gap-2 relative">
+            <div className="grid gap-2 relative flex-1">
               <Label htmlFor="position">Position</Label>
               <Controller
                 name="position"
                 control={control}
                 render={({ field }) => (
                   <RadioGroup
-                    className="flex space-x-4"
+                    className="flex flex-wrap gap-4"
                     value={field.value}
                     onValueChange={(value) => field.onChange(value)}
                   >
@@ -503,6 +516,50 @@ const Register = () => {
               {errors.mobile && (
                 <p className="text-destructive text-xs absolute -bottom-5">
                   {errors.mobile.message}
+                </p>
+              )}
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-4 md:flex-row">
+            <div className="flex-1 grid gap-2 relative">
+              <Label htmlFor="password">Password</Label>
+              <Controller
+                name="password"
+                control={control}
+                render={({ field }) => (
+                  <PasswordInput
+                    id="password"
+                    placeholder="Enter password"
+                    disabled={registerMutation.isPending}
+                    {...field}
+                  />
+                )}
+              />
+              {errors.password && (
+                <p className="text-destructive text-xs mt-1">
+                  {errors.password.message}
+                </p>
+              )}
+            </div>
+
+            <div className="flex-1 grid gap-2 relative">
+              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Controller
+                name="confirmPassword"
+                control={control}
+                render={({ field }) => (
+                  <PasswordInput
+                    id="confirmPassword"
+                    placeholder="Confirm password"
+                    disabled={registerMutation.isPending}
+                    {...field}
+                  />
+                )}
+              />
+              {errors.confirmPassword && (
+                <p className="text-destructive text-xs mt-1">
+                  {errors.confirmPassword.message}
                 </p>
               )}
             </div>
@@ -606,19 +663,6 @@ const Register = () => {
                     <p className="text-xs text-gray-500">Username</p>
                     <p className="text-sm font-normal text-gray-800">
                       {credentials.username}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Password Card */}
-              <div className="flex items-center justify-between gap-3 border rounded-md p-3 shadow-sm bg-white">
-                <div className="flex items-center gap-3">
-                  <KeySquare className="w-5 h-5 text-blue-600" />
-                  <div>
-                    <p className="text-xs text-gray-500">Password</p>
-                    <p className="text-sm font-normal text-gray-800">
-                      {credentials.password}
                     </p>
                   </div>
                 </div>
