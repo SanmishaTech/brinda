@@ -35,7 +35,7 @@ const RewardList = () => {
       {/* Gold Reward Summary */}
       <Card className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white mb-6">
         <CardContent className="p-6">
-          <h2 className="text-lg font-semibold mb-2">Gold Reward Summary</h2>
+          <h2 className="text-lg font-semibold mb-2">Reward Summary</h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <p className="text-sm">Current Level</p>
@@ -48,7 +48,7 @@ const RewardList = () => {
               </p>
             </div>
             <div>
-              <p className="text-sm">Gold Pairs Matched</p>
+              <p className="text-sm">Silver Pairs Matched</p>
               <p className="text-2xl font-bold">
                 {member?.goldRewardBalance || 0}
               </p>
@@ -75,7 +75,7 @@ const RewardList = () => {
 
       {/* All Reward Levels */}
       <h2 className="text-lg font-semibold mb-3 text-gray-700">
-        📊 All Gold Reward Levels
+        📊 All Silver Reward Levels
       </h2>
       <div className="overflow-x-auto pb-4">
         <div className="flex gap-4">
